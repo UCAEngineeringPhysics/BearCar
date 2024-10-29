@@ -3,6 +3,7 @@ site_url: https://UCAEngineeringPhysics.github.io/BearCart
 nav:
   - Home: index.md
   - Getting Started: getting_started.md
+  - Hardware Assembly Guide: assembly_guide.md
   - Bill of Materials: BOM.md
   # - API Reference: api.md
 
