@@ -2,7 +2,8 @@ site_name: BearCart Documentation
 site_url: https://UCAEngineeringPhysics.github.io/BearCart
 nav:
   - Home: index.md
-  - Getting Started: getting_started.md
+  - Installation: installation.md
+  - Wiring Guide: wiring.md
   - Hardware Assembly Guide: assembly_guide.md
   - Bill of Materials: BOM.md
   # - API Reference: api.md
