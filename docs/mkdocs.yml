@@ -4,7 +4,7 @@ nav:
   - Home: index.md
   - Installation: installation.md
   - Wiring Guide: wiring.md
-  - Hardware Assembly Guide: assembly_guide.md
+  - Hardware Assembly Guide: assembly.md
   - Bill of Materials: BOM.md
   # - API Reference: api.md
 
