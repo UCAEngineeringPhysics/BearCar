@@ -3,20 +3,20 @@
 
 ## 1 Split Battery Power
 The LiPo battery will provide power for all the electric components. 
-A wire splitter is employed to separate the power for the drivetrain from the electronics devices.
+A wire splitter is employed to separate the power for the drivetrain from the power for the computing devices.
 
 
 ![battery-splitter](images/wiring/battery-splitter.png)
 
 ## 2 Powering Drivetrain
-A 3-wire servo motor is responsible for turning the front wheels of the BearCart.
-There are two widely used color codes for the servo wires.
-Please refer to the following table for details:
-![servo_color](https://i0.wp.com/dronebotworkshop.com/wp-content/uploads/2018/05/servo-motor-pinout.jpg?w=768&ssl=1)
+The Electronic Speed Controller (ESC) is in charge of regulate the speed and direction of the main engine (a DC motor), as well as providing power to the steering system (a servo motor) through a Battery Eliminator Circuit (BEC).
 
-Most hobby servos are rated from 4.8 to 6 volts.
-We convert the battery power to 5 volts to feed the need of the servo motor. 
-![splitter-buck-servo](/_DOCS/assemble/electric/images/splitter-buck-servo.jpg)
+![esc-motor-servo](images/wiring/esc-motor-servo.png)
+
+The ESC and the servo motor can receive signals through their JST connectors.
+There are two widely used color codes for these connections.
+
+![servo_color](https://i0.wp.com/dronebotworkshop.com/wp-content/uploads/2018/05/servo-motor-pinout.jpg?w=768&ssl=1)
 
 ## 3 Powering Up Motor Driver
 **Pay attention to the polarity of the power port (labeled with "+" and "-")**
