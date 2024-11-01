@@ -23,13 +23,12 @@ The computing devices are strict on the power sources. We use a step-down conver
 
 ![converter-pi-pico](images/wiring/buck-pi-pico.png)
 
-## 5 GPIO Wiring
-- Raspberry Pi is in charge of controlling the steering servo and thrust motor.
-- The control signals are handled by some of the GPIO pins.
-- The GPIO pins employed as shown in the diagram below are the default setting.
+## 4 GPIO Wiring
+Raspberry Pi Pico is a micro-controller. It will send digital signals to the ESC and the servo motor to regulate throttle and steering of the BearCart.
+> The GPIO pins as shown in the diagram below are the default setting.
 Other GPIO pins can be used.
 
-![gpio](/_DOCS/assemble/electric/images/gpio.jpg)
+![gpio](images/wiring/gpio.png)
 
 ## TODO
 - LED wiring
