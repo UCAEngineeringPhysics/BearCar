@@ -18,15 +18,10 @@ There are two widely used color codes for these connections.
 
 ![servo_color](https://i0.wp.com/dronebotworkshop.com/wp-content/uploads/2018/05/servo-motor-pinout.jpg?w=768&ssl=1)
 
-## 3 Powering Up Motor Driver
-**Pay attention to the polarity of the power port (labeled with "+" and "-")**
+## 3 Powering Computers
+The computing devices are strict on the power sources. We use a step-down converter (BUCK converter) to lower the battery output voltage (7.4V nominal) to 5V. 
 
-![splitter-md-motor](/_DOCS/assemble/electric/images/splitter-md-motor.jpg)
-
-## 4 Powering Up Raspberry Pi
-- A Raspberry Pi can be powered up from a '5V' (positive) and a 'GND' (negative) pin among the GPIO pins.
-- **Apply a power source over 5 volts may damage the Raspberry Pi.**
-![splitter-buck-rpi](/_DOCS/assemble/electric/images/splitter-buck-rpi5.jpg)
+![converter-pi-pico](images/wiring/buck-pi-pico.png)
 
 ## 5 GPIO Wiring
 - Raspberry Pi is in charge of controlling the steering servo and thrust motor.
