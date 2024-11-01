@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://UCAEngineeringPhysics.github.io/BearCart/wiring/" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Wiring Guide - BearCart Documentation</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Wiring Guide";
+        var mkdocs_page_input_path = "wiring.md";
+        var mkdocs_page_url = "/BearCart/wiring/";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> BearCart Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../installation/">Installation</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Wiring Guide</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#1-split-battery-power">1 Split Battery Power</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#2-powering-drivetrain">2 Powering Drivetrain</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#3-powering-up-motor-driver">3 Powering Up Motor Driver</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#4-powering-up-raspberry-pi">4 Powering Up Raspberry Pi</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#5-gpio-wiring">5 GPIO Wiring</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#todo">TODO</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../assembly_guide/">Hardware Assembly Guide</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../BOM/">Bill of Materials</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">BearCart Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Wiring Guide</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="electric-wiring-guide">Electric Wiring Guide</h1>
+<p><strong>Color coding the positive and negative power lines is extremely recommended.</strong></p>
+<h2 id="1-split-battery-power">1 Split Battery Power</h2>
+<p>The LiPo battery will provide power for all the electric components. 
+A wire splitter is employed to separate the power for the drivetrain from the electronics devices.</p>
+<p><img alt="battery-splitter" src="../images/wiring/battery-splitter.png" /></p>
+<h2 id="2-powering-drivetrain">2 Powering Drivetrain</h2>
+<p>A 3-wire servo motor is responsible for turning the front wheels of the BearCart.
+There are two widely used color codes for the servo wires.
+Please refer to the following table for details:
+<img alt="servo_color" src="https://i0.wp.com/dronebotworkshop.com/wp-content/uploads/2018/05/servo-motor-pinout.jpg?w=768&amp;ssl=1" /></p>
+<p>Most hobby servos are rated from 4.8 to 6 volts.
+We convert the battery power to 5 volts to feed the need of the servo motor. 
+<img alt="splitter-buck-servo" src="/_DOCS/assemble/electric/images/splitter-buck-servo.jpg" /></p>
+<h2 id="3-powering-up-motor-driver">3 Powering Up Motor Driver</h2>
+<p><strong>Pay attention to the polarity of the power port (labeled with "+" and "-")</strong></p>
+<p><img alt="splitter-md-motor" src="/_DOCS/assemble/electric/images/splitter-md-motor.jpg" /></p>
+<h2 id="4-powering-up-raspberry-pi">4 Powering Up Raspberry Pi</h2>
+<ul>
+<li>A Raspberry Pi can be powered up from a '5V' (positive) and a 'GND' (negative) pin among the GPIO pins.</li>
+<li><strong>Apply a power source over 5 volts may damage the Raspberry Pi.</strong>
+<img alt="splitter-buck-rpi" src="/_DOCS/assemble/electric/images/splitter-buck-rpi5.jpg" /></li>
+</ul>
+<h2 id="5-gpio-wiring">5 GPIO Wiring</h2>
+<ul>
+<li>Raspberry Pi is in charge of controlling the steering servo and thrust motor.</li>
+<li>The control signals are handled by some of the GPIO pins.</li>
+<li>The GPIO pins employed as shown in the diagram below are the default setting.
+Other GPIO pins can be used.</li>
+</ul>
+<p><img alt="gpio" src="/_DOCS/assemble/electric/images/gpio.jpg" /></p>
+<h2 id="todo">TODO</h2>
+<ul>
+<li>LED wiring</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../installation/" class="btn btn-neutral float-left" title="Installation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../assembly_guide/" class="btn btn-neutral float-right" title="Hardware Assembly Guide">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../installation/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../assembly_guide/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
