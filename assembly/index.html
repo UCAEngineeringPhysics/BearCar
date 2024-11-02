@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://UCAEngineeringPhysics.github.io/BearCart/assembly_guide/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://UCAEngineeringPhysics.github.io/BearCart/assembly/" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
     <title>Hardware Assembly Guide - BearCart Documentation</title>
     <link rel="stylesheet" href="../css/theme.css" />
@@ -13,8 +13,8 @@
       <script>
         // Current page data
         var mkdocs_page_name = "Hardware Assembly Guide";
-        var mkdocs_page_input_path = "assembly_guide.md";
-        var mkdocs_page_url = "/BearCart/assembly_guide/";
+        var mkdocs_page_input_path = "assembly.md";
+        var mkdocs_page_url = "/BearCart/assembly/";
       </script>
     
     <!--[if lt IE 9]>
@@ -54,6 +54,18 @@
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="#">Hardware Assembly Guide</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#wire-splitter">Wire Splitter</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#camera">Camera</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#standoffs">Standoffs</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#buck-converter">Buck Converter</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#pico-esc-servo">Pico, ESC &amp; Servo</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#raspberry-pi">Raspberry Pi</a>
+    </li>
     </ul>
                 </li>
               </ul>
@@ -85,6 +97,179 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="hardware-assembly-guide">Hardware Assembly Guide</h1>
+<h2 id="wire-splitter">Wire Splitter</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Item</th>
+<th style="text-align: left;">Qty.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Wire splitter</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;">M2.5*10 screw</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr>
+<td style="text-align: left;">M2.5 nut</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr>
+<td style="text-align: left;">Wired female T-plug connector</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;">Wired male T-plug connector</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;">Female JST connector wires</td>
+<td style="text-align: left;">1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="camera">Camera</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Item</th>
+<th style="text-align: left;">Qty.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">3D-Printed camera mount</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;">RPi Camera module</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;">CSI <strong>camera</strong> cable</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;">M2.5*4 screw</td>
+<td style="text-align: left;">2-4</td>
+</tr>
+<tr>
+<td style="text-align: left;">M2.5 nut</td>
+<td style="text-align: left;">2-4</td>
+</tr>
+<tr>
+<td style="text-align: left;">M2*4 screw</td>
+<td style="text-align: left;">2-4</td>
+</tr>
+<tr>
+<td style="text-align: left;">M2.5 nut</td>
+<td style="text-align: left;">2-4</td>
+</tr>
+</tbody>
+</table>
+<h2 id="standoffs">Standoffs</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Item</th>
+<th style="text-align: left;">Qty.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">M2.5*20 standoff</td>
+<td style="text-align: left;">4</td>
+</tr>
+<tr>
+<td style="text-align: left;">M2.5*10 standoff</td>
+<td style="text-align: left;">4</td>
+</tr>
+<tr>
+<td style="text-align: left;">M2.5 nut</td>
+<td style="text-align: left;">8</td>
+</tr>
+<tr>
+<td style="text-align: left;">M2*15 standoff</td>
+<td style="text-align: left;">4</td>
+</tr>
+<tr>
+<td style="text-align: left;">M2 nut</td>
+<td style="text-align: left;">4</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="standoff_layout" src="../images/hardware/standoff_layout.jpg" /></p>
+<h2 id="buck-converter">Buck Converter</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Item</th>
+<th style="text-align: left;">Qty.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">M2.5 screw</td>
+<td style="text-align: left;">4</td>
+</tr>
+<tr>
+<td style="text-align: left;">Male JST connector wires</td>
+<td style="text-align: left;">2</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="converter_place" src="../images/hardware/buck_place.jpg" /></p>
+<h2 id="pico-esc-servo">Pico, ESC &amp; Servo</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Item</th>
+<th style="text-align: left;">Qty.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">M2 screw</td>
+<td style="text-align: left;">2-4</td>
+</tr>
+<tr>
+<td style="text-align: left;">Male-to-Male Dupont jumper wire</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;">Male-to-Female Dupont jumper wire</td>
+<td style="text-align: left;">4</td>
+</tr>
+<tr>
+<td style="text-align: left;">Micro-USB to USB-A cable</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;">Double-Sided tape</td>
+<td style="text-align: left;">1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="raspberry-pi">Raspberry Pi</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Item</th>
+<th style="text-align: left;">Qty.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">M2.5 screw</td>
+<td style="text-align: left;">2-4</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="pi_place" src="../images/hardware/pi_place.jpg" /></p>
               
             </div>
           </div><footer>
