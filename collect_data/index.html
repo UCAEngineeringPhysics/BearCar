@@ -3,18 +3,18 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://UCAEngineeringPhysics.github.io/BearCart/wiring/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://UCAEngineeringPhysics.github.io/BearCart/collect_data/" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Wiring Guide - BearCart Documentation</title>
+    <title>Data Collection Guide - BearCart Documentation</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Wiring Guide";
-        var mkdocs_page_input_path = "wiring.md";
-        var mkdocs_page_url = "/BearCart/wiring/";
+        var mkdocs_page_name = "Data Collection Guide";
+        var mkdocs_page_input_path = "collect_data.md";
+        var mkdocs_page_url = "/BearCart/collect_data/";
       </script>
     
     <!--[if lt IE 9]>
@@ -51,28 +51,30 @@
                 <li class="toctree-l1"><a class="reference internal" href="../software/">Software Installation Guide</a>
                 </li>
               </ul>
-              <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="#">Wiring Guide</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#1-split-battery-power">1 Split Battery Power</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#2-powering-drivetrain">2 Powering Drivetrain</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#3-powering-computers">3 Powering Computers</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#4-gpio-wiring">4 GPIO Wiring</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#todo">TODO</a>
-    </li>
-    </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../wiring/">Wiring Guide</a>
                 </li>
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../assembly/">Hardware Assembly Guide</a>
                 </li>
               </ul>
-              <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../collect_data/">Data Collection Guide</a>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Data Collection Guide</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#script-execution">Script Execution</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#toggle-recording">Toggle Recording</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#emergency-stop">Emergency Stop</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#saved-data">Saved Data</a>
+    </li>
+    </ul>
                 </li>
               </ul>
               <ul>
@@ -101,7 +103,7 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-      <li class="breadcrumb-item active">Wiring Guide</li>
+      <li class="breadcrumb-item active">Data Collection Guide</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
@@ -110,38 +112,44 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <h1 id="electric-wiring-guide">Electric Wiring Guide</h1>
-<p><strong>Color coding the positive and negative power lines is extremely recommended.</strong></p>
-<h2 id="1-split-battery-power">1 Split Battery Power</h2>
-<p>The LiPo battery will provide power for all the electric components. 
-A wire splitter is employed to separate the power for the drivetrain from the power for the computing devices.</p>
-<p><img alt="battery-splitter" src="../images/wiring/battery-splitter.png" /></p>
-<h2 id="2-powering-drivetrain">2 Powering Drivetrain</h2>
-<p>The Electronic Speed Controller (ESC) is in charge of regulate the speed and direction of the main engine (a DC motor), as well as providing power to the steering system (a servo motor) through a Battery Eliminator Circuit (BEC).</p>
-<p><img alt="esc-motor-servo" src="../images/wiring/esc-motor-servo.png" /></p>
-<p>The ESC and the servo motor can receive signals through their JST connectors.
-There are two widely used color codes for these connections.</p>
-<p><img alt="servo_color" src="https://i0.wp.com/dronebotworkshop.com/wp-content/uploads/2018/05/servo-motor-pinout.jpg?w=768&amp;ssl=1" /></p>
-<h2 id="3-powering-computers">3 Powering Computers</h2>
-<p>The computing devices are strict on the power sources. We use a step-down converter (BUCK converter) to lower the battery output voltage (7.4V nominal) to 5V. </p>
-<p><img alt="converter-pi-pico" src="../images/wiring/buck-pi-pico.png" /></p>
-<h2 id="4-gpio-wiring">4 GPIO Wiring</h2>
-<p>Raspberry Pi Pico is a micro-controller. It will send digital signals to the ESC and the servo motor to regulate throttle and steering of the BearCart.</p>
+                <h1 id="data-collection-guide">Data Collection Guide</h1>
+<h2 id="script-execution">Script Execution</h2>
+<p>In a new RPi's terminal, run following command.</p>
+<pre><code class="language-console">python ~/BearCart/scripts/collect_data.py
+</code></pre>
+<h2 id="usage">Usage</h2>
+<h3 id="toggle-recording">Toggle Recording</h3>
+<p>The default button for toggling data recording is <code>R1</code>.
+Headlight will be toggled as well if it is correctly wired up.
+Press the button to activate/deactivate data recording. </p>
+<h3 id="emergency-stop">Emergency Stop</h3>
+<p>The default button for EMERGENCY STOP is <code>X</code>.
+Press this button will terminate the execution of the Python script.
+Release throttle (right) joystick if a normal stop is expected.</p>
+<h2 id="saved-data">Saved Data</h2>
+<p>A data directory will be automatically created once the <code>collect_data.py</code> script is executed.
+The data directory will be located at <code>~/BearCart/data/&lt;year-month-day-hour-minute&gt;</code>.
+And it will be timestamped with the moment of executing the <code>collect_data.py</code> script.</p>
 <blockquote>
-<p>The GPIO pins as shown in the diagram below are the default setting.
-Other GPIO pins can be used.</p>
+<p>If toggle recording button was never pressed, the data directory will be empty.</p>
 </blockquote>
-<p><img alt="gpio" src="../images/wiring/gpio.png" /></p>
-<h2 id="todo">TODO</h2>
-<ul>
-<li>LED wiring</li>
-</ul>
+<p>If data was effectively recorded, extra files will be saved in the timestamped data directory.
+An example of the data structure looks like the follows.</p>
+<pre><code class="language-console">BearCart/data/2024-08-13-15-05/
+├── images/
+└── labels.csv
+</code></pre>
+<p>The <code>images</code> directory stores all the images recorded during the data collection process.
+The saved images will be indexed follow the chronological order. 
+The <code>labels.csv</code> file stores the "image file names", "human input steering values" and "human input throttle values".
+These files are organized in 3 columns. 
+And each row stands for the human operator's action at the moment of the corresponding image was captured.</p>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../software/" class="btn btn-neutral float-left" title="Software Installation Guide"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../assembly/" class="btn btn-neutral float-right" title="Hardware Assembly Guide">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../assembly/" class="btn btn-neutral float-left" title="Hardware Assembly Guide"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../train/" class="btn btn-neutral float-right" title="Autopilot Training Guide">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -164,10 +172,10 @@ Other GPIO pins can be used.</p>
   <span class="rst-current-version" data-toggle="rst-current-version">
     
     
-      <span><a href="../software/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../assembly/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../assembly/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../train/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
