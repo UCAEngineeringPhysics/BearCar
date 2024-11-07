@@ -51,13 +51,18 @@ Place nuts or screws into those pockets and tighten the standoffs by hands.
 ![post_splitter](images/hardware/post_splitter.jpg)
 ![post_splitter_bed](images/hardware/post_splitter_bed.jpg)
 
-## Buck Converter
+## 4 Buck Converter
 | Item                          | Qty.  |
 | :---                          | :---  |
 | M2.5 screw                    | 4     |
-| Male JST connector wires      | 2     |
+| Male JST connector w/ wires   | 1     |
+| Female JST connector w/ wires | 1     |
 
-![converter_place](images/hardware/buck_place.jpg)
+**Note the arrow pointing direction below the LCD screen**
+
+![prep_converter](images/hardware/prep_converter.jpg)
+![post_converter](images/hardware/post_converter.jpg)
+![post_converter_bed](images/hardware/post_converter_bed.jpg)
 
 ## Pico, ESC & Servo
 | Item                              | Qty.  |
