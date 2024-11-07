@@ -29,6 +29,7 @@ Place nuts or screws into those pockets and tighten the standoffs by hands.
 ### 2.1 Install Camera Mount on Bed
 ![prep_camount](images/hardware/prep_camount.jpg)
 ![post_camount](images/hardware/post_camount.jpg)
+![post_standoff_back](images/hardware/post_standoff_back.jpg)
 
 ### 2.2 Install Pi Camera
 ![prep_cam](images/hardware/prep_cam.jpg)
@@ -36,15 +37,19 @@ Place nuts or screws into those pockets and tighten the standoffs by hands.
 ![post_cam_back](images/hardware/post_cam_back.jpg)
 
 
-## Wire Splitter
-| Item                          | Qty.  |
-| :---                          | :---  |
-| Wire splitter                 | 1     |
-| M2.5*10 screw                 | 2     |
-| M2.5 nut                      | 2     |
-| Wired female T-plug connector | 1     |
-| Wired male T-plug connector   | 1     |
-| Female JST connector wires    | 1     |
+## 3 Wire Splitter
+| Item                             | Qty.  |
+| :---                             | :---  |
+| Wire splitter                    | 1     |
+| M2.5*16 screw                    | 2     |
+| M2.5 nut                         | 2     |
+| Female T-plug connector w/ wires | 1     |
+| Male T-plug connector w/ wires   | 1     |
+| Female JST connector w/ wires    | 1     |
+
+![prep_splitter](images/hardware/prep_splitter.jpg)
+![post_splitter](images/hardware/post_splitter.jpg)
+![post_splitter_bed](images/hardware/post_splitter_bed.jpg)
 
 ## Buck Converter
 | Item                          | Qty.  |
