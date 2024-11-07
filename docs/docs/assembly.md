@@ -64,7 +64,7 @@ Place nuts or screws into those pockets and tighten the standoffs by hands.
 ![post_converter](images/hardware/post_converter.jpg)
 ![post_converter_bed](images/hardware/post_converter_bed.jpg)
 
-## Pico, ESC & Servo
+## 5 Pico, ESC & Servo
 | Item                              | Qty.  |
 | :---                              | :---  |
 | M2 screw                          | 2-4   |
@@ -73,6 +73,9 @@ Place nuts or screws into those pockets and tighten the standoffs by hands.
 | Micro-USB to USB-A cable          | 1     |
 | Double-Sided tape                 | 1     |
 
+Pico's `GP0`, `GP15` and 2 `GND` pins will be employed later to control the ESC and the servo motor. Please refer to the [Wiring Guide](/docs/wiring.md) for more details.
+![prep_pico](images/hardware/prep_pico.jpg)
+![post_pico](images/hardware/post_pico.jpg)
 
 ## Raspberry Pi
 | Item                              | Qty.  |
