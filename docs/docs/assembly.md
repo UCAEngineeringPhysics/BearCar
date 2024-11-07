@@ -54,6 +54,7 @@ Place nuts or screws into those pockets and tighten the standoffs by hands.
 ## 4 Buck Converter
 | Item                          | Qty.  |
 | :---                          | :---  |
+| Step-Down (BUCK) converter    | 1     |
 | M2.5 screw                    | 4     |
 | Male JST connector w/ wires   | 1     |
 | Female JST connector w/ wires | 1     |
@@ -64,9 +65,10 @@ Place nuts or screws into those pockets and tighten the standoffs by hands.
 ![post_converter](images/hardware/post_converter.jpg)
 ![post_converter_bed](images/hardware/post_converter_bed.jpg)
 
-## 5 Pico, ESC & Servo
+## 5 Pico
 | Item                              | Qty.  |
 | :---                              | :---  |
+| RPi Pico                          | 1     |
 | M2 screw                          | 2-4   |
 | Male-to-Male Dupont jumper wire   | 1     |
 | Male-to-Female Dupont jumper wire | 4     |
@@ -77,10 +79,12 @@ Pico's `GP0`, `GP15` and 2 `GND` pins will be employed later to control the ESC 
 ![prep_pico](images/hardware/prep_pico.jpg)
 ![post_pico](images/hardware/post_pico.jpg)
 
-## Raspberry Pi
+## 6 Raspberry Pi
 | Item                              | Qty.  |
 | :---                              | :---  |
+| Raspberry Pi 5                    | 1     |
 | M2.5 screw                        | 2-4   |
 
-![pi_place](images/hardware/pi_place.jpg)
+![prep_pi](images/hardware/prep_pi.jpg)
+![post_pi](images/hardware/post_pi.jpg)
 
