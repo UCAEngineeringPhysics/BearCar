@@ -1,4 +1,40 @@
 # Hardware Assembly Guide
+We recommend you to follow the following order to assemble your BearCart.
+
+## 1 Standoffs
+| Item                          | Qty.  |
+| :---                          | :---  |
+| Male M2.5*15 standoff         | 8     |
+| M2.5 nut                      | 8     |
+| Female M2*15 standoff         | 4     |
+| M2*6 screw                    | 4     |
+
+There are pockets at the bottom side of the bed. 
+Place nuts or screws into those pockets and tighten the standoffs by hands.
+
+![prep_standoff](images/hardware/prep_standoff.jpg)
+![prep_camount](images/hardware/prep_camount.jpg)
+
+## 2 Camera
+| Item                    | Qty.  |
+| :---                    | :---  |
+| 3D-Printed camera mount | 1     |
+| RPi Camera module       | 1     |
+| CSI **camera** cable        | 1     |
+| M2.5*6 screw            | 2-4   |
+| M2.5 nut                | 2-4   |
+| M2*6 screw              | 2-4   |
+| M2 nut                | 2-4   |
+
+### 2.1 Install Camera Mount on Bed
+![prep_camount](images/hardware/prep_camount.jpg)
+![post_camount](images/hardware/post_camount.jpg)
+
+### 2.2 Install Pi Camera
+![prep_cam](images/hardware/prep_cam.jpg)
+![post_cam_front](images/hardware/post_cam_front.jpg)
+![post_cam_back](images/hardware/post_cam_back.jpg)
+
 
 ## Wire Splitter
 | Item                          | Qty.  |
@@ -9,28 +45,6 @@
 | Wired female T-plug connector | 1     |
 | Wired male T-plug connector   | 1     |
 | Female JST connector wires    | 1     |
-
-## Camera
-| Item                    | Qty.  |
-| :---                    | :---  |
-| 3D-Printed camera mount | 1     |
-| RPi Camera module       | 1     |
-| CSI **camera** cable        | 1     |
-| M2.5*4 screw            | 2-4   |
-| M2.5 nut                | 2-4   |
-| M2*4 screw              | 2-4   |
-| M2.5 nut                | 2-4   |
-
-## Standoffs
-| Item                          | Qty.  |
-| :---                          | :---  |
-| M2.5*20 standoff              | 4     |
-| M2.5*10 standoff              | 4     |
-| M2.5 nut                      | 8     |
-| M2*15 standoff                | 4     |
-| M2 nut                        | 4     |
-
-![standoff_layout](images/hardware/standoff_layout.jpg)
 
 ## Buck Converter
 | Item                          | Qty.  |
