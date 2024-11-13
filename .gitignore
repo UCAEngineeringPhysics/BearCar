@@ -67,7 +67,8 @@ venv/
 ENV/
 
 # MkDocs documentation
-*site*/
+*site/
+*site/*
 
 
 # BC data
