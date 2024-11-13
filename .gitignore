@@ -67,7 +67,7 @@ venv/
 ENV/
 
 # MkDocs documentation
-*site/
+docs/site/
 *site/*
 
 
