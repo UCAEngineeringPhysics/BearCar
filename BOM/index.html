@@ -74,6 +74,10 @@
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="#">Bill of Materials</a>
     <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#part-list">Part List</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#peripherals">Peripherals</a>
+    </li>
     </ul>
                 </li>
               </ul>
@@ -101,6 +105,9 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="bill-of-materials">Bill of Materials</h1>
+<h2 id="part-list">Part List</h2>
+<p>The total cost for building a BearCart from the listed items below is around $250.
+Although, you can always find cheaper replacement for pretty much every single item in the list.</p>
 <table>
 <thead>
 <tr>
@@ -118,22 +125,28 @@
 <td style="text-align: right;">$98.88</td>
 </tr>
 <tr>
-<td style="text-align: center;"><a href="https://www.pishop.us/product/raspberry-pi-5-4gb/?src=raspberrypi">Raspberry Pi 5</a>[^1]</td>
+<td style="text-align: center;"><a href="https://www.pishop.us/product/raspberry-pi-5-4gb/?src=raspberrypi">Raspberry Pi 5</a><sup>1</sup></td>
 <td style="text-align: left;">SBC for running AI autopilot and other Python scripts</td>
 <td style="text-align: center;">1</td>
 <td style="text-align: right;">$60.00</td>
 </tr>
 <tr>
-<td style="text-align: center;"><a href="https://www.amazon.com/dp/B01ER2SKFS?th=1">RPi Camera V2</a>[^2]</td>
-<td style="text-align: left;">Eye of the robot, 8-megapixel</td>
+<td style="text-align: center;"><a href="https://www.amazon.com/dp/B01ER2SKFS?th=1">RPi Camera V2</a><sup>2</sup></td>
+<td style="text-align: left;">Eye of the BearCart, 8-megapixel</td>
 <td style="text-align: center;">1</td>
 <td style="text-align: right;">$12.50</td>
 </tr>
 <tr>
-<td style="text-align: center;"><a href="https://www.pishop.us/product/camera-cable-for-raspberry-pi-5/">Camera Cable</a></td>
+<td style="text-align: center;"><a href="https://www.pishop.us/product/camera-cable-for-raspberry-pi-5/">Camera Cable</a><sup>3</sup></td>
 <td style="text-align: left;">200mm 22 pin to 15 pin</td>
 <td style="text-align: center;">1</td>
 <td style="text-align: right;">$1.20</td>
+</tr>
+<tr>
+<td style="text-align: center;"><a href="https://www.pishop.us/product/micro-hdmi-to-standard-hdmi-a-m-1m-cable-white/">Micro-HDMI to Standard HDMI Cable</a></td>
+<td style="text-align: left;">Connect monitor to RPi 5</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: right;">$5.56</td>
 </tr>
 <tr>
 <td style="text-align: center;"><a href="https://www.amazon.com/dp/B09X7C7LL1/?th=1">MicroSD Card</a></td>
@@ -154,19 +167,19 @@
 <td style="text-align: right;">$2.67</td>
 </tr>
 <tr>
-<td style="text-align: center;"><a href="https://www.amazon.com/dp/B0CM876HQB/">QUICRUN 1060 ESC</a>[^3]</td>
+<td style="text-align: center;"><a href="https://www.amazon.com/dp/B0CM876HQB/">QUICRUN 1060 ESC</a><sup>4</sup></td>
 <td style="text-align: left;">60 Amp continuous current and a 6V3A BEC integrated</td>
 <td style="text-align: center;">1</td>
 <td style="text-align: right;">$21.99</td>
 </tr>
 <tr>
-<td style="text-align: center;"><a href="https://www.amazon.com/gp/product/B0BWH7FBZC/">Wireless Game Pad</a></td>
+<td style="text-align: center;"><a href="https://www.amazon.com/gp/product/B0BWH7FBZC/">Wireless Game Pad</a><sup>5</sup></td>
 <td style="text-align: left;">Bluetooth</td>
 <td style="text-align: center;">1</td>
 <td style="text-align: right;">$19.99</td>
 </tr>
 <tr>
-<td style="text-align: center;"><a href="https://www.amazon.com/dp/B0CXT83GV6">Adjustable Buck Converter</a></td>
+<td style="text-align: center;"><a href="https://www.amazon.com/dp/B0CXT83GV6">Adjustable Buck Converter</a><sup>6</sup></td>
 <td style="text-align: left;">6V - 32V to 1.5V - 32V</td>
 <td style="text-align: center;">1</td>
 <td style="text-align: right;">$12.49</td>
@@ -249,11 +262,53 @@
 <td style="text-align: center;">2</td>
 <td style="text-align: right;">&lt; $0.1</td>
 </tr>
+<tr>
+<td style="text-align: center;"><a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/mech/mechanical_designs/ucaep_mew4_bed_v3.stl">3D Printed Bed</a></td>
+<td style="text-align: left;">Hosts above components</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: right;">~ $1.21</td>
+</tr>
+<tr>
+<td style="text-align: center;"><a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/mech/mechanical_designs/CameraMount.stl">3D Printed Camera Mount</a></td>
+<td style="text-align: left;">Holds RPi camera</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: right;">&lt; $0.1</td>
+</tr>
 </tbody>
 </table>
-<p>[^1]: 8GB RAM and accessories are optional</p>
-<p>[^2]: V1, V3 or V4 camera should be OK</p>
-<p>[^3]: Electronic speed controller</p>
+<p><sup>1</sup>: 8GB RAM and accessories are optional</p>
+<p><sup>2</sup>: V1, V3 or V4 cameras are fine</p>
+<p><sup>3</sup>: Don't be tricked by the <a href="https://www.pishop.us/product/display-cable-for-raspberry-pi-5/"><strong>Display</strong> Cable</a></p>
+<p><sup>4</sup>: Electronic speed controller. Other brands and products are OK, but make sure the unit <strong>DOES NOT</strong> have radio receiver (antenna) integrated.</p>
+<p><sup>5</sup>: Any generic gamepad on the market should work. Get a bluetooth one if you want your BearCart and the gamepad to be one-on-one tethered (You'll want this when you are managing multiple BearCarts).</p>
+<p><sup>6</sup>: Get a dedicated <a href="https://www.dfrobot.com/product-2162.html">DC-DC Buck converter</a> with 5V/8A output, if not interested in monitoring the battery health or need more space on the board.</p>
+<h2 id="peripherals">Peripherals</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Item</th>
+<th style="text-align: left;">Requirement</th>
+<th style="text-align: center;">Qty.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">Monitor</td>
+<td style="text-align: left;">Has HDMI port</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: center;">Keyboard</td>
+<td style="text-align: left;">USB connector</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: center;">Mouse</td>
+<td style="text-align: left;">USB connector</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table>
               
             </div>
           </div><footer>
