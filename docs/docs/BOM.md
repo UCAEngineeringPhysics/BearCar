@@ -10,6 +10,7 @@ Although, you can always find cheaper replacement for pretty much every single i
 | [Raspberry Pi 5](https://www.pishop.us/product/raspberry-pi-5-4gb/?src=raspberrypi)<sup>1</sup> | SBC for running AI autopilot and other Python scripts | 1 | $60.00 |
 | [RPi Camera V2](https://www.amazon.com/dp/B01ER2SKFS?th=1)<sup>2</sup> | Eye of the BearCart, 8-megapixel | 1 | $12.50 |
 | [Camera Cable](https://www.pishop.us/product/camera-cable-for-raspberry-pi-5/)<sup>3</sup> | 200mm 22 pin to 15 pin | 1 | $1.20 |
+| [Raspberry Pi 27W Power Supply](https://www.pishop.us/product/raspberry-pi-27w-usb-c-power-supply-white-us/) | Delivers a maximum of 5.1V, 5A to RPi 5 | 1 | $13.60 |
 | [Micro-HDMI to Standard HDMI Cable](https://www.pishop.us/product/micro-hdmi-to-standard-hdmi-a-m-1m-cable-white/) | Connect monitor to RPi 5 | 1 | $5.56 |
 | [MicroSD Card](https://www.amazon.com/dp/B09X7C7LL1/?th=1) | 64GB, U3, A2 | 1 | $11.27 |
 | [Raspberry Pi Pico](https://www.pishop.us/product/raspberry-pi-pico-h-pre-soldered-headers/) | Microcontroller listens to RPi commands and controls drivetrain | 1 | $5.00 |
@@ -46,6 +47,7 @@ Although, you can always find cheaper replacement for pretty much every single i
 <sup>6</sup>: Get a dedicated [DC-DC Buck converter](https://www.dfrobot.com/product-2162.html) with 5V/8A output, if not interested in monitoring the battery health or need more space on the board.
 
 ## Peripherals
+We recommend beginners to connect following peripherals to the Raspberry Pi. For advanced users/developers, they are optional.
 
 | Item     | Requirement   | Qty.  |
 | :---:    | :---          | :---: |
