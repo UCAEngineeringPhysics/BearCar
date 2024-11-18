@@ -47,14 +47,12 @@
                 <li class="toctree-l1 current"><a class="reference internal current" href="#">Quick Start</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#software-installation">Software Installation</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#install-dependencies">Install Dependencies</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#clone-the-repository">Clone The Repository</a>
+    <li class="toctree-l2"><a class="reference internal" href="#data-collection-on-raspberry-pi">Data Collection (on Raspberry Pi)</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#install-python-packages">Install Python Packages</a>
+    <li class="toctree-l2"><a class="reference internal" href="#autopilot-model-training-on-server">Autopilot Model Training (on server)</a>
     </li>
-        </ul>
+    <li class="toctree-l2"><a class="reference internal" href="#autopilot-deployment-on-raspberry-pi">Autopilot Deployment (on Raspberry Pi)</a>
     </li>
     </ul>
                 </li>
@@ -68,7 +66,7 @@
                 </li>
               </ul>
               <ul>
-                <li class="toctree-l1"><a class="reference internal" href="../software/">Software Installation Guide</a>
+                <li class="toctree-l1"><a class="reference internal" href="../software/">Software Installation and Test Guide</a>
                 </li>
               </ul>
               <ul>
@@ -113,17 +111,32 @@
                 <h1 id="getting-started">Getting Started</h1>
 <h2 id="software-installation">Software Installation</h2>
 <p>Fire up the terminal on your Raspberry Pi, and run following commands in it.</p>
-<h3 id="install-dependencies">Install Dependencies</h3>
+<ul>
+<li>Install Dependencies </li>
+</ul>
 <pre><code class="language-bash">sudo apt install python3-pip
 pip install pip --upgrade --break-system-packages
 </code></pre>
-<h3 id="clone-the-repository">Clone The Repository</h3>
+<ul>
+<li>Clone The Repository</li>
+</ul>
 <pre><code class="language-bash">cd ~
 git clone https://github.com/UCAEngineeringPhysics/BearCart.git
 </code></pre>
-<h3 id="install-python-packages">Install Python Packages</h3>
+<ul>
+<li>Install Python Packages</li>
+</ul>
 <pre><code class="language-bash">cd ~/BearCart
 pip install -r requirements.txt --break-system-packages
+</code></pre>
+<h2 id="data-collection-on-raspberry-pi">Data Collection (on Raspberry Pi)</h2>
+<pre><code class="language-bash">python ~/BearCart/scripts/collect_data.py
+</code></pre>
+<h2 id="autopilot-model-training-on-server">Autopilot Model Training (on server)</h2>
+<pre><code class="language-bash">python ~/BearCart/scripts/train.py &lt;data directory name in format: year-month-date-hour-minute&gt;
+</code></pre>
+<h2 id="autopilot-deployment-on-raspberry-pi">Autopilot Deployment (on Raspberry Pi)</h2>
+<pre><code class="language-bash">python ~/BearCart/scripts/autopilot.py
 </code></pre>
               
             </div>

@@ -5,14 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://UCAEngineeringPhysics.github.io/BearCart/software/" />
       <link rel="shortcut icon" href="../img/favicon.ico" />
-    <title>Software Installation Guide - BearCart Documentation</title>
+    <title>Software Installation and Test Guide - BearCart Documentation</title>
     <link rel="stylesheet" href="../css/theme.css" />
     <link rel="stylesheet" href="../css/theme_extra.css" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
     
       <script>
         // Current page data
-        var mkdocs_page_name = "Software Installation Guide";
+        var mkdocs_page_name = "Software Installation and Test Guide";
         var mkdocs_page_input_path = "software.md";
         var mkdocs_page_url = "/BearCart/software/";
       </script>
@@ -56,7 +56,7 @@
                 </li>
               </ul>
               <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="#">Software Installation Guide</a>
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Software Installation and Test Guide</a>
     <ul class="current">
     <li class="toctree-l2"><a class="reference internal" href="#1-software-on-pico">1. Software on Pico</a>
         <ul>
@@ -71,6 +71,14 @@
     <li class="toctree-l2"><a class="reference internal" href="#2-software-on-raspberry-pi">2. Software on Raspberry Pi</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#21-bearcart-software-installation">2.1 BearCart Software Installation</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#211-install-dependencies">2.1.1 Install dependencies:</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#212-download-bearcart-repository">2.1.2 Download BearCart repository</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#213-install-python-packages">2.1.3 Install Python packages</a>
+    </li>
+        </ul>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#22-update-configurations">2.2 Update Configurations</a>
     </li>
@@ -111,7 +119,7 @@
         <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
-      <li class="breadcrumb-item active">Software Installation Guide</li>
+      <li class="breadcrumb-item active">Software Installation and Test Guide</li>
     <li class="wy-breadcrumbs-aside">
     </li>
   </ul>
@@ -145,26 +153,24 @@ Take down the duty cycle values steer the front wheels all the way to the left, 
 If using Thonny, you'll notice the file name becomes <code>[main.py]</code>.</p>
 <h2 id="2-software-on-raspberry-pi">2. Software on Raspberry Pi</h2>
 <h3 id="21-bearcart-software-installation">2.1 BearCart Software Installation</h3>
-<p>Open Raspberry Pi's terminal window and follow the steps below:
-1. Install dependencies:</p>
-<pre><code class="language-console">sudo apt install python3-pip
+<p>Open Raspberry Pi's terminal window and follow the steps below:</p>
+<h4 id="211-install-dependencies">2.1.1 Install dependencies:</h4>
+<pre><code class="language-bash">sudo apt install python3-pip
 pip install pip --upgrade --break-system-packages
 </code></pre>
-<ol>
-<li>Download BearCart repository</li>
-</ol>
-<pre><code class="language-console">cd ~
+<h4 id="212-download-bearcart-repository">2.1.2 Download BearCart repository</h4>
+<pre><code class="language-bash">cd ~
 git clone https://github.com/UCAEngineeringPhysics/BearCart.git
 </code></pre>
-<ol>
-<li>Install Python packages</li>
-</ol>
-<pre><code class="language-console">cd ~/BearCart
+<h4 id="213-install-python-packages">2.1.3 Install Python packages</h4>
+<pre><code class="language-bash">cd ~/BearCart
 pip install -r requirements.txt --break-system-packages
 </code></pre>
 <h3 id="22-update-configurations">2.2 Update Configurations</h3>
-<p>Open up <a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/671e7794f572fbdda4885c78627b4d613b9486a2/scripts/configs.json">configs.json</a> in a text editor.
-- Change the follwing lines according to servo calibration results</p>
+<p>Open up <a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/671e7794f572fbdda4885c78627b4d613b9486a2/scripts/configs.json">configs.json</a> in a text editor.</p>
+<ul>
+<li>Change the follwing lines according to servo calibration results</li>
+</ul>
 <pre><code class="language-json">&quot;steering_left&quot;: 1000000,
 &quot;steering_right&quot;: 2000000,
 &quot;steering_center&quot;: 1500000,
