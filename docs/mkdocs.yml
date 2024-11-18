@@ -3,9 +3,9 @@ site_url: https://UCAEngineeringPhysics.github.io/BearCart
 nav:
   - Home: index.md
   - Quick Start: quick_start.md
-  - Software Installation Guide: software.md
   - Wiring Guide: wiring.md
   - Hardware Assembly Guide: assembly.md
+  - Software Installation Guide: software.md
   - Data Collection Guide: collect_data.md
   - Autopilot Training Guide: train.md
   - Autopilot Deployment Guide: deploy.md
