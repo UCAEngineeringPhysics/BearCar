@@ -58,31 +58,31 @@
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="#">Software Installation and Test Guide</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#1-software-on-pico">1. Software on Pico</a>
+    <li class="toctree-l2"><a class="reference internal" href="#1-bearcart-software-installation">1 BearCart Software Installation</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#11-upload-micropython-firmware-to-pico">1.1 Upload MicroPython Firmware to Pico</a>
+    <li class="toctree-l3"><a class="reference internal" href="#11-install-dependencies">1.1 Install dependencies:</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#12-calibrate-esc-and-servo">1.2 Calibrate ESC and Servo</a>
+    <li class="toctree-l3"><a class="reference internal" href="#12-download-bearcart-repository">1.2 Download BearCart repository</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#13-upload-the-command-listener-script-to-pico">1.3 Upload the Command Listener Script to Pico</a>
+    <li class="toctree-l3"><a class="reference internal" href="#13-install-python-packages">1.3 Install Python packages</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#2-software-on-pico">2. Software on Pico</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#21-upload-micropython-firmware-to-pico">2.1 Upload MicroPython Firmware to Pico</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#22-calibrate-esc-and-servo">2.2 Calibrate ESC and Servo</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#23-upload-the-command-listener-script-to-pico">2.3 Upload the Command Listener Script to Pico</a>
     </li>
         </ul>
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#2-software-on-raspberry-pi">2. Software on Raspberry Pi</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#21-bearcart-software-installation">2.1 BearCart Software Installation</a>
-        <ul>
-    <li class="toctree-l4"><a class="reference internal" href="#211-install-dependencies">2.1.1 Install dependencies:</a>
+    <li class="toctree-l3"><a class="reference internal" href="#21-update-configurations">2.1 Update Configurations</a>
     </li>
-    <li class="toctree-l4"><a class="reference internal" href="#212-download-bearcart-repository">2.1.2 Download BearCart repository</a>
-    </li>
-    <li class="toctree-l4"><a class="reference internal" href="#213-install-python-packages">2.1.3 Install Python packages</a>
-    </li>
-        </ul>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#22-update-configurations">2.2 Update Configurations</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#23-unit-test">2.3 Unit Test</a>
+    <li class="toctree-l3"><a class="reference internal" href="#22-unit-test">2.2 Unit Test</a>
     </li>
         </ul>
     </li>
@@ -129,16 +129,30 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="software-installation-and-test-guide">Software Installation  and Test Guide</h1>
-<h2 id="1-software-on-pico">1. Software on Pico</h2>
+<h2 id="1-bearcart-software-installation">1 BearCart Software Installation</h2>
+<p>Open Raspberry Pi's terminal window and follow the steps below:</p>
+<h3 id="11-install-dependencies">1.1 Install dependencies:</h3>
+<pre><code class="language-bash">sudo apt install python3-pip
+pip install pip --upgrade --break-system-packages
+</code></pre>
+<h3 id="12-download-bearcart-repository">1.2 Download BearCart repository</h3>
+<pre><code class="language-bash">cd ~
+git clone https://github.com/UCAEngineeringPhysics/BearCart.git
+</code></pre>
+<h3 id="13-install-python-packages">1.3 Install Python packages</h3>
+<pre><code class="language-bash">cd ~/BearCart
+pip install -r requirements.txt --break-system-packages
+</code></pre>
+<h2 id="2-software-on-pico">2. Software on Pico</h2>
 <p><a href="https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html">Pico</a> is a microcontroller.
 It bridges the Raspberry Pi and the drivetrain (ESC and servo) of BearCart.
 Raspberry Pi sends desired propelling and turning commands to Pico.
 Pico translates them into the PWM signals then sends them to the drivetrain.
 The code running on Pico is located at <a href="https://github.com/UCAEngineeringPhysics/BearCart/tree/main/scripts/pico">BearCart/scripts/pico/</a>.</p>
-<h3 id="11-upload-micropython-firmware-to-pico">1.1 Upload MicroPython Firmware to Pico</h3>
+<h3 id="21-upload-micropython-firmware-to-pico">2.1 Upload MicroPython Firmware to Pico</h3>
 <p>The MicroPython firmware allows Pico to execute Python code.
 Please follow the instructions in the <a href="https://projects.raspberrypi.org/en/projects/getting-started-with-the-pico/3">Getting started with Raspberry Pi Pico</a> guide.</p>
-<h3 id="12-calibrate-esc-and-servo">1.2 Calibrate ESC and Servo</h3>
+<h3 id="22-calibrate-esc-and-servo">2.2 Calibrate ESC and Servo</h3>
 <p>Make sure you have followed the <a href="../wiring/">Wiring Guide</a> to connect Pico to Raspberry Pi, ESC and servo.
 If using Thonny, remember to set your Python interpreter to MicroPython at the bottom right corner.</p>
 <ol>
@@ -148,25 +162,11 @@ Take down the duty cycle values steer the front wheels all the way to the left, 
 <strong>CAUTION: lift the BearCart up, and make sure nothing has contact with any tire!</strong></li>
 </ol>
 <p>Take down the duty cycle values/ranges that spin the throttle motor forward at its maximum speed, spin it reversely at its maximum speed, and stop it.</p>
-<h3 id="13-upload-the-command-listener-script-to-pico">1.3 Upload the Command Listener Script to Pico</h3>
+<h3 id="23-upload-the-command-listener-script-to-pico">2.3 Upload the Command Listener Script to Pico</h3>
 <p>Upload or save <a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/671e7794f572fbdda4885c78627b4d613b9486a2/scripts/pico/main.py">main.py</a> to Pico.
 If using Thonny, you'll notice the file name becomes <code>[main.py]</code>.</p>
 <h2 id="2-software-on-raspberry-pi">2. Software on Raspberry Pi</h2>
-<h3 id="21-bearcart-software-installation">2.1 BearCart Software Installation</h3>
-<p>Open Raspberry Pi's terminal window and follow the steps below:</p>
-<h4 id="211-install-dependencies">2.1.1 Install dependencies:</h4>
-<pre><code class="language-bash">sudo apt install python3-pip
-pip install pip --upgrade --break-system-packages
-</code></pre>
-<h4 id="212-download-bearcart-repository">2.1.2 Download BearCart repository</h4>
-<pre><code class="language-bash">cd ~
-git clone https://github.com/UCAEngineeringPhysics/BearCart.git
-</code></pre>
-<h4 id="213-install-python-packages">2.1.3 Install Python packages</h4>
-<pre><code class="language-bash">cd ~/BearCart
-pip install -r requirements.txt --break-system-packages
-</code></pre>
-<h3 id="22-update-configurations">2.2 Update Configurations</h3>
+<h3 id="21-update-configurations">2.1 Update Configurations</h3>
 <p>Open up <a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/671e7794f572fbdda4885c78627b4d613b9486a2/scripts/configs.json">configs.json</a> in a text editor.</p>
 <ul>
 <li>Change the follwing lines according to servo calibration results</li>
@@ -183,7 +183,7 @@ pip install -r requirements.txt --break-system-packages
 &quot;throttle_fwd_range&quot;: 590000,
 &quot;throttle_rev_range&quot;: 120000,
 </code></pre>
-<h3 id="23-unit-test">2.3 Unit Test</h3>
+<h3 id="22-unit-test">2.2 Unit Test</h3>
 <p>All the unit testing scripts are located at <a href="https://github.com/UCAEngineeringPhysics/BearCart/tree/main/scripts/unit_test">BearCart/scripts/unit_test</a></p>
 <ol>
 <li>
