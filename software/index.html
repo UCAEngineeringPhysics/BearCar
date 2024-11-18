@@ -47,16 +47,38 @@
                 <li class="toctree-l1"><a class="reference internal" href="../quick_start/">Quick Start</a>
                 </li>
               </ul>
-              <ul class="current">
-                <li class="toctree-l1 current"><a class="reference internal current" href="#">Software Installation Guide</a>
-                </li>
-              </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../wiring/">Wiring Guide</a>
                 </li>
               </ul>
               <ul>
                 <li class="toctree-l1"><a class="reference internal" href="../assembly/">Hardware Assembly Guide</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Software Installation Guide</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#1-software-on-pico">1. Software on Pico</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#11-upload-micropython-firmware-to-pico">1.1 Upload MicroPython Firmware to Pico</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#12-calibrate-esc-and-servo">1.2 Calibrate ESC and Servo</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#13-upload-the-command-listener-script-to-pico">1.3 Upload the Command Listener Script to Pico</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#2-software-on-raspberry-pi">2. Software on Raspberry Pi</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#21-bearcart-software-installation">2.1 BearCart Software Installation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#22-update-configurations">2.2 Update Configurations</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#23-unit-test">2.3 Unit Test</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
                 </li>
               </ul>
               <ul>
@@ -98,15 +120,94 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <blockquote>
-<p>Coming Soon...</p>
+                <h1 id="software-installation-and-test-guide">Software Installation  and Test Guide</h1>
+<h2 id="1-software-on-pico">1. Software on Pico</h2>
+<p><a href="https://www.raspberrypi.com/documentation/microcontrollers/pico-series.html">Pico</a> is a microcontroller.
+It bridges the Raspberry Pi and the drivetrain (ESC and servo) of BearCart.
+Raspberry Pi sends desired propelling and turning commands to Pico.
+Pico translates them into the PWM signals then sends them to the drivetrain.
+The code running on Pico is located at <a href="https://github.com/UCAEngineeringPhysics/BearCart/tree/main/scripts/pico">BearCart/scripts/pico/</a>.</p>
+<h3 id="11-upload-micropython-firmware-to-pico">1.1 Upload MicroPython Firmware to Pico</h3>
+<p>The MicroPython firmware allows Pico to execute Python code.
+Please follow the instructions in the <a href="https://projects.raspberrypi.org/en/projects/getting-started-with-the-pico/3">Getting started with Raspberry Pi Pico</a> guide.</p>
+<h3 id="12-calibrate-esc-and-servo">1.2 Calibrate ESC and Servo</h3>
+<p>Make sure you have followed the <a href="../wiring/">Wiring Guide</a> to connect Pico to Raspberry Pi, ESC and servo.
+If using Thonny, remember to set your Python interpreter to MicroPython at the bottom right corner.</p>
+<ol>
+<li>Run <a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/671e7794f572fbdda4885c78627b4d613b9486a2/scripts/pico/esc_servo_test.py">esc_servo_test.py</a>.
+Take down the duty cycle values steer the front wheels all the way to the left, all way to the right and middle.</li>
+<li>Run <a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/671e7794f572fbdda4885c78627b4d613b9486a2/scripts/pico/esc_throttle_test.py">esc_throttle_test.py</a>.
+<strong>CAUTION: lift the BearCart up, and make sure nothing has contact with any tire!</strong></li>
+</ol>
+<p>Take down the duty cycle values/ranges that spin the throttle motor forward at its maximum speed, spin it reversely at its maximum speed, and stop it.</p>
+<h3 id="13-upload-the-command-listener-script-to-pico">1.3 Upload the Command Listener Script to Pico</h3>
+<p>Upload or save <a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/671e7794f572fbdda4885c78627b4d613b9486a2/scripts/pico/main.py">main.py</a> to Pico.
+If using Thonny, you'll notice the file name becomes <code>[main.py]</code>.</p>
+<h2 id="2-software-on-raspberry-pi">2. Software on Raspberry Pi</h2>
+<h3 id="21-bearcart-software-installation">2.1 BearCart Software Installation</h3>
+<p>Open Raspberry Pi's terminal window and follow the steps below:
+1. Install dependencies:</p>
+<pre><code class="language-console">sudo apt install python3-pip
+pip install pip --upgrade --break-system-packages
+</code></pre>
+<ol>
+<li>Download BearCart repository</li>
+</ol>
+<pre><code class="language-console">cd ~
+git clone https://github.com/UCAEngineeringPhysics/BearCart.git
+</code></pre>
+<ol>
+<li>Install Python packages</li>
+</ol>
+<pre><code class="language-console">cd ~/BearCart
+pip install -r requirements.txt --break-system-packages
+</code></pre>
+<h3 id="22-update-configurations">2.2 Update Configurations</h3>
+<p>Open up <a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/671e7794f572fbdda4885c78627b4d613b9486a2/scripts/configs.json">configs.json</a> in a text editor.
+- Change the follwing lines according to servo calibration results</p>
+<pre><code class="language-json">&quot;steering_left&quot;: 1000000,
+&quot;steering_right&quot;: 2000000,
+&quot;steering_center&quot;: 1500000,
+&quot;steering_range&quot;: 500000,
+</code></pre>
+<ul>
+<li>Change the following lines according to throttle calibration results</li>
+</ul>
+<pre><code class="language-json">&quot;throttle_stall&quot;: 1210000,
+&quot;throttle_fwd_range&quot;: 590000,
+&quot;throttle_rev_range&quot;: 120000,
+</code></pre>
+<h3 id="23-unit-test">2.3 Unit Test</h3>
+<p>All the unit testing scripts are located at <a href="https://github.com/UCAEngineeringPhysics/BearCart/tree/main/scripts/unit_test">BearCart/scripts/unit_test</a></p>
+<ol>
+<li>
+<p>Test Raspberry Pi camera module: <a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/671e7794f572fbdda4885c78627b4d613b9486a2/scripts/unit_test/camera.py">camera.py</a>.</p>
+<blockquote>
+<p><strong>CAUTION: power down Raspberry Pi before connect/disconnect the camera</strong></p>
 </blockquote>
+</li>
+<li>
+<p>Test gamepad: <a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/671e7794f572fbdda4885c78627b4d613b9486a2/scripts/unit_test/joystick.py">joystick.py</a>.</p>
+<blockquote>
+<p>Make sure the gamepad is connected via bluetooth.</p>
+</blockquote>
+</li>
+<li>
+<p>Test steering command transmitting: <a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/671e7794f572fbdda4885c78627b4d613b9486a2/scripts/unit_test/serial_steering.py">serial_steering.py</a>.</p>
+</li>
+<li>
+<p>Test throttle command transmitting: <a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/671e7794f572fbdda4885c78627b4d613b9486a2/scripts/unit_test/serial_throttle.py">serial_throttle.py</a>.</p>
+</li>
+<li>
+<p>Integration test: <a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/671e7794f572fbdda4885c78627b4d613b9486a2/scripts/unit_test/camera_joystick_drivetrain.py">camera_joystick_drivetrain.py</a>.</p>
+</li>
+</ol>
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="../quick_start/" class="btn btn-neutral float-left" title="Quick Start"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-        <a href="../wiring/" class="btn btn-neutral float-right" title="Wiring Guide">Next <span class="icon icon-circle-arrow-right"></span></a>
+        <a href="../assembly/" class="btn btn-neutral float-left" title="Hardware Assembly Guide"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../collect_data/" class="btn btn-neutral float-right" title="Data Collection Guide">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
   <hr/>
@@ -129,10 +230,10 @@
   <span class="rst-current-version" data-toggle="rst-current-version">
     
     
-      <span><a href="../quick_start/" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="../assembly/" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
-      <span><a href="../wiring/" style="color: #fcfcfc">Next &raquo;</a></span>
+      <span><a href="../collect_data/" style="color: #fcfcfc">Next &raquo;</a></span>
     
   </span>
 </div>
