@@ -30,24 +30,25 @@ If using Thonny, you'll notice the file name becomes `[main.py]`.
 
 ### 2.1 BearCart Software Installation
 Open Raspberry Pi's terminal window and follow the steps below:
-1. Install dependencies:
-```console
+#### 2.1.1 Install dependencies:
+```bash
 sudo apt install python3-pip
 pip install pip --upgrade --break-system-packages
 ```
-2. Download BearCart repository
-```console
+#### 2.1.2 Download BearCart repository
+```bash
 cd ~
 git clone https://github.com/UCAEngineeringPhysics/BearCart.git
 ```
-3. Install Python packages
-```console
+#### 2.1.3 Install Python packages
+```bash
 cd ~/BearCart
 pip install -r requirements.txt --break-system-packages
 ```
 
 ### 2.2 Update Configurations
 Open up [configs.json](https://github.com/UCAEngineeringPhysics/BearCart/blob/671e7794f572fbdda4885c78627b4d613b9486a2/scripts/configs.json) in a text editor.
+
 - Change the follwing lines according to servo calibration results
 ```json
 "steering_left": 1000000,

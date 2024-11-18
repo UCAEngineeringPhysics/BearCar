@@ -5,7 +5,7 @@ nav:
   - Quick Start: quick_start.md
   - Wiring Guide: wiring.md
   - Hardware Assembly Guide: assembly.md
-  - Software Installation Guide: software.md
+  - Software Installation and Test Guide: software.md
   - Data Collection Guide: collect_data.md
   - Autopilot Training Guide: train.md
   - Autopilot Deployment Guide: deploy.md
