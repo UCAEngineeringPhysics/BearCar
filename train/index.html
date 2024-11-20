@@ -65,6 +65,20 @@
               </ul>
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="#">Autopilot Training Guide</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#1-transfer-collected-data-to-server">1 Transfer Collected Data to Server</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#2-run-training-script">2 Run Training Script</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#21-remotely-log-in-to-server-via-ssh">2.1 Remotely Log In to Server via SSH</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#22-training-with-specified-data">2.2 Training with Specified Data</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#3-transfer-autopilot-model-to-raspberry-pi">3 Transfer Autopilot Model to Raspberry Pi</a>
+    </li>
+    </ul>
                 </li>
               </ul>
               <ul>
@@ -98,9 +112,77 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
             <div class="section" itemprop="articleBody">
               
-                <blockquote>
-<p>Coming Soon...</p>
-</blockquote>
+                <h1 id="autopilot-training-guide">Autopilot Training Guide</h1>
+<p>The autopilot is a deep learning model.
+To be more specific, it is a convolutional neural network model.
+This model takes in images captured by the camera, then predict driving actions (throttle and steering) accordingly.</p>
+<p>To train such a model, we need to feed human operators' driving data to it.
+The trained model is expected to imitate its human teachers' driving behaviors.
+Basically, this is a behavioral cloning approach.</p>
+<p>Any computer with PyTorch installed can be used to train such a model.
+So, theoretically, the Raspberry Pi can be used for the training purpose.
+However, we strongly recommend you to setup a dedicated model training server to train your autopilot model.
+For the computational power of a Raspberry Pi is quite limited.</p>
+<p>The following steps will guide you through the entire process of autopilot training on a server computer.
+You can perform all the operations on the Raspberry Pi without physically interact with the server computer.</p>
+<p><em>For those intend to train models on your Raspberry Pis, please ignore the data transferring steps.</em></p>
+<p>The following steps assume that your server is sharing the same network as the Raspberry Pi.
+So, the first 3 segments in the ip address on both machines should be the same.
+In our case, they both start with <code>192.168.0.</code>.</p>
+<h2 id="1-transfer-collected-data-to-server">1 Transfer Collected Data to Server</h2>
+<ul>
+<li>Usage:</li>
+</ul>
+<pre><code class="language-bash">rsync -rv --progress --partial &lt;data_path_on_rpi&gt; &lt;username&gt;@&lt;server_ip_address&gt;:&lt;data_path_on_server&gt;
+</code></pre>
+<ul>
+<li>Example:</li>
+</ul>
+<pre><code class="language-bash">rsync -rv --progress --partial ~/BearCart/data/2024-08-13-15-05 user@192.168.0.123:~/BearCart/data/  # example
+</code></pre>
+<h2 id="2-run-training-script">2 Run Training Script</h2>
+<h3 id="21-remotely-log-in-to-server-via-ssh">2.1 Remotely Log In to Server via SSH</h3>
+<ul>
+<li>Usage:</li>
+</ul>
+<pre><code class="language-bash">ssh &lt;username&gt;@&lt;server_ip_address&gt;
+</code></pre>
+<ul>
+<li>Example:</li>
+</ul>
+<pre><code class="language-bash">ssh user@192.168.0.123
+</code></pre>
+<p>You'll need to enter the correct password to log in.</p>
+<h3 id="22-training-with-specified-data">2.2 Training with Specified Data</h3>
+<ul>
+<li>Usage:</li>
+</ul>
+<pre><code class="language-bash">python ~/BearCart/scripts/train.py &lt;data_directory_name&gt; 
+</code></pre>
+<ul>
+<li>Example:</li>
+</ul>
+<pre><code class="language-bash">python ~/BearCart/scripts/train.py 2024-08-13-15-05 
+</code></pre>
+<p>The trained model will be saved at:</p>
+<pre><code class="language-bash">&lt;model_path&gt;/DonkeyNet-15epochs-0.001lr.pth
+</code></pre>
+<p>For example:</p>
+<pre><code class="language-bash">~/BearCart/data/2024-08-13-15-05/DonkeyNet-15epochs-0.001lr.pth
+</code></pre>
+<p>And, the model is stored on the server computer now.</p>
+<p>Now you can log out from the server by typing <code>exit</code> in terminal.
+Or press <code>Ctrl</code>+<code>d</code> on keyboard.</p>
+<h2 id="3-transfer-autopilot-model-to-raspberry-pi">3 Transfer Autopilot Model to Raspberry Pi</h2>
+<p><strong>Make sure you are back to Raspberry Pi.</strong></p>
+<ul>
+<li>Usage:</li>
+</ul>
+<pre><code class="language-bash">rsync -rv --progress --partial &lt;username&gt;@&lt;server_ip_address&gt;:&lt;model_path_on_server&gt; &lt;model_dir_path&gt;
+</code></pre>
+<p>-Example:</p>
+<pre><code class="language-bash">rsync -rv --progress --partial user@192.168.0.123:~/BearCart/data/2024-08-13-15-05/DonkeyNet-15epochs-0.001lr.pth ~/BearCart/models/
+</code></pre>
               
             </div>
           </div><footer>
