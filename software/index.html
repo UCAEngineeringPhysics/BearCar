@@ -72,7 +72,7 @@
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#21-upload-micropython-firmware-to-pico">2.1 Upload MicroPython Firmware to Pico</a>
     </li>
-    <li class="toctree-l3"><a class="reference internal" href="#22-calibrate-esc-and-servo">2.2 Calibrate ESC and Servo</a>
+    <li class="toctree-l3"><a class="reference internal" href="#22-optional-calibrate-esc-and-servo">2.2 (Optional) Calibrate ESC and Servo</a>
     </li>
     <li class="toctree-l3"><a class="reference internal" href="#23-upload-the-command-listener-script-to-pico">2.3 Upload the Command Listener Script to Pico</a>
     </li>
@@ -152,13 +152,13 @@ The code running on Pico is located at <a href="https://github.com/UCAEngineerin
 <h3 id="21-upload-micropython-firmware-to-pico">2.1 Upload MicroPython Firmware to Pico</h3>
 <p>The MicroPython firmware allows Pico to execute Python code.
 Please follow the instructions in the <a href="https://projects.raspberrypi.org/en/projects/getting-started-with-the-pico/3">Getting started with Raspberry Pi Pico</a> guide.</p>
-<h3 id="22-calibrate-esc-and-servo">2.2 Calibrate ESC and Servo</h3>
+<h3 id="22-optional-calibrate-esc-and-servo">2.2 (Optional) Calibrate ESC and Servo</h3>
 <p>Make sure you have followed the <a href="../wiring/">Wiring Guide</a> to connect Pico to Raspberry Pi, ESC and servo.
 If using Thonny, remember to set your Python interpreter to MicroPython at the bottom right corner.</p>
 <ol>
-<li>Run <a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/671e7794f572fbdda4885c78627b4d613b9486a2/scripts/pico/esc_servo_test.py">esc_servo_test.py</a>.
+<li>Run <a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/ccebf6f4740c4e8708bd6acf017aac4ace4de9b8/scripts/pico/servo_test.py">servo_test.py</a>.
 Take down the duty cycle values steer the front wheels all the way to the left, all way to the right and middle.</li>
-<li>Run <a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/671e7794f572fbdda4885c78627b4d613b9486a2/scripts/pico/esc_throttle_test.py">esc_throttle_test.py</a>.
+<li>Run <a href="https://github.com/UCAEngineeringPhysics/BearCart/blob/ccebf6f4740c4e8708bd6acf017aac4ace4de9b8/scripts/pico/esc_test.py">esc_test.py</a>.
 <strong>CAUTION: lift the BearCart up, and make sure nothing has contact with any tire!</strong></li>
 </ol>
 <p>Take down the duty cycle values/ranges that spin the throttle motor forward at its maximum speed, spin it reversely at its maximum speed, and stop it.</p>
