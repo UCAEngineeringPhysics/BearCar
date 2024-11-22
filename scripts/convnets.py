@@ -1,4 +1,7 @@
+import torch
 import torch.nn as nn
+from torchvision.models import efficientnet_b3, EfficientNet_B3_Weights
+
 
 class DonkeyNet(nn.Module):
 
@@ -27,3 +30,71 @@ class DonkeyNet(nn.Module):
         x = self.relu(self.fc2(x))
         x = self.fc3(x)
         return x
+
+
+class CustomEfficientNetB3(nn.Module):
+    """
+    Following Perplexity's suggestion
+    """
+    def __init__(self, num_ouputs=2):
+        super(CustomEfficientNetB3, self).__init__()
+        
+        # Load pre-trained EfficientNet-B3
+        self.efficientnet = efficientnet_b3(weights=EfficientNet_B3_Weights.DEFAULT)
+        
+        # Remove the original classifier
+        self.features = nn.Sequential(*list(self.efficientnet.children())[:-1])
+        
+        # Get the number of features from EfficientNet-B3
+        self.num_ftrs = self.efficientnet.classifier[1].in_features
+        
+        # Additional input processing
+        self.ldr_fcs = nn.Sequential(
+            nn.Linear(1800, 512),
+            nn.ReLU(),
+            nn.Linear(512, 256),
+            nn.ReLU(),
+        )
+        
+        # Combined classifier
+        self.predictor = nn.Sequential(
+            nn.Linear(self.num_ftrs + 256, 256),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(256, num_ouputs)
+        )
+
+    def forward(self, x_img, x_ldr):
+        # Process image through EfficientNet-B3 features
+        x_img = self.features(x_img)
+        x_img = x_img.view(x_img.size(0), -1)
+        
+        # Process additional input
+        x_ldr = self.ldr_fcs(x_ldr)
+        
+        # Concatenate EfficientNet features and additional input features
+        combined_features = torch.cat((x_img, x_ldr), dim=1)
+        
+        # Pass through the combined classifier
+        output = self.predictor(combined_features)
+        
+        return output
+
+if __name__ == '__main__':
+    # Create the custom model
+    model = DonkeyNet()  # Adjust num_classes as needed
+    # model = CustomEfficientNetB3(num_ouputs=2)  # Adjust num_classes as needed
+    def count_parameters(model):
+        return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+    total_params = count_parameters(model)
+    print(f"Total trainable parameters: {total_params}")
+
+    # Example usage
+    # batch_size = 4
+    # image_input = torch.randn(batch_size, 3, 300, 300)  # Assuming 300x300 input images
+    # additional_input = torch.randn(batch_size, 1800)
+    #
+    # output = model(image_input, additional_input)
+    # print(output.shape)  # Should print torch.Size([4, 10]) for batch_size=4 and num_classes=10
+
