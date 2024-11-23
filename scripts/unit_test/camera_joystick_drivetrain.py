@@ -15,8 +15,8 @@ from gpiozero import LED
 # SETUP
 # Load configs
 params_file_path = os.path.join(os.path.dirname(sys.path[0]), 'configs.json')
-params_file = open(params_file_path)
-params = json.load(params_file)
+with open(params_file_path, 'r') as file:
+    params = json.load(file)
 # Constants
 STEERING_AXIS = params['steering_joy_axis']
 STEERING_CENTER = params['steering_center']
@@ -28,6 +28,8 @@ THROTTLE_REV_RANGE = params['throttle_rev_range']
 THROTTLE_LIMIT = params['throttle_limit']
 RECORD_BUTTON = params['record_btn']
 STOP_BUTTON = params['stop_btn']
+WIDTH = params['image_width']
+HEIGHT = params['image_height']
 # Init LED
 headlight = LED(params['led_pin'])
 headlight.off()
@@ -43,7 +45,7 @@ cv.startWindowThread()
 cam = Picamera2()
 cam.configure(
     cam.create_preview_configuration(
-        main={"format": 'RGB888', "size": (120, 160)},
+        main={"format": 'RGB888', "size": (WIDTH, HEIGHT)},
         controls={"FrameDurationLimits": (50000, 50000)},  # 20 FPS
     )
 )
