@@ -28,8 +28,6 @@ THROTTLE_REV_RANGE = params['throttle_rev_range']
 THROTTLE_LIMIT = params['throttle_limit']
 RECORD_BUTTON = params['record_btn']
 STOP_BUTTON = params['stop_btn']
-WIDTH = params['image_width']
-HEIGHT = params['image_height']
 # Init LED
 headlight = LED(params['led_pin'])
 headlight.off()
@@ -45,8 +43,8 @@ cv.startWindowThread()
 cam = Picamera2()
 cam.configure(
     cam.create_preview_configuration(
-        main={"format": 'RGB888', "size": (WIDTH, HEIGHT)},
-        controls={"FrameDurationLimits": (50000, 50000)},  # 20 FPS
+        main={"format": 'RGB888', "size": (224, 224)},
+        controls={"FrameDurationLimits": (41667, 41667)},  # 24 FPS
     )
 )
 cam.start()
@@ -57,8 +55,8 @@ for i in reversed(range(60)):
     if frame is None:
         print("No frame received. TERMINATE!")
         sys.exit()
-    if not i % 20:
-        print(i/20)  # count down 3, 2, 1 sec
+    if not i % 24:
+        print(i/24)  # count down 3, 2, 1 sec
 # Init timer for FPS computing
 start_stamp = time()
 frame_counts = 0
