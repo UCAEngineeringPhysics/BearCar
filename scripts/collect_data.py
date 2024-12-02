@@ -14,8 +14,8 @@ from gpiozero import LED
 # SETUP
 # Load configs
 params_file_path = os.path.join(sys.path[0], 'configs.json')
-params_file = open(params_file_path)
-params = json.load(params_file)
+with open(params_file_path, 'r') as file:
+    params = json.load(file)
 # Constants
 STEERING_AXIS = params['steering_joy_axis']
 STEERING_CENTER = params['steering_center']
@@ -55,20 +55,20 @@ cv.startWindowThread()
 cam = Picamera2()
 cam.configure(
     cam.create_preview_configuration(
-        main={"format": 'RGB888', "size": (120, 160)},
-        controls={"FrameDurationLimits": (50000, 50000)},  # 20 FPS
+        main={"format": 'RGB888', "size": (224, 224)},
+        controls={"FrameDurationLimits": (41667, 41667)},  # 24 FPS
     )
 )
 cam.start()
-for i in reversed(range(60)):
+for i in reversed(range(72)):
     frame = cam.capture_array()
     # cv.imshow("Camera", frame)
     # cv.waitKey(1)
     if frame is None:
         print("No frame received. TERMINATE!")
         sys.exit()
-    if not i % 20:
-        print(i/20)  # count down 3, 2, 1 sec
+    if not i % 24:
+        print(i/24)  # count down 3, 2, 1 sec
 # Init timer for FPS computing
 start_stamp = time()
 frame_counts = 0
@@ -123,9 +123,8 @@ try:
         ser_pico.write(msg)
         # Log data
         action = [act_st, act_th]
-        # print(f"action: {action}")
+        print(f"action: {action}")
         if is_recording:
-            # img = cv.resize(frame, (120, 160))
             cv.imwrite(image_dir + str(frame_counts) + '.jpg', frame)
             label = [str(frame_counts) + '.jpg'] + action
             with open(label_path, 'a+', newline='') as f:
