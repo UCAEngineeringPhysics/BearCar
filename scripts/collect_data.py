@@ -123,7 +123,7 @@ try:
         ser_pico.write(msg)
         # Log data
         action = [act_st, act_th]
-        print(f"action: {action}")
+        # print(f"action: {action}")  # debug
         if is_recording:
             cv.imwrite(image_dir + str(frame_counts) + '.jpg', frame)
             label = [str(frame_counts) + '.jpg'] + action
@@ -134,7 +134,7 @@ try:
         # Log frame rate
         since_start = time() - start_stamp
         frame_rate = frame_counts / since_start
-        print(f"frame rate: {frame_rate}")
+        # print(f"frame rate: {frame_rate}")  # debug
         # Press "q" to quit
         if cv.waitKey(1)==ord('q'):
             headlight.off()
