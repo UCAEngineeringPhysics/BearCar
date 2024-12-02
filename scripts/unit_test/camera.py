@@ -21,7 +21,7 @@ picam.configure(
         controls={"FrameDurationLimits": (41667, 41667)},  # 24 FPS
     )
 )
-picam2.start()
+picam.start()
 
 # LOOP
 while True:
