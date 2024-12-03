@@ -51,18 +51,18 @@ class BearCartDataset(Dataset):
         throttle = torch.as_tensor(self.img_labels.iloc[idx, 2], dtype=torch.float32)
         return image, steering, throttle
 
-# class EfficientBearNet(nn.Module):
-#     def __init__(self, num_outputs=2):
-#         super(EfficientBearNet, self).__init__()
-#         self.efficientnet = models.efficientnet_b3(weights=None)
-#         in_features = self.efficientnet.classifier[1].in_features
-#         self.efficientnet.classifier = nn.Sequential(
-#             nn.Dropout(p=0.1, inplace=True),
-#             nn.Linear(in_features, num_outputs)
-#         )
-#
-#     def forward(self, x):
-#         return self.efficientnet(x)
+class EfficientBearNet(nn.Module):
+    def __init__(self, num_outputs=2):
+        super(EfficientBearNet, self).__init__()
+        self.efficientnet = models.efficientnet_b3(weights=None)
+        in_features = self.efficientnet.classifier[1].in_features
+        self.efficientnet.classifier = nn.Sequential(
+            nn.Dropout(p=0.1, inplace=True),
+            nn.Linear(in_features, num_outputs)
+        )
+
+    def forward(self, x):
+        return self.efficientnet(x)
 
 def train(dataloader, model, loss_fn, optimizer):
     """
