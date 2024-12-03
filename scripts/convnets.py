@@ -39,7 +39,7 @@ class EfficientBearNet(nn.Module):
         and using transfer learning to make it predict am autonomous vehicles throttle and steering values based on an image input.
         Can you show me how to realize this using pytorch?
     """
-    def __init__(self, num_ouputs=2):
+    def __init__(self, num_outputs=2):
         super(EfficientBearNet, self).__init__()
         
         # Load pre-trained EfficientNet-B3

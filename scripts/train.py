@@ -125,7 +125,7 @@ for ep in range(epochs):
 print("Optimize Done!")
 
 # Graph training process
-pilot_title = f'{model._get_name()}-{epochs}epochs-{lr}lr'
+pilot_title = f'{model._get_name()}-{epochs}epochs-{learning_rate}lr'
 plt.plot(range(epochs), train_losses, 'b--', label='Training')
 plt.plot(range(epochs), test_losses, 'orange', label='Test')
 plt.grid(True)
