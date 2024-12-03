@@ -4,7 +4,8 @@ import json
 from time import time
 import torch
 from torchvision import transforms
-import convnets
+from torchvision.transforms import v2
+from convnets import EfficientBearNet
 import serial
 import pygame
 import cv2 as cv
@@ -17,16 +18,16 @@ from gpiozero import LED
 model_path = os.path.join(
     os.path.dirname(sys.path[0]),
     'models', 
-    'DonkeyNet-15epochs-0.001lr.pth'
+    'pilot.pth'
 )
-to_tensor = transforms.ToTensor()
-model = convnets.DonkeyNet()
+to_tensor = v2.Compose([v2.ToDtype(torch.float32, scale=True)])
+model = EfficientBearNet()
 model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
 model.eval()
 # Load configs
 params_file_path = os.path.join(sys.path[0], 'configs.json')
-params_file = open(params_file_path)
-params = json.load(params_file)
+with open(params_file_path, 'r') as file:
+    params = json.load(file)
 # Constants
 STEERING_CENTER = params['steering_center']
 STEERING_RANGE = params['steering_range']
@@ -51,20 +52,20 @@ cv.startWindowThread()
 cam = Picamera2()
 cam.configure(
     cam.create_preview_configuration(
-        main={"format": 'RGB888', "size": (120, 160)},
-        controls={"FrameDurationLimits": (50000, 50000)},  # 20 FPS
+        main={"format": 'RGB888', "size": (224, 224)},
+        controls={"FrameDurationLimits": (41667, 41667)},  # 24 FPS
     )
 )
 cam.start()
-for i in reversed(range(60)):
+for i in reversed(range(72)):
     frame = cam.capture_array()
     # cv.imshow("Camera", frame)
     # cv.waitKey(1)
     if frame is None:
         print("No frame received. TERMINATE!")
         sys.exit()
-    if not i % 20:
-        print(i/20)  # count down 3, 2, 1 sec  
+    if not i % 24:
+        print(i/24)  # count down 3, 2, 1 sec  
 # Init timer for FPS computing
 start_stamp = time()
 frame_counts = 0
@@ -99,7 +100,8 @@ try:
                     sys.exit()
         # predict steer and throttle
         img_tensor = to_tensor(frame)
-        pred_st, pred_th = model(img_tensor[None, :]).squeeze()
+        with torch.no_grad():
+            pred_st, pred_th = model(img_tensor[None, :]).squeeze()
         st_trim = float(pred_st)
         if st_trim >= 1:  # trim steering signal
             st_trim = .999
@@ -128,12 +130,12 @@ try:
         msg = (str(duty_st) + "," + str(duty_th) + "\n").encode('utf-8')
         # Transmit control signals
         ser_pico.write(msg)
-        print(f"predicted action: {pred_st, pred_th}")        
+        print(f"predicted action: {pred_st, pred_th}")  # debug
         frame_counts += 1
         # Log frame rate
         since_start = time() - start_stamp
         frame_rate = frame_counts / since_start
-        print(f"frame rate: {frame_rate}")
+        print(f"frame rate: {frame_rate}")  # debug
         if cv.waitKey(1)==ord('q'):
             headlight.off()
             headlight.close()

@@ -1,17 +1,13 @@
 import os
 import sys
-# import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-import torchvision.models as models
 from torch.utils.data import DataLoader, Dataset, random_split
 from torchvision.transforms import v2
 from torchvision.io import read_image
 import matplotlib.pyplot as plt
 from convnets import EfficientBearNet
-# import convnets
-# import cv2 as cv
 
 # Pass in command line arguments for data diretory name
 # e.g. python train.py 2023-12-13-14-15
