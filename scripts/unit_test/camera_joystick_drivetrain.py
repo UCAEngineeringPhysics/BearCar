@@ -82,7 +82,12 @@ try:
                     headlight.toggle() 
                 elif js.get_button(params['stop_btn']): # emergency stop
                     print("E-STOP PRESSED. TERMINATE!")
-                    break
+                    headlight.off()
+                    headlight.close()
+                    cv.destroyAllWindows()
+                    pygame.quit()
+                    ser_pico.close()
+                    sys.exit()
         # Calaculate steering and throttle value
         act_st = ax_val_st * params['steering_dir']  # steer action: -1: left, 1: right
         act_th = -ax_val_th # throttle action: -1: max forward, 1: max backward
@@ -108,8 +113,7 @@ try:
         since_start = time() - start_stamp
         frame_rate = frame_counts / since_start
         print(f"frame rate: {frame_rate}")
-        # Press "q" to quit
-        if cv.waitKey(1)==ord('q'):
+        if cv.waitKey(1)==ord('q'):  # [Q]uit
             break
 
 # Take care terminal signal (Ctrl-c)
