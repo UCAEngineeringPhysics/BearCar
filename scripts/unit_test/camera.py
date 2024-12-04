@@ -23,7 +23,7 @@ picam.configure(
 )
 picam.start()
 for i in reversed(range(72)):
-    frame = cam.capture_array()
+    frame = picam.capture_array()
     # cv.imshow("Camera", frame)
     # cv.waitKey(1)
     if frame is None:
