@@ -5,14 +5,11 @@ import sys
 import os
 import cv2
 from picamera2 import Picamera2
-from time import sleep
+from time import time
 
 print("Please adjust lens focus if image is blurry")
 # SETUP
 # Config Pi Camera
-for i in reversed(range(1, 4)):
-    print(i)
-    sleep(1)
 cv2.startWindowThread()
 picam = Picamera2()
 picam.configure(
@@ -21,6 +18,7 @@ picam.configure(
         controls={"FrameDurationLimits": (41667, 41667)},  # 24 FPS
     )
 )
+# Start Pi Camera with a count down
 picam.start()
 for i in reversed(range(72)):
     frame = picam.capture_array()
