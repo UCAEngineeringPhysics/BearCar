@@ -20,8 +20,8 @@ model_path = os.path.join(
     'models', 
     'pilot.pth'
 )
-# to_tensor = v2.Compose([v2.ToDtype(torch.float32, scale=True)])
-to_tensor = transforms.ToTensor()
+to_tensor = v2.Compose([v2.ToDtype(torch.float32, scale=True)])
+# to_tensor = transforms.ToTensor()
 model = BearCartNet()
 model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
 model.eval()
