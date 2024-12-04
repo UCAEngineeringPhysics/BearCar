@@ -22,13 +22,42 @@ picam.configure(
     )
 )
 picam.start()
+for i in reversed(range(72)):
+    frame = cam.capture_array()
+    # cv.imshow("Camera", frame)
+    # cv.waitKey(1)
+    if frame is None:
+        print("No frame received. TERMINATE!")
+        sys.exit()
+    if not i % 24:
+        print(i/24)  # count down 3, 2, 1 sec
+# Init timer for FPS computing
+start_stamp = time()
+frame_counts = 0
+ave_frame_rate = 0.
 
 # LOOP
-while True:
-    im = picam.capture_array()
-    grey = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-    cv2.imshow("Camera", im)
-    # Press "q" to quit
-    if cv2.waitKey(1)==ord('q'):
-        cv2.destroyAllWindows()
-        sys.exit()
+try:
+    while True:
+        if frame is None:
+            print("No frame received. TERMINATE!")
+            break
+        im = picam.capture_array()
+        # Log frame rate
+        frame_counts += 1
+        since_start = time() - start_stamp
+        frame_rate = frame_counts / since_start
+        print(f"frame rate: {frame_rate}")
+        # grey = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
+        cv2.imshow("Camera", im)
+        if cv2.waitKey(1)==ord('q'):  # [q]uit
+            print("Quit signal received.")
+            cv2.destroyAllWindows()
+            sys.exit()
+except KeyboardInterrupt:
+    cv.destroyAllWindows()
+    sys.exit()
+finally:
+    cv.destroyAllWindows()
+    sys.exit()
+
