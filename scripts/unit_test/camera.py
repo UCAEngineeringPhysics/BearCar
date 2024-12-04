@@ -28,9 +28,9 @@ for i in reversed(range(72)):
     if not i % 24:
         print(i/24)  # count down 3, 2, 1 sec
 # Init timer for FPS computing
-start_stamp = time()
 frame_counts = 0
-ave_frame_rate = 0.
+frame_rate = 0.
+start_stamp = time()
 
 # LOOP
 try:
