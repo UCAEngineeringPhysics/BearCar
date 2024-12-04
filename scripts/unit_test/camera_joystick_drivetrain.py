@@ -11,23 +11,11 @@ import cv2 as cv
 from picamera2 import Picamera2
 from gpiozero import LED
 
-
 # SETUP
 # Load configs
 params_file_path = os.path.join(os.path.dirname(sys.path[0]), 'configs.json')
 with open(params_file_path, 'r') as file:
     params = json.load(file)
-# Constants
-# STEERING_AXIS = params['steering_joy_axis']
-# STEERING_CENTER = params['steering_center']
-# STEERING_RANGE = params['steering_range']
-# THROTTLE_AXIS = params['throttle_joy_axis']
-# THROTTLE_STALL = params['throttle_stall']
-# THROTTLE_FWD_RANGE = params['throttle_fwd_range']
-# THROTTLE_REV_RANGE = params['throttle_rev_range']
-# THROTTLE_LIMIT = params['throttle_limit']
-# RECORD_BUTTON = params['record_btn']
-# STOP_BUTTON = params['stop_btn']
 # Init LED
 headlight = LED(params['led_pin'])
 headlight.off()
@@ -113,7 +101,9 @@ try:
         since_start = time() - start_stamp
         frame_rate = frame_counts / since_start
         print(f"frame rate: {frame_rate}")
-        if cv.waitKey(1)==ord('q'):  # [Q]uit
+        # Wait for [Q]uit signal
+        if cv.waitKey(1)==ord('q'):
+            print("Quit signal received.")
             break
 
 # Take care terminal signal (Ctrl-c)
