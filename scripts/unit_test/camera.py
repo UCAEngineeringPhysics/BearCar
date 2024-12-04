@@ -22,8 +22,6 @@ picam.configure(
 picam.start()
 for i in reversed(range(72)):
     frame = picam.capture_array()
-    # cv.imshow("Camera", frame)
-    # cv.waitKey(1)
     if frame is None:
         print("No frame received. TERMINATE!")
         sys.exit()
@@ -53,9 +51,9 @@ try:
             cv2.destroyAllWindows()
             sys.exit()
 except KeyboardInterrupt:
-    cv.destroyAllWindows()
+    cv2.destroyAllWindows()
     sys.exit()
 finally:
-    cv.destroyAllWindows()
+    cv2.destroyAllWindows()
     sys.exit()
 
