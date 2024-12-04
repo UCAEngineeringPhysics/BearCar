@@ -5,7 +5,7 @@ from time import time
 import torch
 from torchvision import transforms
 from torchvision.transforms import v2
-from convnets import EfficientBearNet
+from convnets import BearCartNet
 import serial
 import pygame
 import cv2 as cv
@@ -22,7 +22,7 @@ model_path = os.path.join(
 )
 # to_tensor = v2.Compose([v2.ToDtype(torch.float32, scale=True)])
 to_tensor = transforms.ToTensor()
-model = EfficientBearNet()
+model = BearCartNet()
 model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
 model.eval()
 # Load configs
@@ -30,14 +30,14 @@ params_file_path = os.path.join(sys.path[0], 'configs.json')
 with open(params_file_path, 'r') as file:
     params = json.load(file)
 # Constants
-STEERING_CENTER = params['steering_center']
-STEERING_RANGE = params['steering_range']
-THROTTLE_STALL = params['throttle_stall']
-THROTTLE_FWD_RANGE = params['throttle_fwd_range']
-THROTTLE_REV_RANGE = params['throttle_rev_range']
-THROTTLE_LIMIT = params['throttle_limit']
-PAUSE_BUTTON = params['record_btn']
-STOP_BUTTON = params['stop_btn']
+# STEERING_CENTER = params['steering_center']
+# STEERING_RANGE = params['steering_range']
+# THROTTLE_STALL = params['throttle_stall']
+# THROTTLE_FWD_RANGE = params['throttle_fwd_range']
+# THROTTLE_REV_RANGE = params['throttle_rev_range']
+# THROTTLE_LIMIT = params['throttle_limit']
+# PAUSE_BUTTON = params['record_btn']
+# STOP_BUTTON = params['stop_btn']
 # Init LED
 headlight = LED(params['led_pin'])
 headlight.off()
@@ -66,7 +66,7 @@ for i in reversed(range(72)):
         print("No frame received. TERMINATE!")
         sys.exit()
     if not i % 24:
-        print(i/24)  # count down 3, 2, 1 sec  
+        print(i/24)  # count down 3, 2, 1 sec
 # Init timer for FPS computing
 start_stamp = time()
 frame_counts = 0
@@ -81,18 +81,14 @@ try:
         frame = cam.capture_array()  # read image
         if frame is None:
             print("No frame received. TERMINATE!")
-            headlight.close()
-            cv.destroyAllWindows()
-            pygame.quit()
-            ser_pico.close()
-            sys.exit()
+            break
         for e in pygame.event.get():  # read controller input
             if e.type == pygame.JOYBUTTONDOWN:
-                if js.get_button(PAUSE_BUTTON):
+                if js.get_button(params['record_btn']):
                     is_paused = not is_paused
                     print(f"Paused: {is_paused}")
                     headlight.toggle()
-                elif js.get_button(STOP_BUTTON):  # emergency stop 
+                elif js.get_button(params['stop_btn']): # emergency stop
                     print("E-STOP PRESSED. TERMINATE!")
                     headlight.off()
                     headlight.close()
@@ -115,19 +111,22 @@ try:
             th_trim = -.999
         # Encode steering value to dutycycle in nanosecond
         if is_paused:
-            duty_st = STEERING_CENTER
+            duty_st = params['steering_center']
         else:
-            duty_st = STEERING_CENTER - STEERING_RANGE + int(STEERING_RANGE * (st_trim + 1))
+            duty_st = params['steering_center'] - params['steering_range'] + \
+                int(params['steering_range'] * (st_trim + 1))
         # Encode throttle value to dutycycle in nanosecond
         if is_paused:
-            duty_th = THROTTLE_STALL
+            duty_th = params['throttle_stall']
         else:
             if th_trim > 0:
-                duty_th = THROTTLE_STALL + int(THROTTLE_FWD_RANGE * min(th_trim, THROTTLE_LIMIT))
+                duty_th = params['throttle_stall'] + \
+                    int(params['throttle_fwd_range'] * min(th_trim, params['throttle_limit']))
             elif th_trim < 0:
-                duty_th = THROTTLE_STALL + int(THROTTLE_REV_RANGE * max(th_trim, -THROTTLE_LIMIT))
+                duty_th = params['throttle_stall'] + \
+                    int(params['throttle_rev_range'] * max(th_trim, -params['throttle_limit']))
             else:
-                duty_th = THROTTLE_STALL
+                duty_th = params['throttle_stall']
         msg = (str(duty_st) + "," + str(duty_th) + "\n").encode('utf-8')
         # Transmit control signals
         ser_pico.write(msg)
@@ -138,12 +137,8 @@ try:
         frame_rate = frame_counts / since_start
         print(f"frame rate: {frame_rate}")  # debug
         if cv.waitKey(1)==ord('q'):
-            headlight.off()
-            headlight.close()
-            cv.destroyAllWindows()
-            pygame.quit()
-            ser_pico.close()
-            sys.exit()
+            print("Quit signal received.")
+            break
  
 # Take care terminate signal (Ctrl-c)
 except KeyboardInterrupt:
