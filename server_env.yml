@@ -15,6 +15,7 @@ dependencies:
   - torchvision==0.20.0
   - pytorch-cuda=12.4
   - torchinfo
+  - iopath
   - fvcore
   # - pip
   # - pip:
