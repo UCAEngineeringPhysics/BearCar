@@ -133,8 +133,8 @@ print("Optimize Done!")
 
 # Graph training process
 pilot_title = f'{model._get_name()}-{epochs}epochs-{learning_rate}lr'
-plt.plot(range(epochs), train_losses, 'b--', label='Training')
-plt.plot(range(epochs), test_losses, 'orange', label='Test')
+plt.plot(range(len(train_losses)), train_losses, 'b--', label='Training')
+plt.plot(range(len(test_losses)), test_losses, 'orange', label='Test')
 plt.grid(True)
 plt.xlabel('Epoch')
 plt.ylabel('MSE Loss')
