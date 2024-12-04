@@ -18,16 +18,16 @@ params_file_path = os.path.join(os.path.dirname(sys.path[0]), 'configs.json')
 with open(params_file_path, 'r') as file:
     params = json.load(file)
 # Constants
-STEERING_AXIS = params['steering_joy_axis']
-STEERING_CENTER = params['steering_center']
-STEERING_RANGE = params['steering_range']
-THROTTLE_AXIS = params['throttle_joy_axis']
-THROTTLE_STALL = params['throttle_stall']
-THROTTLE_FWD_RANGE = params['throttle_fwd_range']
-THROTTLE_REV_RANGE = params['throttle_rev_range']
-THROTTLE_LIMIT = params['throttle_limit']
-RECORD_BUTTON = params['record_btn']
-STOP_BUTTON = params['stop_btn']
+# STEERING_AXIS = params['steering_joy_axis']
+# STEERING_CENTER = params['steering_center']
+# STEERING_RANGE = params['steering_range']
+# THROTTLE_AXIS = params['throttle_joy_axis']
+# THROTTLE_STALL = params['throttle_stall']
+# THROTTLE_FWD_RANGE = params['throttle_fwd_range']
+# THROTTLE_REV_RANGE = params['throttle_rev_range']
+# THROTTLE_LIMIT = params['throttle_limit']
+# RECORD_BUTTON = params['record_btn']
+# STOP_BUTTON = params['stop_btn']
 # Init LED
 headlight = LED(params['led_pin'])
 headlight.off()
@@ -71,39 +71,33 @@ try:
         frame = cam.capture_array() # read image
         if frame is None:
             print("No frame received. TERMINATE!")
-            headlight.close()
-            cv.destroyAllWindows()
-            pygame.quit()
-            ser_pico.close()
-            sys.exit()
+            break
         cv.imshow('camera', frame)
         for e in pygame.event.get(): # read controller input
             if e.type == pygame.JOYAXISMOTION:
-                ax_val_st = round((js.get_axis(STEERING_AXIS)), 2)  # keep 2 decimals
-                ax_val_th = round((js.get_axis(THROTTLE_AXIS)), 2)  # keep 2 decimals
+                ax_val_st = round((js.get_axis(params['steering_joy_axis'])), 2)  # keep 2 decimals
+                ax_val_th = round((js.get_axis(params['throttle_joy_axis'])), 2)  # keep 2 decimals
             elif e.type == pygame.JOYBUTTONDOWN:
-                if js.get_button(RECORD_BUTTON):
+                if js.get_button(params['record_btn']):
                     headlight.toggle() 
-                elif js.get_button(STOP_BUTTON): # emergency stop
+                elif js.get_button(params['stop_btn']): # emergency stop
                     print("E-STOP PRESSED. TERMINATE!")
-                    headlight.off()
-                    headlight.close()
-                    cv.destroyAllWindows()
-                    pygame.quit()
-                    ser_pico.close()
-                    sys.exit()
+                    break
         # Calaculate steering and throttle value
-        act_st = ax_val_st
+        act_st = ax_val_st * params['steering_dir']  # steer action: -1: left, 1: right
         act_th = -ax_val_th # throttle action: -1: max forward, 1: max backward
         # Encode steering value to dutycycle in nanosecond
-        duty_st = STEERING_CENTER - STEERING_RANGE + int(STEERING_RANGE * (act_st + 1))
+        duty_st = params['steering_center'] - params['steering_range'] + \
+            int(params['steering_range'] * (act_st + 1))
         # Encode throttle value to dutycycle in nanosecond
         if act_th > 0:
-            duty_th = THROTTLE_STALL + int(THROTTLE_FWD_RANGE * min(act_th, THROTTLE_LIMIT))
+            duty_th = params['throttle_stall'] + \
+                int(params['throttle_fwd_range'] * min(act_th, params['throttle_limit']))
         elif act_th < 0:
-            duty_th = THROTTLE_STALL + int(THROTTLE_REV_RANGE * max(act_th, -THROTTLE_LIMIT))
+            duty_th = params['throttle_stall'] + \
+                int(params['throttle_rev_range'] * max(act_th, -params['throttle_limit']))
         else:
-            duty_th = THROTTLE_STALL 
+            duty_th = params['throttle_stall'] 
         msg = (str(duty_st) + "," + str(duty_th) + "\n").encode('utf-8')
         ser_pico.write(msg)
         # Log action
@@ -116,15 +110,17 @@ try:
         print(f"frame rate: {frame_rate}")
         # Press "q" to quit
         if cv.waitKey(1)==ord('q'):
-            headlight.off()
-            headlight.close()
-            cv.destroyAllWindows()
-            pygame.quit()
-            ser_pico.close()
-            sys.exit()
+            break
 
 # Take care terminal signal (Ctrl-c)
 except KeyboardInterrupt:
+    headlight.off()
+    headlight.close()
+    cv.destroyAllWindows()
+    pygame.quit()
+    ser_pico.close()
+    sys.exit()
+finally:
     headlight.off()
     headlight.close()
     cv.destroyAllWindows()
