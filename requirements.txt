@@ -1,8 +1,7 @@
-torch==2.0.1
-torchvision==0.15.2
+https://download.pytorch.org/whl/cpu/torch-2.5.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl#sha256=d5b3203f191bc40783c99488d2e776dcf93ac431a59491d627a1ca5b3ae20b22
+https://download.pytorch.org/whl/cpu/torchvision-0.20.1-cp311-cp311-linux_aarch64.whl#sha256=a40d766345927639da322c693934e5f91b1ba2218846c7104b868dea2314ce8e
 opencv-python==4.9.0.80
 pandas>=1.5.3
 matplotlib>=3.6.0
 pygame>=2.1.0
-numpy<2.0.0
 pyserial>=3.5
