@@ -84,7 +84,7 @@ def test(dataloader, model, loss_fn):
 
 
 # MAIN
-# Instantiate a dataset
+# Instantiate dataset
 data_dir = os.path.join(os.path.dirname(sys.path[0]), 'data', data_datetime)
 annotations_file = os.path.join(data_dir, 'labels.csv')  # the name of the csv file
 img_dir = os.path.join(data_dir, 'images') # the name of the folder with all the images in it
@@ -98,15 +98,15 @@ train_set, test_set = random_split(bearcart_dataset, [train_size, test_size])
 train_dataloader = DataLoader(train_set, batch_size=64, shuffle=True)
 test_dataloader = DataLoader(test_set, batch_size=64)
 
-# Create model - Pass in image size
+# Instantiate model
 model = BearCartNet().to(DEVICE)  # choose the architecture class from cnn_network.py
 
 # Hyper-parameters
 learning_rate = 0.001
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 loss_fn = nn.MSELoss()
-epochs = 50
-patience = 5
+epochs = 32
+patience = 7
 best_loss = float('inf')  # best loss on test data
 best_counter = 0
 train_losses = []
@@ -116,15 +116,18 @@ for ep in range(epochs):
     print(f"Epoch {ep+1}\n-------------------------------")
     ep_train_loss = train(train_dataloader, model, loss_fn, optimizer)
     ep_test_loss = test(test_dataloader, model, loss_fn)
-    print(f"epoch {ep+1} training loss: {ep_train_loss}, testing loss: {ep_test_loss}")
+    print(f"Epoch {ep+1} training loss: {ep_train_loss}, testing loss: {ep_test_loss}")
     train_losses.append(ep_train_loss)
     test_losses.append(ep_test_loss)
-    # Early stopping logic
+    # Early stopping
     if ep_test_loss < best_loss:
         best_loss = ep_test_loss
         best_counter = 0  # Reset counter if validation loss improved
+        model_name = f'{model._get_name()}-{ep+1}ep-{learning_rate}lr-{ep_test_loss:.4f}mse'
+        torch.save(model.state_dict(), os.path.join(data_dir, f'{model_name}.pth'))
     else:
         best_counter += 1
+        print(f"{best_counter} epochs since best model")
         if best_counter >= patience:
             print("Early stopping triggered!")
             break
@@ -132,14 +135,11 @@ for ep in range(epochs):
 print("Optimize Done!")
 
 # Graph training process
-pilot_title = f'{model._get_name()}-{epochs}epochs-{learning_rate}lr'
 plt.plot(range(len(train_losses)), train_losses, 'b--', label='Training')
 plt.plot(range(len(test_losses)), test_losses, 'orange', label='Test')
 plt.grid(True)
 plt.xlabel('Epoch')
 plt.ylabel('MSE Loss')
 plt.legend()
-plt.title(pilot_title)
-plt.savefig(os.path.join(data_dir, f'{pilot_title}.png'))
-# Save the model
-torch.save(model.state_dict(), os.path.join(data_dir, f'{pilot_title}.pth'))
+plt.title(model_name)
+plt.savefig(os.path.join(data_dir, f'{model_name}.png'))
