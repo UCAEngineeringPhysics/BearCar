@@ -84,31 +84,34 @@ def test(dataloader, model, loss_fn):
 
 
 # MAIN
-# Create a dataset
+# Instantiate a dataset
 data_dir = os.path.join(os.path.dirname(sys.path[0]), 'data', data_datetime)
 annotations_file = os.path.join(data_dir, 'labels.csv')  # the name of the csv file
 img_dir = os.path.join(data_dir, 'images') # the name of the folder with all the images in it
 bearcart_dataset = BearCartDataset(annotations_file, img_dir)
 print(f"data length: {len(bearcart_dataset)}")
-
-# Create training dataloader and test dataloader
+# Instantiate training and test dataloader
 train_size = round(len(bearcart_dataset)*0.915)
 test_size = len(bearcart_dataset) - train_size
 print(f"train size: {train_size}, test size: {test_size}")
-train_data, test_data = random_split(bearcart_dataset, [train_size, test_size])
-train_dataloader = DataLoader(train_data, batch_size=32, shuffle=True)
-test_dataloader = DataLoader(test_data, batch_size=32)
+train_set, test_set = random_split(bearcart_dataset, [train_size, test_size])
+train_dataloader = DataLoader(train_set, batch_size=64, shuffle=True)
+test_dataloader = DataLoader(test_set, batch_size=64)
 
 # Create model - Pass in image size
 model = BearCartNet().to(DEVICE)  # choose the architecture class from cnn_network.py
-# Hyper-parameters (lr=0.001, epochs=15 | lr=0.0001, epochs=15 or 20)
+
+# Hyper-parameters
 learning_rate = 0.001
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 loss_fn = nn.MSELoss()
-epochs = 15 # switch back to 15 epochs
-# Optimize the model
+epochs = 50
+patience = 5
+best_loss = float('inf')  # best loss on test data
+best_counter = 0
 train_losses = []
 test_losses = []
+# Optimize the model
 for ep in range(epochs):
     print(f"Epoch {ep+1}\n-------------------------------")
     ep_train_loss = train(train_dataloader, model, loss_fn, optimizer)
@@ -116,6 +119,15 @@ for ep in range(epochs):
     print(f"epoch {ep+1} training loss: {ep_train_loss}, testing loss: {ep_test_loss}")
     train_losses.append(ep_train_loss)
     test_losses.append(ep_test_loss)
+    # Early stopping logic
+    if ep_test_loss < best_loss:
+        best_loss = ep_test_loss
+        best_counter = 0  # Reset counter if validation loss improved
+    else:
+    best_counter += 1
+    if best_counter >= patience:
+        print("Early stopping triggered!")
+        break
 
 print("Optimize Done!")
 
