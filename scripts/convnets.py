@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-from torchinfo import summary
 
 
 class DonkeyNet(nn.Module):
@@ -68,6 +67,7 @@ class BearCartNet(nn.Module):
 
 
 if __name__ == '__main__':
+    from torchinfo import summary
     # STATS
     model = BearCartNet()  # Adjust num_classes as needed
     batch_size = 1
