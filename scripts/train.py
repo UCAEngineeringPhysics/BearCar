@@ -124,10 +124,10 @@ for ep in range(epochs):
         best_loss = ep_test_loss
         best_counter = 0  # Reset counter if validation loss improved
     else:
-    best_counter += 1
-    if best_counter >= patience:
-        print("Early stopping triggered!")
-        break
+        best_counter += 1
+        if best_counter >= patience:
+            print("Early stopping triggered!")
+            break
 
 print("Optimize Done!")
 
