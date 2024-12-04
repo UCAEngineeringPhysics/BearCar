@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader, Dataset, random_split
 from torchvision.transforms import v2
 from torchvision.io import read_image
 import matplotlib.pyplot as plt
-from convnets import EfficientBearNet
+from convnets import BearCartNet
 
 # Pass in command line arguments for data diretory name
 # e.g. python train.py 2023-12-13-14-15
@@ -53,7 +53,6 @@ def train(dataloader, model, loss_fn, optimizer):
     """
     training function for 1 epoch
     """
-
     model.train()
     num_used_samples = 0
     ep_loss = 0.
@@ -101,7 +100,7 @@ train_dataloader = DataLoader(train_data, batch_size=32, shuffle=True)
 test_dataloader = DataLoader(test_data, batch_size=32)
 
 # Create model - Pass in image size
-model = EfficientBearNet().to(DEVICE)  # choose the architecture class from cnn_network.py
+model = BearCartNet().to(DEVICE)  # choose the architecture class from cnn_network.py
 # Hyper-parameters (lr=0.001, epochs=15 | lr=0.0001, epochs=15 or 20)
 learning_rate = 0.001
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
