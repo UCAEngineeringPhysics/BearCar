@@ -29,15 +29,6 @@ model.eval()
 params_file_path = os.path.join(sys.path[0], 'configs.json')
 with open(params_file_path, 'r') as file:
     params = json.load(file)
-# Constants
-# STEERING_CENTER = params['steering_center']
-# STEERING_RANGE = params['steering_range']
-# THROTTLE_STALL = params['throttle_stall']
-# THROTTLE_FWD_RANGE = params['throttle_fwd_range']
-# THROTTLE_REV_RANGE = params['throttle_rev_range']
-# THROTTLE_LIMIT = params['throttle_limit']
-# PAUSE_BUTTON = params['record_btn']
-# STOP_BUTTON = params['stop_btn']
 # Init LED
 headlight = LED(params['led_pin'])
 headlight.off()
@@ -61,7 +52,6 @@ cam.start()
 for i in reversed(range(72)):
     frame = cam.capture_array()
     # cv.imshow("Camera", frame)
-    # cv.waitKey(1)
     if frame is None:
         print("No frame received. TERMINATE!")
         sys.exit()
@@ -94,6 +84,7 @@ try:
                     headlight.close()
                     cv.destroyAllWindows()
                     pygame.quit()
+                    ser_pico.close()
                     sys.exit()
         # predict steer and throttle
         img_tensor = to_tensor(frame)
@@ -104,7 +95,7 @@ try:
             st_trim = .999
         elif st_trim <= -1:
             st_trim = -.999
-        th_trim = (float(pred_th))
+        th_trim = float(pred_th)
         if th_trim >= 1:  # trim throttle signal
             th_trim = .999
         elif th_trim <= -1:
@@ -142,6 +133,13 @@ try:
  
 # Take care terminate signal (Ctrl-c)
 except KeyboardInterrupt:
+    headlight.off()
+    headlight.close()
+    cv.destroyAllWindows()
+    pygame.quit()
+    ser_pico.close()
+    sys.exit()
+finally:
     headlight.off()
     headlight.close()
     cv.destroyAllWindows()
