@@ -95,8 +95,8 @@ train_size = round(len(bearcart_dataset)*0.915)
 test_size = len(bearcart_dataset) - train_size
 print(f"train size: {train_size}, test size: {test_size}")
 train_set, test_set = random_split(bearcart_dataset, [train_size, test_size])
-train_dataloader = DataLoader(train_set, batch_size=64, shuffle=True)
-test_dataloader = DataLoader(test_set, batch_size=64)
+train_dataloader = DataLoader(train_set, batch_size=128, shuffle=True)
+test_dataloader = DataLoader(test_set, batch_size=128)
 
 # Instantiate model
 model = BearCartNet().to(DEVICE)  # choose the architecture class from cnn_network.py
