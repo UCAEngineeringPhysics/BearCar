@@ -90,7 +90,7 @@ try:
         img_tensor = to_tensor(frame)
         with torch.no_grad():
             pred_st, pred_th = model(img_tensor[None, :]).squeeze()
-        st_trim = float(pred_st) * params['steering_dir']
+        st_trim = float(pred_st)
         if st_trim >= 1:  # trim steering signal
             st_trim = .999
         elif st_trim <= -1:
