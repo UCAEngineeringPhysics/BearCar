@@ -123,8 +123,16 @@ for ep in range(epochs):
     if ep_test_loss < best_loss:
         best_loss = ep_test_loss
         best_counter = 0  # Reset counter if validation loss improved
+        try:
+            os.remove(os.path.join(data_dir, f'{model_name}.pth'))
+            print(f"Last best model file has been deleted successfully.")
+        except FileNotFoundError:
+            print(f"File '{os.path.join(data_dir, f'{model_name}.pth')}' not found.")
+        except Exception as e:
+            print(f"Error occurred while deleting the file: {e}")
         model_name = f'{model._get_name()}-{ep+1}ep-{learning_rate}lr-{ep_test_loss:.4f}mse'
         torch.save(model.state_dict(), os.path.join(data_dir, f'{model_name}.pth'))
+        print(f"Best model saved as '{os.path.join(data_dir, f'{model_name}.pth')}'")
     else:
         best_counter += 1
         print(f"{best_counter} epochs since best model")

@@ -43,23 +43,19 @@ class BearCartNet(nn.Module):
         self.conv6 = nn.Conv2d(128, 128, kernel_size=3)
         self.conv7 = nn.Conv2d(128, 128, kernel_size=3)
 
-        self.bn32 = nn.BatchNorm2d(32)
-        self.bn64 = nn.BatchNorm2d(64)
-        self.bn128 = nn.BatchNorm2d(128)
-        
         self.fc1 = nn.Linear(128*15*15, 128)
         self.fc2 = nn.Linear(128, 128)
         self.fc3 = nn.Linear(128, 2) 
         self.relu = nn.ReLU()
 
     def forward(self, x):  # 224
-        x = self.relu(self.bn32(self.conv1(x)))  # (224 - 5) / 2 + 1 = 110
-        x = self.relu(self.bn64(self.conv2(x)))  # (110 - 5) / 2 + 1 = 53
-        x = self.relu(self.bn64(self.conv3(x)))  # (53 - 5) / 2 + 1 = 25
-        x = self.relu(self.bn128(self.conv4(x)))  # (25 - 5) + 1 = 21
-        x = self.relu(self.bn128(self.conv5(x)))  # (21 - 3) + 1 = 19
-        x = self.relu(self.bn128(self.conv6(x)))  # (19 - 3) + 1 = 17
-        x = self.relu(self.bn128(self.conv7(x)))  # (19 - 3) + 1 = 15
+        x = self.relu(self.conv1(x))  # (224 - 5) / 2 + 1 = 110
+        x = self.relu(self.conv2(x))  # (110 - 5) / 2 + 1 = 53
+        x = self.relu(self.conv3(x))  # (53 - 5) / 2 + 1 = 25
+        x = self.relu(self.conv4(x))  # (25 - 5) + 1 = 21
+        x = self.relu(self.conv5(x))  # (21 - 3) + 1 = 19
+        x = self.relu(self.conv6(x))  # (19 - 3) + 1 = 17
+        x = self.relu(self.conv7(x))  # (19 - 3) + 1 = 15
 
         x = x.view(x.size(0), -1)  # flatten
 
