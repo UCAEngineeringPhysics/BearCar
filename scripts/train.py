@@ -91,7 +91,7 @@ img_dir = os.path.join(data_dir, 'images') # the name of the folder with all the
 bearcart_dataset = BearCartDataset(annotations_file, img_dir)
 print(f"data length: {len(bearcart_dataset)}")
 # Instantiate training and test dataloader
-train_size = round(len(bearcart_dataset)*0.915)
+train_size = round(len(bearcart_dataset)*0.9)
 test_size = len(bearcart_dataset) - train_size
 print(f"train size: {train_size}, test size: {test_size}")
 train_set, test_set = random_split(bearcart_dataset, [train_size, test_size])
@@ -105,8 +105,8 @@ model = BearCartNet().to(DEVICE)  # choose the architecture class from cnn_netwo
 learning_rate = 0.001
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 loss_fn = nn.MSELoss()
-epochs = 32
-patience = 7
+epochs = 64
+patience = 5
 best_loss = float('inf')  # best loss on test data
 best_counter = 0
 train_losses = []
@@ -123,8 +123,16 @@ for ep in range(epochs):
     if ep_test_loss < best_loss:
         best_loss = ep_test_loss
         best_counter = 0  # Reset counter if validation loss improved
+        try:
+            os.remove(os.path.join(data_dir, f'{model_name}.pth'))
+            print(f"Last best model file has been deleted successfully.")
+        except FileNotFoundError:
+            print(f"File '{os.path.join(data_dir, f'{model_name}.pth')}' not found.")
+        except Exception as e:
+            print(f"Error occurred while deleting the file: {e}")
         model_name = f'{model._get_name()}-{ep+1}ep-{learning_rate}lr-{ep_test_loss:.4f}mse'
         torch.save(model.state_dict(), os.path.join(data_dir, f'{model_name}.pth'))
+        print(f"Best model saved as '{os.path.join(data_dir, f'{model_name}.pth')}'")
     else:
         best_counter += 1
         print(f"{best_counter} epochs since best model")
