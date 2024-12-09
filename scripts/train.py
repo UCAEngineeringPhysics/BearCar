@@ -88,6 +88,7 @@ def test(dataloader, model, loss_fn):
 # Instantiate dataset
 data_dir = os.path.join(os.path.dirname(sys.path[0]), 'data', data_datetime)
 annotations_file = os.path.join(data_dir, 'labels.csv')  # the name of the csv file
+img_dir = os.path.join(data_dir, 'images') # the name of the folder with all the images in it
 # Split train/test
 df = pd.read_csv(annotations_file)
 val_inds = np.arange(int(len(df) * 0.1)) * 8
@@ -96,70 +97,65 @@ train_annotates = df.drop(val_inds)
 val_annotates = val_annotates.reset_index(drop=True)
 train_annotates = train_annotates.reset_index(drop=True)
 print(f"train size: {len(train_annotates)}, validation size: {len(val_annotates)}")
+train_annotates.to_csv(os.path.join(data_dir, 'train.csv'), index=False)
+val_annotates.to_csv(os.path.join(data_dir, 'validation.csv'), index=False)
+train_annotations_file = os.path.join(data_dir, 'train.csv')  # the name of the csv file
+val_annotations_file = os.path.join(data_dir, 'validation.csv')  # the name of the csv file
+train_set = BearCartDataset(train_annotations_file, img_dir)
+val_set = BearCartDataset(val_annotations_file, img_dir)
+train_dataloader = DataLoader(train_set, batch_size=128, shuffle=True)
+test_dataloader = DataLoader(val_set, batch_size=128)
 
+# Instantiate model
+model = BearCartNet().to(DEVICE)  # choose the architecture class from cnn_network.py
 
+# Hyper-parameters
+learning_rate = 0.001
+optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+loss_fn = nn.MSELoss()
+epochs = 32
+patience = 7
+best_loss = float('inf')  # best loss on test data
+best_counter = 0
+train_losses = []
+test_losses = []
+# Optimize the model
+for ep in range(epochs):
+    print(f"Epoch {ep+1}\n-------------------------------")
+    ep_train_loss = train(train_dataloader, model, loss_fn, optimizer)
+    ep_test_loss = test(test_dataloader, model, loss_fn)
+    print(f"Epoch {ep+1} training loss: {ep_train_loss}, testing loss: {ep_test_loss}")
+    train_losses.append(ep_train_loss)
+    test_losses.append(ep_test_loss)
+    # Early stopping
+    if ep_test_loss < best_loss:
+        best_loss = ep_test_loss
+        best_counter = 0  # Reset counter if validation loss improved
+        try:
+            os.remove(os.path.join(data_dir, f'{model_name}.pth'))
+            print(f"Last best model file has been deleted successfully.")
+        except FileNotFoundError:
+            print(f"File '{os.path.join(data_dir, f'{model_name}.pth')}' not found.")
+        except Exception as e:
+            print(f"Error occurred while deleting the file: {e}")
+        model_name = f'{model._get_name()}-{ep+1}ep-{learning_rate}lr-{ep_test_loss:.4f}mse'
+        torch.save(model.state_dict(), os.path.join(data_dir, f'{model_name}.pth'))
+        print(f"Best model saved as '{os.path.join(data_dir, f'{model_name}.pth')}'")
+    else:
+        best_counter += 1
+        print(f"{best_counter} epochs since best model")
+        if best_counter >= patience:
+            print("Early stopping triggered!")
+            break
 
-# img_dir = os.path.join(data_dir, 'images') # the name of the folder with all the images in it
-# bearcart_dataset = BearCartDataset(annotations_file, img_dir)
-# print(f"data length: {len(bearcart_dataset)}")
-# # Instantiate training and test dataloader
-# train_size = round(len(bearcart_dataset)*0.915)
-# test_size = len(bearcart_dataset) - train_size
-# print(f"train size: {train_size}, test size: {test_size}")
-# train_set, test_set = random_split(bearcart_dataset, [train_size, test_size])
-# train_dataloader = DataLoader(train_set, batch_size=128, shuffle=True)
-# test_dataloader = DataLoader(test_set, batch_size=128)
-#
-# # Instantiate model
-# model = BearCartNet().to(DEVICE)  # choose the architecture class from cnn_network.py
-#
-# # Hyper-parameters
-# learning_rate = 0.001
-# optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-# loss_fn = nn.MSELoss()
-# epochs = 32
-# patience = 7
-# best_loss = float('inf')  # best loss on test data
-# best_counter = 0
-# train_losses = []
-# test_losses = []
-# # Optimize the model
-# for ep in range(epochs):
-#     print(f"Epoch {ep+1}\n-------------------------------")
-#     ep_train_loss = train(train_dataloader, model, loss_fn, optimizer)
-#     ep_test_loss = test(test_dataloader, model, loss_fn)
-#     print(f"Epoch {ep+1} training loss: {ep_train_loss}, testing loss: {ep_test_loss}")
-#     train_losses.append(ep_train_loss)
-#     test_losses.append(ep_test_loss)
-#     # Early stopping
-#     if ep_test_loss < best_loss:
-#         best_loss = ep_test_loss
-#         best_counter = 0  # Reset counter if validation loss improved
-#         try:
-#             os.remove(os.path.join(data_dir, f'{model_name}.pth'))
-#             print(f"Last best model file has been deleted successfully.")
-#         except FileNotFoundError:
-#             print(f"File '{os.path.join(data_dir, f'{model_name}.pth')}' not found.")
-#         except Exception as e:
-#             print(f"Error occurred while deleting the file: {e}")
-#         model_name = f'{model._get_name()}-{ep+1}ep-{learning_rate}lr-{ep_test_loss:.4f}mse'
-#         torch.save(model.state_dict(), os.path.join(data_dir, f'{model_name}.pth'))
-#         print(f"Best model saved as '{os.path.join(data_dir, f'{model_name}.pth')}'")
-#     else:
-#         best_counter += 1
-#         print(f"{best_counter} epochs since best model")
-#         if best_counter >= patience:
-#             print("Early stopping triggered!")
-#             break
-#
-# print("Optimize Done!")
-#
-# # Graph training process
-# plt.plot(range(len(train_losses)), train_losses, 'b--', label='Training')
-# plt.plot(range(len(test_losses)), test_losses, 'orange', label='Test')
-# plt.grid(True)
-# plt.xlabel('Epoch')
-# plt.ylabel('MSE Loss')
-# plt.legend()
-# plt.title(model_name)
-# plt.savefig(os.path.join(data_dir, f'{model_name}.png'))
+print("Optimize Done!")
+
+# Graph training process
+plt.plot(range(len(train_losses)), train_losses, 'b--', label='Training')
+plt.plot(range(len(test_losses)), test_losses, 'orange', label='Test')
+plt.grid(True)
+plt.xlabel('Epoch')
+plt.ylabel('MSE Loss')
+plt.legend()
+plt.title(model_name)
+plt.savefig(os.path.join(data_dir, f'{model_name}.png'))
