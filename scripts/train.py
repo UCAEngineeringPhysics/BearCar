@@ -1,6 +1,7 @@
 import os
 import sys
 import pandas as pd
+import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset, random_split
@@ -88,6 +89,13 @@ def test(dataloader, model, loss_fn):
 data_dir = os.path.join(os.path.dirname(sys.path[0]), 'data', data_datetime)
 annotations_file = os.path.join(data_dir, 'labels.csv')  # the name of the csv file
 # Split train/test
+df = pd.read_csv(annotations_file)
+val_inds = np.arange(int(len(df) * 0.1)) * 8
+val_annotates = df.iloc[val_inds]
+train_annotates = df.drop(val_inds)
+val_annotates = val_annotates.reset_index(drop=True)
+train_annotates = train_annotates.reset_index(drop=True)
+print(f"train size: {len(train_annotates)}, validation size: {len(val_annotates)}")
 
 
 
