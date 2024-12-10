@@ -41,9 +41,9 @@ class BearCartNet(nn.Module):
         self.conv4 = nn.Conv2d(128, 128, kernel_size=3)
         self.conv5 = nn.Conv2d(128, 128, kernel_size=3)
         self.conv6 = nn.Conv2d(128, 128, kernel_size=3)
-        # self.conv7 = nn.Conv2d(256, 256, kernel_size=3)
+        self.conv7 = nn.Conv2d(128, 128, kernel_size=3)
 
-        self.fc1 = nn.Linear(128*19*19, 128)
+        self.fc1 = nn.Linear(128*17*17, 128)
         self.fc2 = nn.Linear(128, 128)
         self.fc3 = nn.Linear(128, 2)
         self.relu = nn.ReLU()
@@ -55,7 +55,7 @@ class BearCartNet(nn.Module):
         x = self.relu(self.conv4(x))  # (25 - 3) + 1 = 23
         x = self.relu(self.conv5(x))  # (23 - 3) + 1 = 21
         x = self.relu(self.conv6(x))  # (21 - 3) + 1 = 19
-        # x = self.relu(self.conv7(x))  # (19 - 3) + 1 = 17
+        x = self.relu(self.conv7(x))  # (19 - 3) + 1 = 17
 
         x = x.view(x.size(0), -1)  # flatten
 
