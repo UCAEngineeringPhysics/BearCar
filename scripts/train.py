@@ -113,7 +113,7 @@ model = BearCartNet().to(DEVICE)  # choose the architecture class from cnn_netwo
 learning_rate = 0.001
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 loss_fn = nn.MSELoss()
-epochs = 32
+epochs = 64
 patience = 7
 best_loss = float('inf')  # best loss on test data
 best_counter = 0
