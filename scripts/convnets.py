@@ -45,10 +45,11 @@ class BearCartNet(nn.Module):
 
         self.relu = nn.ReLU()
         self.max_pool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        self.avg_pool = nn.AvgPool2d(kernel_size=1)
+        # self.avg_pool = nn.AvgPool2d(kernel_size=1)
 
-        self.fc1 = nn.Linear(256*7*7, 1000)
-        self.fc2 = nn.Linear(1000, 2)
+        self.fc1 = nn.Linear(256*7*7, 128)
+        self.fc2 = nn.Linear(128, 128)
+        self.fc3 = nn.Linear(128, 2)
 
     def forward(self, x):  # 224
         x = self.relu(self.conv1(x))  # (224 - 7 + 2 * 3) / 2 + 1 = 112.5
@@ -59,12 +60,13 @@ class BearCartNet(nn.Module):
         x = self.relu(self.conv5(x))  # (24 - 3) / 2 + 1 = 11.5
         x = self.relu(self.conv6(x))  # (11 - 3) + 1 = 9
         x = self.relu(self.conv7(x))  # (9 - 3) + 1 = 7
-        x = self.avg_pool(x)  # (7 - 1) + 1 = 7
+        # x = self.avg_pool(x)  # (7 - 1) + 1 = 7
 
         x = x.view(x.size(0), -1)  # flatten
 
         x = self.relu(self.fc1(x))
-        y = self.fc2(x)
+        x = self.relu(self.fc2(x))
+        y = self.fc3(x)
         return y
 
 
