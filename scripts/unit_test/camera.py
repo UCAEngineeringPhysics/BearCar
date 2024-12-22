@@ -3,6 +3,7 @@ If logged in remotely, please enable X11 forwarding, either `ssh -X` or `ssh -Y`
 """
 import sys
 import os
+import json
 import cv2
 from picamera2 import Picamera2
 from time import time
