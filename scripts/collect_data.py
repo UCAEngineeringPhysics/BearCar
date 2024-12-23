@@ -45,18 +45,21 @@ cam = Picamera2()
 cam.configure(
     cam.create_preview_configuration(
         main={"format": 'RGB888', "size": (224, 224)},
-        controls={"FrameDurationLimits": (41667, 41667)},  # 24 FPS
+        controls={
+            "FrameDurationLimits": (
+                int(1000_000 / params['frame_rate']), int(1000_000 / params['frame_rate'])
+            )
+        },  # 24 FPS
     )
 )
 cam.start()
-for i in reversed(range(72)):
+for i in reversed(range(3 * params['frame_rate'])):
     frame = cam.capture_array()
-    # cv.imshow("Camera", frame)
     if frame is None:
         print("No frame received. TERMINATE!")
         sys.exit()
-    if not i % 24:
-        print(i/24)  # count down 3, 2, 1 sec
+    if not i % params['frame_rate']:
+        print(i/params['frame_rate'])  # count down 3, 2, 1 sec
 # Init variables
 ax_val_st = 0. # center steering
 ax_val_th = 0. # shut throttle
@@ -120,7 +123,7 @@ try:
         # Log frame rate
         since_start = time() - start_stamp
         frame_rate = frame_counts / since_start
-        # print(f"frame rate: {frame_rate}")  # debug
+        print(f"frame rate: {frame_rate}")  # debug
         # Press "q" to quit
         if cv.waitKey(1)==ord('q'):
             print("Quit signal received.")
