@@ -4,7 +4,7 @@ If logged in remotely, please enable X11 forwarding, either `ssh -X` or `ssh -Y`
 import sys
 import os
 import json
-import cv2
+import cv2 as cv
 from picamera2 import Picamera2
 from time import time
 
@@ -15,10 +15,10 @@ params_file_path = os.path.join(os.path.dirname(sys.path[0]), 'configs.json')
 with open(params_file_path, 'r') as file:
     params = json.load(file)
 # Config Pi Camera
-cv2.startWindowThread()
-picam = Picamera2()
-picam.configure(
-    picam.create_preview_configuration(
+cv.startWindowThread()
+cam = Picamera2()
+cam.configure(
+    cam.create_preview_configuration(
         main={"format": 'RGB888', "size": (224, 224)},
         controls={
             "FrameDurationLimits": (
@@ -28,9 +28,9 @@ picam.configure(
     )
 )
 # Start Pi Camera with a count down
-picam.start()
+cam.start()
 for i in reversed(range(3 * params['frame_rate'])):
-    frame = picam.capture_array()
+    frame = cam.capture_array()
     if frame is None:
         print("No frame received. TERMINATE!")
         sys.exit()
@@ -47,22 +47,22 @@ try:
         if frame is None:
             print("No frame received. TERMINATE!")
             break
-        im = picam.capture_array()
+        im = cam.capture_array()
         # Log frame rate
         frame_counts += 1
         since_start = time() - start_stamp
         frame_rate = frame_counts / since_start
         print(f"frame rate: {frame_rate}")
-        # grey = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
-        cv2.imshow("Camera", im)
-        if cv2.waitKey(1)==ord('q'):  # [q]uit
+        # grey = cv.cvtColor(im, cv.COLOR_BGR2GRAY)
+        cv.imshow("Camera", im)
+        if cv.waitKey(1)==ord('q'):  # [q]uit
             print("Quit signal received.")
-            cv2.destroyAllWindows()
+            cv.destroyAllWindows()
             sys.exit()
 except KeyboardInterrupt:
-    cv2.destroyAllWindows()
+    cv.destroyAllWindows()
     sys.exit()
 finally:
-    cv2.destroyAllWindows()
+    cv.destroyAllWindows()
     sys.exit()
 

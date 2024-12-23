@@ -27,6 +27,7 @@ pygame.display.init()
 pygame.joystick.init()
 js = pygame.joystick.Joystick(0)
 # Init Pi Camera
+cv.startWindowThread()
 cam = Picamera2()
 cam.configure(
     cam.create_preview_configuration(
