@@ -27,9 +27,9 @@ pygame.display.init()
 pygame.joystick.init()
 js = pygame.joystick.Joystick(0)
 # Init Pi Camera
-picam = Picamera2()
-picam.configure(
-    picam.create_preview_configuration(
+cam = Picamera2()
+cam.configure(
+    cam.create_preview_configuration(
         main={"format": 'RGB888', "size": (224, 224)},
         controls={
             "FrameDurationLimits": (
@@ -38,9 +38,9 @@ picam.configure(
         },  # 24 FPS
     )
 )
-picam.start()
+cam.start()
 for i in reversed(range(3 * params['frame_rate'])):
-    frame = picam.capture_array()
+    frame = cam.capture_array()
     if frame is None:
         print("No frame received. TERMINATE!")
         sys.exit()
