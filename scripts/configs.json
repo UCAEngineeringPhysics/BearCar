@@ -13,5 +13,5 @@
     "throttle_fwd_range": 590000,
     "throttle_rev_range": 120000,
     "throttle_limit": 0.3,
-    "frame_rate": 20
+    "frame_rate": 15
 }
