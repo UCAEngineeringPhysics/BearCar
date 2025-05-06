@@ -4,11 +4,11 @@ Upload this script to the pico board, then rename it to main.py.
 import sys
 import select
 from time import sleep, ticks_ms, ticks_diff
-from machine import Pin, PWM, freq, reset, WDT
+from machine import Pin, PWM, WDT, freq, reset
 
 # SETUP
 # Overclock
-# freq(200_000_000)  # Pico 2 original: 150_000_000
+freq(200_000_000)  # Pico 2 original: 150_000_000
 # Config Pins
 steering = PWM(Pin(16))
 steering.freq(50)
@@ -22,10 +22,8 @@ listener = select.poll()
 listener.register(sys.stdin, select.POLLIN)
 event = listener.poll()
 # print("I'm listening...")  # uncomment to debug
-# Config watchdog
-# TIMEOUT_MS = 500  # Stop motors after 0.5 seconds of silence
-# last_msg_ts = ticks_ms()
-wdt = WDT(timeout=500)
+# Config watchdog timer
+wdt = WDT(timeout=500)  # ms
 
 # LOOP
 try:
@@ -35,7 +33,6 @@ try:
         for msg, _ in event:
             if msg:
                 wdt.feed()
-#                 last_msg_ts = ticks_ms()
                 msg_line = msg.readline().rstrip()
                 # print(f"Pico heard: {msg_line}")  # debug
                 msg_parts = msg_line.split(',')
@@ -45,25 +42,23 @@ try:
                     try:
                         dutycycle_st = int(msg_parts[0])
                         dutycycle_th = int(msg_parts[1])
-#                         print(f"Pico received dutycycle: {dutycycle_st}, {dutycycle_th}") # debug
+                        # print(f"Pico received dutycycle: {dutycycle_st}, {dutycycle_th}") # debug
                         steering.duty_ns(dutycycle_st)
                         thruster.duty_ns(dutycycle_th)
                     except ValueError:
-#                         print("ValueError!")  # debug
+                        # print("ValueError!")  # debug
                         reset()
             else:
-#                 if ticks_diff(ticks_ms(), last_msg_ts) > TIMEOUT_MS:
-#                     print('TIMEOUT! Pico RESET!')
                 thruster.duty_ns(0)
                 steering.duty_ns(0)
                 reset()
 except Exception as e:
-#     print('Pico reset')
+    # print('Pico reset')  # debug
     thruster.duty_ns(0)
     steering.duty_ns(0)
     reset()
 finally:
-#     print('Pico reset')
+    # print('Pico reset')  # debug
     thruster.duty_ns(0)
     steering.duty_ns(0)
     reset()
