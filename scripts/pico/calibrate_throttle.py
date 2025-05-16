@@ -1,24 +1,37 @@
 from machine import Pin, PWM, reset
 from time import sleep
 
-print("Please calibrate your ESC follow the steps below:")
-print("1. Turn off ESC")
-print("2. Unplug Pico")
-print("3. Plug Pico back in, and turn ESC on.")
-print("4. Run this MicroPython script.")
+# SAFETY CHECK
+is_lifted = input("Is something contacting any wheel of BearCart? (Y/n)")
+while is_lifted is not "n":
+    print("Please lift BearCart up and remove everything that is making the contact")
+    is_lifted = input("Is something contacting any wheel of BearCart? (Y/n)")
+print("Please calibrate ESC throttle follow the steps below:")
+print("1. Turn off ESC.")
+print("2. Unplug Pico.")
+print("3. Plug Pico back in.")
+print("4. Turn ESC back on.")
+print("5. Run this MicroPython script.")
 
 # SETUP
 throttle = PWM(Pin(16))
 throttle.freq(50)
-# throttle.duty_ns(0)
+# Range constants
+DUTY_NEUTRAL = 1_500_000  # nanoseconds
+DUTY_FMAX = 1_800_000
+# TODO: figure out if max reverse is configurable  
+# Set neutral throttle's dutycycle
+throttle.duty_ns(DUTY_NEUTRAL)
+sleep(0.5)
+# TODO: config led for a naive HRI
 
 # LOOP
 try:
-    throttle.duty_ns(1500000)
-    sleep(1)
-    throttle.duty_ns(1800000)  # to make sure
-    sleep(1)
-    throttle.duty_ns(1500000)
+    # Set max forward dutycycle
+    throttle.duty_ns(DUTY_FMAX)
+    sleep(0.5)
+    # Set throttle's dutycycle back to neutral
+    throttle.duty_ns(DUTY_NEUTRAL)
     sleep(2)
 except:
     print("Exception!")

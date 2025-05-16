@@ -1,30 +1,42 @@
-from machine import Pin, PWM
+from machine import Pin, PWM, reset
 from time import sleep
 
+# SAFETY CHECK
+is_lifted = input("Is something contacting any wheel of BearCart? (Y/n)")
+while is_lifted is not "n":
+    print("Please lift BearCart up and remove everything that is making the contact")
+    is_lifted = input("Is something contacting any wheel of BearCart? (Y/n)")
+print("Hold tight! Unleash the beast!!!")
+
 # SETUP
-motor = PWM(Pin(16))
-motor.freq(50)
-# sleep(3)
+throttle = PWM(Pin(16))
+throttle.freq(50)
+# TODO: config led for a naive HRI
 
 # LOOP
-for i in range(1500000, 1800000, 10000): # forward up
-    motor.duty_ns(i)
-    print(i)
+print("\nFORWARD: ramp up\n")
+for dc in range(1500000, 2000000, 10000): # forward up
+    throttle.duty_ns(dc)
+    print(dc)
     sleep(0.2)
-for i in reversed(range(1500000, 1800000, 10000)): # forward down
-    motor.duty_ns(i)
-    print(i)
+print("\nFORWARD: ramp down\n")
+for dc in reversed(range(1500000, 2000000, 10000)): # forward down
+    throttle.duty_ns(dc)
+    print(dc)
     sleep(0.2)
-for i in reversed(range(1200000, 1500000, 10000)): # reverse up
-    motor.duty_ns(i)
-    print(i)
+print("\nREVERSE: ramp up\n")
+for dc in reversed(range(1000000, 1500000, 10000)): # reverse up
+    throttle.duty_ns(dc)
+    print(dc)
     sleep(0.2)
-for i in range(1200000, 1500000, 10000): # reverse down
-    motor.duty_ns(i)
-    print(i)
+print("\nREVERSE: ramp down\n")
+for dc in range(1000000, 1500000, 10000): # reverse down
+    throttle.duty_ns(dc)
+    print(dc)
     sleep(0.2)
-motor.duty_ns(1500000)
+throttle.duty_ns(1500000)
+print("STOP")
 sleep(1)
-motor.deinit()
-
+throttle.deinit()
+reset()
 
