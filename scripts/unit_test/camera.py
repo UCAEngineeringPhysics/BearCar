@@ -1,6 +1,7 @@
 """
 If logged in remotely, please enable X11 forwarding, either `ssh -X` or `ssh -Y`
 """
+
 import sys
 import os
 import json
@@ -11,34 +12,35 @@ from time import time
 print("Please adjust lens focus if image is blurry")
 # SETUP
 # Load configs
-params_file_path = os.path.join(os.path.dirname(sys.path[0]), 'configs.json')
-with open(params_file_path, 'r') as file:
+params_file_path = os.path.join(os.path.dirname(sys.path[0]), "configs.json")
+with open(params_file_path, "r") as file:
     params = json.load(file)
 # Config Pi Camera
 cv.startWindowThread()
 cam = Picamera2()
 cam.configure(
     cam.create_preview_configuration(
-        main={"format": 'RGB888', "size": (224, 224)},
+        main={"format": "RGB888", "size": (224, 224)},
         controls={
             "FrameDurationLimits": (
-                int(1000_000 / params['frame_rate']), int(1000_000 / params['frame_rate'])
+                int(1_000_000 / params["frame_rate"]),
+                int(1_000_000 / params["frame_rate"]),
             )
-        },  # 24 FPS
+        },
     )
 )
 # Start Pi Camera with a count down
 cam.start()
-for i in reversed(range(3 * params['frame_rate'])):
+for i in reversed(range(3 * params["frame_rate"])):
     frame = cam.capture_array()
     if frame is None:
         print("No frame received. TERMINATE!")
         sys.exit()
-    if not i % params['frame_rate']:
-        print(i/params['frame_rate'])  # count down 3, 2, 1 sec
+    if not i % params["frame_rate"]:
+        print(i / params["frame_rate"])  # count down 3, 2, 1 sec
 # Init timer for FPS computing
 frame_counts = 0
-frame_rate = 0.
+frame_rate = 0.0
 start_stamp = time()
 
 # LOOP
@@ -55,7 +57,7 @@ try:
         print(f"frame rate: {frame_rate}")
         # grey = cv.cvtColor(im, cv.COLOR_BGR2GRAY)
         cv.imshow("Camera", im)
-        if cv.waitKey(1)==ord('q'):  # [q]uit
+        if cv.waitKey(1) == ord("q"):  # [q]uit
             print("Quit signal received.")
             cv.destroyAllWindows()
             sys.exit()
@@ -65,4 +67,3 @@ except KeyboardInterrupt:
 finally:
     cv.destroyAllWindows()
     sys.exit()
-
