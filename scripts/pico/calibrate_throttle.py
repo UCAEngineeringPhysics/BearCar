@@ -36,6 +36,8 @@ try:
 except:
     print("Exception!")
 finally:
-    print("Throttle is calibrated if you heard a long beep, followed by 2 short beeps.")
+    print("\n\u2713Throttle is calibrated\u2713\n")
+    print("Calibration succeeded, if you heard a long beep followed by 2 short beeps.")
     print("If not, repeat and follow the instructions carefully.")
+    sleep(0.1)
     reset()
