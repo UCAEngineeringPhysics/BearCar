@@ -6,4 +6,5 @@ echo 'eval "$(uv generate-shell-completion bash)"' >>$HOME/.bashrc
 # cd $HOME/BearCart/ && uv venv
 # echo 'alias gobc="source $HOME/BearCart/.venv/bin/activate"' >>$HOME/.bashrc
 source $HOME/.bashrc
+cd $HOME/BearCart/ && uv sync
 echo 'You may start BearCart environemnt now'
