@@ -12,4 +12,4 @@ source $HOME/.bashrc
 # Coloring output
 PURPLE='\033[0;35m'
 NC='\033[0m' # No Color
-echo -e 'You may start BearCart environemnt now: ${PURPLE}gobear${NC}'
+echo -e "You may start BearCart environemnt now: ${PURPLE}gobear${NC}"
