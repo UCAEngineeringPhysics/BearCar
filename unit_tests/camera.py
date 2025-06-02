@@ -59,8 +59,7 @@ try:
         cv.imshow("Camera", im)
         if cv.waitKey(1) == ord("q"):  # [q]uit
             print("Quit signal received.")
-            cv.destroyAllWindows()
-            sys.exit()
+            break
 except KeyboardInterrupt:
     cv.destroyAllWindows()
     sys.exit()
