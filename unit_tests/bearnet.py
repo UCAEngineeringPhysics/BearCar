@@ -42,10 +42,6 @@ class BearNet(nn.Module):
 if __name__ == "__main__":
     from torchinfo import summary
 
-    # STATS
-    # model = DonkeyNet()  # Adjust num_classes as needed
-    # batch_size = 1
-    # summary(model, input_size=(batch_size, 3, 160, 120))
     model = BearNet()  # Adjust num_classes as needed
     batch_size = 1
     summary(model, input_size=(batch_size, 3, 224, 224))
