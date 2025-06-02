@@ -30,7 +30,6 @@ class BearNet(nn.Module):
         x = self.relu(self.conv6(x))  # (11 - 3) + 1 = 9
         x = self.relu(self.conv7(x))  # (9 - 3) + 1 = 7
         # x = self.avg_pool(x)  # (7 - 1) + 1 = 7
-
         x = x.view(x.size(0), -1)  # flatten
 
         x = self.relu(self.fc1(x))
@@ -39,9 +38,3 @@ class BearNet(nn.Module):
         return y
 
 
-if __name__ == "__main__":
-    from torchinfo import summary
-
-    model = BearNet()  # Adjust num_classes as needed
-    batch_size = 1
-    summary(model, input_size=(batch_size, 3, 224, 224))

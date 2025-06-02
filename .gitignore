@@ -164,7 +164,7 @@ cython_debug/
 
 # Data directory
 *data/
-*models/
+pilots/
 
 # VSCode
 *.micropico
