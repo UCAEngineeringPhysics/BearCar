@@ -8,6 +8,7 @@ dependencies = [
     "numpy<2.0.0",
     "opencv-python>=4.11.0.86",
     "pygame>=2.6.1",
+    "pyserial>=3.5",
     "torch>=2.7.0",
     "torchinfo>=1.8.0",
     "torchvision>=0.22.0",

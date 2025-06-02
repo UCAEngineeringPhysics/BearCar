@@ -2,11 +2,10 @@ import sys
 import os
 import json
 from time import time
+import pygame
 import torch
 import torch.nn as nn
 from torchvision.transforms import v2
-import serial
-import pygame
 import cv2 as cv
 from picamera2 import Picamera2
 
@@ -23,12 +22,10 @@ class BearNet(nn.Module):
         self.conv5 = nn.Conv2d(128, 256, kernel_size=3, stride=2)
         self.conv6 = nn.Conv2d(256, 256, kernel_size=3)
         self.conv7 = nn.Conv2d(256, 256, kernel_size=3)
-
         self.relu = nn.ReLU()
         self.max_pool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         # self.avg_pool = nn.AvgPool2d(kernel_size=1)
-
-        self.fc1 = nn.Linear(256 * 7 * 7, 128)
+        self.fc1 = nn.Linear(256*7*7, 128)
         self.fc2 = nn.Linear(128, 128)
         self.fc3 = nn.Linear(128, 2)
 
@@ -42,32 +39,26 @@ class BearNet(nn.Module):
         x = self.relu(self.conv6(x))  # (11 - 3) + 1 = 9
         x = self.relu(self.conv7(x))  # (9 - 3) + 1 = 7
         # x = self.avg_pool(x)  # (7 - 1) + 1 = 7
-
         x = x.view(x.size(0), -1)  # flatten
-
         x = self.relu(self.fc1(x))
         x = self.relu(self.fc2(x))
         y = self.fc3(x)
         return y
 
-
 # Instantiate BearNet
-model = BearNet()
-model.eval()
+random_pilot = BearNet()
+random_pilot.eval()
 # Load configs
 params_file_path = os.path.join(os.path.dirname(sys.path[0]), "configs.json")
 with open(params_file_path, "r") as file:
     params = json.load(file)
-# Init serial port
-ser_pico = serial.Serial(port="/dev/ttyACM0", baudrate=115200)
-print(f"Pico is connected to port: {ser_pico.name}")
+# Config image transforms
+to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
 # Init controller
 pygame.display.init()
 pygame.joystick.init()
 js = pygame.joystick.Joystick(0)
-# Config image transforms
-to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
-# init camera
+# Init camera
 cv.startWindowThread()
 cam = Picamera2()
 cam.configure(
@@ -104,6 +95,12 @@ try:
         if frame is None:
             print("No frame received. TERMINATE!")
             break
+        cv.imshow("Camera", frame)
+        # Log frame rate
+        frame_counts += 1
+        since_start = time() - start_stamp
+        frame_rate = frame_counts / since_start
+        print(f"frame rate: {frame_rate}")  # debug
         for e in pygame.event.get():  # read controller input
             if e.type == pygame.JOYBUTTONDOWN:
                 if js.get_button(params["record_btn"]):
@@ -113,69 +110,18 @@ try:
                     print("E-STOP PRESSED. TERMINATE!")
                     cv.destroyAllWindows()
                     pygame.quit()
-                    ser_pico.close()
                     sys.exit()
-        # predict steer and throttle
+        # Predict steer and throttle
         img_tensor = to_tensor(frame)
         with torch.no_grad():
-            pred_st, pred_th = map(float, model(img_tensor[None, :]).squeeze())
+            pred_st, pred_th = map(float, random_pilot(img_tensor[None, :]).squeeze())
         print(pred_st, pred_th)
-        # st_trim = float(pred_st)
-        if pred_st >= 1:  # trim steering signal
-            pred_st = 0.999
-        elif pred_st <= -1:
-            pred_st = -0.999
-        # th_trim = float(pred_th)
-        if pred_th >= 1:  # trim throttle signal
-            pred_th = 0.999
-        elif pred_th <= -1:
-            pred_th = -0.999
-        # Encode steering value to dutycycle in nanosecond
-        # if is_paused:
-        #     duty_st = params["steering_center"]
-        # else:
-        #     duty_st = (
-        #         params["steering_center"]
-        #         - params["steering_range"]
-        #         + int(params["steering_range"] * (pred_st + 1))
-        #     )
-        # # Encode throttle value to dutycycle in nanosecond
-        # if is_paused:
-        #     duty_th = params["throttle_stall"]
-        # else:
-        #     if pred_th > 0:
-        #         duty_th = params["throttle_stall"] + int(
-        #             params["throttle_fwd_range"]
-        #             * min(pred_th, params["throttle_limit"])
-        #         )
-        #     elif pred_th < 0:
-        #         duty_th = params["throttle_stall"] + int(
-        #             params["throttle_rev_range"]
-        #             * max(pred_th, -params["throttle_limit"])
-        #         )
-        #     else:
-        #         duty_th = params["throttle_stall"]
-        # msg = (str(duty_st) + "," + str(duty_th) + "\n").encode("utf-8")
-        # # Transmit control signals
-        # ser_pico.write(msg)
-        # print(f"predicted action: {pred_st, pred_th}")  # debug
-        frame_counts += 1
-        # Log frame rate
-        since_start = time() - start_stamp
-        frame_rate = frame_counts / since_start
-        print(f"frame rate: {frame_rate}")  # debug
         if cv.waitKey(1) == ord("q"):
             print("Quit signal received.")
             break
-
-# Take care terminate signal (Ctrl-c)
-except KeyboardInterrupt:
+except KeyboardInterrupt:  # take care terminate signal (Ctrl-c)
     cv.destroyAllWindows()
-    pygame.quit()
-    ser_pico.close()
     sys.exit()
 finally:
     cv.destroyAllWindows()
-    pygame.quit()
-    ser_pico.close()
     sys.exit()

@@ -1,8 +1,8 @@
 {
     "led_pin": 21,
     "steering_joy_axis": 0,
-    "throttle_joy_axis": 3,
-    "record_btn": 7,
+    "throttle_joy_axis": 1,
+    "record_btn": 5,
     "stop_btn": 0,
     "steering_dir": 1,
     "steering_left": 1000000,
