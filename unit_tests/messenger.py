@@ -1,6 +1,6 @@
 """
 This script will test communication between Pico and RPi.
-Please uncomment line 44 and 79 in the 'main.py' on Pico.
+Please uncomment line 45 in the 'main.py' on Pico.
 """
 
 from serial import Serial
@@ -34,14 +34,20 @@ for i in range(100):
         th_dc = dutycycles[int(i/20)]
         msg = f"{modes[int(i/20)]}, {st_dc}, {th_dc}\n".encode('utf-8')
     else:
-        msg = f"p, {st_dc}, {th_dc}\n".encode('utf-8')
+        msg = f"p, {dutycycles[-1]}, {dutycycles[-1]}\n".encode('utf-8')
     messenger.write(msg)
-    # print("RPi transmitting")  # debug
-    sleep(0.1)
+    # print(f"[RPi Transmit] {msg}")  # debug
+    # Listen to Pico's response
     if messenger.inWaiting() > 0:
         reply = messenger.readline()
         reply = reply.decode('utf-8', 'ignore')
         print(f"[Pico Response] {reply}")
-messenger.write(f"p, {1_500_000}, {1_500_000}\n".encode('utf-8'))
+    sleep(0.1)
+messenger.write(f"e, {dutycycles[-1]}, {dutycycles[-1]}\n".encode('utf-8'))
+# print(f"[RPi Transmit] e, {dutycycles[-1]}, {dutycycles[-1]}\n")  # debug
+if messenger.inWaiting() > 0:
+    reply = messenger.readline()
+    reply = reply.decode('utf-8', 'ignore')
+    print(f"[Pico Response] {reply}")  
 sleep(0.5)
 messenger.close()
