@@ -13,9 +13,12 @@ NEUTRAL_DUTY = 1_500_000  # throttle zero and servo center
 # Overclock
 freq(200_000_000)  # Pico 2 original: 150_000_000
 # Config LED pins
-r_led = Pin(18, Pin.OUT)
-g_led = Pin(19, Pin.OUT)
+r_led = Pin(19, Pin.OUT)
+# r_led.valeu(1)
+g_led = Pin(18, Pin.OUT)
+# g_led.valeu(1)
 b_led = Pin(20, Pin.OUT)
+# b_led.valeu(1)
 # Config drivetrain pins
 steering = PWM(Pin(17))
 steering.freq(50)  # ESC only works with 50Hz PWM
@@ -54,27 +57,27 @@ try:
                         # Process LED actions
                         mode = msg_parts[0]
                         if mode is 'n':  # normal
+                            r_led.value(1)
+                            g_led.value(0)
+                            b_led.value(1)
+                        elif mode is 'r':  # recording
+                            r_led.value(1)
+                            g_led.value(1)
+                            b_led.value(0)
+                        elif mode is 'a':  # autopilot
                             r_led.value(0)
                             g_led.value(1)
                             b_led.value(0)
-                        elif mode is 'r':  # recording
+                        elif mode is 'p':  # pause
                             r_led.value(0)
                             g_led.value(0)
-                            b_led.value(1)
-                        elif mode is 'a':  # autopilot
-                            r_led.value(1)
-                            g_led.value(0)
-                            b_led.value(1)
-                        elif mode is 'p':  # pause
-                            r_led.value(1)
-                            g_led.value(1)
                             b_led.value(1)
                             dutycycle_st = NEUTRAL_DUTY
                             dutycycle_th = NEUTRAL_DUTY
                         else:  # error
-                            r_led.value(1)
-                            g_led.value(0)
-                            b_led.value(0)
+                            r_led.value(0)
+                            g_led.value(1)
+                            b_led.value(1)
                             dutycycle_st = NEUTRAL_DUTY
                             dutycycle_th = NEUTRAL_DUTY
                         # print(f"Pico received command: {mode}, {dutycycle_st}, {dutycycle_th}") # debug
