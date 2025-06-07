@@ -1,4 +1,3 @@
-import torch
 import torch.nn as nn
 
 
@@ -31,10 +30,10 @@ class DonkeyNet(nn.Module):
         return x
 
 
-class BearCartNet(nn.Module):
+class BearNet(nn.Module):
 
     def __init__(self):
-        super(BearCartNet, self).__init__()
+        super(BearNet, self).__init__()
         self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3)
         self.conv2 = nn.Conv2d(64, 64, kernel_size=3)
         self.conv3 = nn.Conv2d(64, 128, kernel_size=3, stride=2)
@@ -72,10 +71,7 @@ class BearCartNet(nn.Module):
 
 if __name__ == '__main__':
     from torchinfo import summary
-    # STATS
     # model = DonkeyNet()  # Adjust num_classes as needed
-    # batch_size = 1
-    # summary(model, input_size=(batch_size, 3, 160, 120))
-    model = BearCartNet()  # Adjust num_classes as needed
+    model = BearNet()  # Adjust num_classes as needed
     batch_size = 1
     summary(model, input_size=(batch_size, 3, 224, 224))
