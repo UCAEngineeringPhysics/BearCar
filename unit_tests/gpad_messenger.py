@@ -16,17 +16,6 @@ params_file_path = os.path.join(os.path.dirname(sys.path[0]), "configs.json")
 params_file = open(params_file_path)
 params = json.load(params_file)
 # Constants
-STEERING_AXIS = params["steering_joy_axis"]
-STEERING_CENTER = params["steering_center"]
-STEERING_RANGE = params["steering_range"]
-THROTTLE_AXIS = params["throttle_joy_axis"]
-THROTTLE_NEUTRAL = params["throttle_neutral"]
-THROTTLE_FWD_RANGE = params["throttle_fwd_range"]
-THROTTLE_REV_RANGE = params["throttle_rev_range"]
-THROTTLE_LIMIT = params["throttle_limit"]
-RECORD_BUTTON = params["record_btn"]
-PAUSE_BUTTON = params["pause_btn"]
-STOP_BUTTON = params["stop_btn"]
 # Init serial port
 messenger = serial.Serial(port="/dev/ttyACM0", baudrate=115200)
 print(f"Pico is connected to port: {messenger.name}")
@@ -37,49 +26,51 @@ js = pygame.joystick.Joystick(0)
 # Init joystick axes values
 ax_val_st = 0.0
 ax_val_th = 0.0
-# Flags
+# Flags, ordered by priority
+is_stopped = False
 is_paused = True
 is_recording = False
 mode = ''
 
 # MAIN LOOP
 try:
-    while True:
+    while not is_stopped:
         for e in pygame.event.get():  # read controller input
-            if e.type == pygame.JOYAXISMOTION:
-                ax_val_st = round((js.get_axis(STEERING_AXIS)), 2)  # keep 2 decimals
-                ax_val_th = round((js.get_axis(THROTTLE_AXIS)), 2)  # keep 2 decimals
-            elif e.type == pygame.JOYBUTTONDOWN:
-                if js.get_button(STOP_BUTTON):  # emergency stop
+            if e.type == pygame.JOYBUTTONDOWN:
+                if js.get_button(params['stop_btn']):  # emergency stop
+                    is_stopped = True
                     print("E-STOP PRESSED. TERMINATE")
                     pygame.quit()
                     messenger.close()
                     sys.exit()
-                elif js.get_button(RECORD_BUTTON):
-                    is_recording = not is_recording
-                    print(f"Recording: {is_recording}")  # debug
-                elif js.get_button(PAUSE_BUTTON):
+                elif js.get_button(params['pause_btn']):
                     is_paused = not is_paused
                     if is_paused:
                         is_recording = False
-                    print(f"Paused: {is_paused}")  # debug
+                    # print(f"Paused: {is_paused}")  # debug
+                elif js.get_button(params['record_btn']):
+                    if not is_paused:
+                        is_recording = not is_recording
+                        # print(f"Recording: {is_recording}")  # debug
+            elif e.type == pygame.JOYAXISMOTION:
+                ax_val_st = round((js.get_axis(params['steering_joy_axis'])), 2)  # keep 2 decimals
+                ax_val_th = round((js.get_axis(params['throttle_joy_axis'])), 2)  # keep 2 decimals
         # Calaculate steering and throttle value
-        act_st = ax_val_st
-        act_th = -ax_val_th  # throttle action: -1: max forward, 1: max backward
+        act_st = ax_val_st  # -1: left most; +1: right most
+        act_th = -ax_val_th  # -1: max forward, +1: max backward
         # Encode steering value to dutycycle in nanosecond
-        duty_st = STEERING_CENTER - STEERING_RANGE + int(STEERING_RANGE * (act_st + 1))
+        duty_st = params["steering_center"] + int(params["steering_range"] * act_st)
         # Encode throttle value to dutycycle in nanosecond
         if act_th > 0:
-            duty_th = THROTTLE_NEUTRAL + int(
-                THROTTLE_FWD_RANGE * min(act_th, THROTTLE_LIMIT)
+            duty_th = params["throttle_neutral"] + int(
+                params["throttle_fwd_range"] * min(act_th, params["throttle_limit"])
             )
         elif act_th < 0:
-            duty_th = THROTTLE_NEUTRAL + int(
-                THROTTLE_REV_RANGE * max(act_th, -THROTTLE_LIMIT)
+            duty_th = params["throttle_neutral"] + int(
+                params["throttle_fwd_range"] * max(act_th, -params["throttle_limit"])
             )
         else:
-            duty_th = THROTTLE_NEUTRAL
-        # msg = (str(duty_st) + "," + str(duty_th) + "\n").encode("utf-8")
+            duty_th = params["throttle_neutral"]
         if is_paused:
             mode = 'p'
         else:
@@ -90,7 +81,7 @@ try:
         msg = f"{mode}, {duty_st}, {duty_th}\n".encode('utf-8')
         messenger.write(msg)
         # Log action
-        print(f"action: {act_st, act_th}")
+        print(f"action: {act_st, act_th}")  # debug
         # 20Hz
         sleep(0.05)
 
