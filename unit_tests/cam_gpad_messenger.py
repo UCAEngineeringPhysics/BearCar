@@ -48,7 +48,7 @@ ax_val_th = 0.0
 is_stopped = False
 is_paused = True
 is_recording = False
-mode = ''
+mode = 'p'
 # Init timer for FPS computing
 start_stamp = time()
 frame_counts = 0
