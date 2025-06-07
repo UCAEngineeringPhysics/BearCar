@@ -1,7 +1,3 @@
-"""
-Integrated test with controller, pico usb communication, throttle motor.
-"""
-
 import sys
 import os
 import serial
@@ -13,9 +9,8 @@ from time import sleep
 # SETUP
 # Load configs
 params_file_path = os.path.join(os.path.dirname(sys.path[0]), "configs.json")
-params_file = open(params_file_path)
-params = json.load(params_file)
-# Constants
+with open(params_file_path, 'r') as file:
+    params = json.load(file)
 # Init serial port
 messenger = serial.Serial(port="/dev/ttyACM0", baudrate=115200)
 print(f"Pico is connected to port: {messenger.name}")
