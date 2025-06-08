@@ -10,6 +10,7 @@ import torch
 import torch.nn as nn
 from torchvision.transforms import v2
 
+
 # SETUP
 # Define BearNet
 class BearNet(nn.Module):
@@ -24,9 +25,10 @@ class BearNet(nn.Module):
         self.conv7 = nn.Conv2d(256, 256, kernel_size=3)
         self.relu = nn.ReLU()
         self.max_pool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        self.fc1 = nn.Linear(256*7*7, 128)
+        self.fc1 = nn.Linear(256 * 7 * 7, 128)
         self.fc2 = nn.Linear(128, 128)
         self.fc3 = nn.Linear(128, 2)
+
     def forward(self, x):  # 224
         x = self.relu(self.conv1(x))  # (224 - 7 + 2 * 3) / 2 + 1 = 112.5
         x = self.max_pool(x)  # (112 - 3 + 2 * 1) / 2 + 1 = 56.5
@@ -41,6 +43,8 @@ class BearNet(nn.Module):
         x = self.relu(self.fc2(x))
         y = self.fc3(x)
         return y
+
+
 # Instantiate BearNet
 random_pilot = BearNet()
 random_pilot.eval()
@@ -48,7 +52,7 @@ random_pilot.eval()
 to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
 # Load configs
 params_file_path = os.path.join(os.path.dirname(sys.path[0]), "configs.json")
-with open(params_file_path, 'r') as file:
+with open(params_file_path, "r") as file:
     params = json.load(file)
 # Init serial port
 messenger = serial.Serial(port="/dev/ttyACM0", baudrate=115200)
@@ -62,69 +66,75 @@ cv.startWindowThread()
 cam = Picamera2()
 cam.configure(
     cam.create_preview_configuration(
-        main={"format": 'RGB888', "size": (224, 224)},
+        main={"format": "RGB888", "size": (224, 224)},
         controls={
             "FrameDurationLimits": (
-                int(1_000_000 / params['frame_rate']), int(1_000_000 / params['frame_rate'])
+                int(1_000_000 / params["frame_rate"]),
+                int(1_000_000 / params["frame_rate"]),
             )
         },
     )
 )
 cam.start()
-for i in reversed(range(3 * params['frame_rate'])):
+for i in reversed(range(3 * params["frame_rate"])):
     frame = cam.capture_array()
     if frame is None:
         print("No frame received. TERMINATE!")
         sys.exit()
-    if not i % params['frame_rate']:
-        print(i/params['frame_rate'])  # count down 3, 2, 1 sec
+    if not i % params["frame_rate"]:
+        print(i / params["frame_rate"])  # count down 3, 2, 1 sec
 # Flags, ordered by priority
 is_stopped = False
 is_paused = True
-mode = 'p'
+mode = "p"
 # Init timer for FPS computing
 start_stamp = time()
 frame_counts = 0
-ave_frame_rate = 0.
+ave_frame_rate = 0.0
 
 # LOOP
 try:
     while not is_stopped:
         # Process camera data
-        frame = cam.capture_array() # read image
+        frame = cam.capture_array()  # read image
         if frame is None:
             print("No frame received. TERMINATE!")
             break
         frame_counts += 1
-        cv.imshow('camera', frame)
+        cv.imshow("camera", frame)
         # Log frame rate
         since_start = time() - start_stamp
         frame_rate = frame_counts / since_start
         print(f"frame rate: {frame_rate}")
         # Wait for [Q]uit signal
-        if cv.waitKey(1)==ord('q'):
+        if cv.waitKey(1) == ord("q"):
             print("Quit signal received.")
             break
         # Process gamepad data
         for e in pygame.event.get():  # read controller input
             if e.type == pygame.JOYBUTTONDOWN:
-                if js.get_button(params['stop_btn']):  # emergency stop
+                if js.get_button(params["stop_btn"]):  # emergency stop
                     is_stopped = True
                     print("E-STOP PRESSED. TERMINATE")
                     pygame.quit()
                     messenger.close()
                     sys.exit()
-                elif js.get_button(params['pause_btn']):
+                elif js.get_button(params["pause_btn"]):
                     is_paused = not is_paused
                     if is_paused:
-                        mode = 'p'
+                        mode = "p"
                     else:
-                        mode = 'a'
+                        mode = "a"
                     # print(f"Paused: {is_paused}")  # debug
         # Predict steer and throttle
         img_tensor = to_tensor(frame)
         with torch.no_grad():
-            pred_st, pred_th = map(float, torch.clamp(random_pilot(img_tensor[None, :]).squeeze(), min=-0.999, max=0.999))
+            pred_st, pred_th = map(
+                float,
+                torch.clamp(
+                    random_pilot(img_tensor[None, :]).squeeze(), min=-0.999, max=0.999
+                ),
+            )
         print(f"predicted actions: {pred_st}, {pred_th}")  # debug
         # Encode steering value to dutycycle in nanosecond
         duty_st = params["steering_center"] + int(params["steering_range"] * pred_st)
@@ -139,7 +149,7 @@ try:
             )
         else:
             duty_th = params["throttle_neutral"]
-        msg = f"{mode}, {duty_st}, {duty_th}\n".encode('utf-8')
+        msg = f"{mode}, {duty_st}, {duty_th}\n".encode("utf-8")
         messenger.write(msg)
 
 # Take care terminal signal (Ctrl-c)

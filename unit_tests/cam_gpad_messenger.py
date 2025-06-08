@@ -11,7 +11,7 @@ from picamera2 import Picamera2
 # SETUP
 # Load configs
 params_file_path = os.path.join(os.path.dirname(sys.path[0]), "configs.json")
-with open(params_file_path, 'r') as file:
+with open(params_file_path, "r") as file:
     params = json.load(file)
 # Init serial port
 messenger = serial.Serial(port="/dev/ttyACM0", baudrate=115200)
@@ -25,22 +25,23 @@ cv.startWindowThread()
 cam = Picamera2()
 cam.configure(
     cam.create_preview_configuration(
-        main={"format": 'RGB888', "size": (224, 224)},
+        main={"format": "RGB888", "size": (224, 224)},
         controls={
             "FrameDurationLimits": (
-                int(1_000_000 / params['frame_rate']), int(1_000_000 / params['frame_rate'])
+                int(1_000_000 / params["frame_rate"]),
+                int(1_000_000 / params["frame_rate"]),
             )
         },
     )
 )
 cam.start()
-for i in reversed(range(3 * params['frame_rate'])):
+for i in reversed(range(3 * params["frame_rate"])):
     frame = cam.capture_array()
     if frame is None:
         print("No frame received. TERMINATE!")
         sys.exit()
-    if not i % params['frame_rate']:
-        print(i/params['frame_rate'])  # count down 3, 2, 1 sec
+    if not i % params["frame_rate"]:
+        print(i / params["frame_rate"])  # count down 3, 2, 1 sec
 # Init joystick axes values
 ax_val_st = 0.0
 ax_val_th = 0.0
@@ -48,51 +49,61 @@ ax_val_th = 0.0
 is_stopped = False
 is_paused = True
 is_recording = False
-mode = 'p'
+mode = "p"
 # Init timer for FPS computing
 start_stamp = time()
 frame_counts = 0
-ave_frame_rate = 0.
+ave_frame_rate = 0.0
 
 # LOOP
 try:
     while not is_stopped:
         # Process camera data
-        frame = cam.capture_array() # read image
+        frame = cam.capture_array()  # read image
         if frame is None:
             print("No frame received. TERMINATE!")
             break
         frame_counts += 1
-        cv.imshow('camera', frame)
+        # cv.imshow("camera", frame)
+        # if cv.waitKey(1) == ord("q"):  # [q]uit
+        #     print("Quit signal received.")
+        #     break
         # Log frame rate
         since_start = time() - start_stamp
         frame_rate = frame_counts / since_start
         print(f"frame rate: {frame_rate}")
-        # Wait for [Q]uit signal
-        if cv.waitKey(1)==ord('q'):
-            print("Quit signal received.")
-            break
         # Process gamepad data
         for e in pygame.event.get():  # read controller input
             if e.type == pygame.JOYBUTTONDOWN:
-                if js.get_button(params['stop_btn']):  # emergency stop
+                if js.get_button(params["stop_btn"]):  # emergency stop
                     is_stopped = True
                     print("E-STOP PRESSED. TERMINATE")
                     pygame.quit()
                     messenger.close()
                     sys.exit()
-                elif js.get_button(params['pause_btn']):
+                elif js.get_button(params["pause_btn"]):
                     is_paused = not is_paused
                     if is_paused:
                         is_recording = False
+                        mode = "p"
+                    else:
+                        mode = "n"
                     # print(f"Paused: {is_paused}")  # debug
-                elif js.get_button(params['record_btn']):
+                elif js.get_button(params["record_btn"]):
                     if not is_paused:
                         is_recording = not is_recording
+                        if is_recording:
+                            mode = "r"
+                        else:
+                            mode = "n"
                         # print(f"Recording: {is_recording}")  # debug
             elif e.type == pygame.JOYAXISMOTION:
-                ax_val_st = round((js.get_axis(params['steering_joy_axis'])), 2)  # keep 2 decimals
-                ax_val_th = round((js.get_axis(params['throttle_joy_axis'])), 2)  # keep 2 decimals
+                ax_val_st = round(
+                    (js.get_axis(params["steering_joy_axis"])), 2
+                )  # keep 2 decimals
+                ax_val_th = round(
+                    (js.get_axis(params["throttle_joy_axis"])), 2
+                )  # keep 2 decimals
         # Calaculate steering and throttle value
         act_st = ax_val_st  # -1: left most; +1: right most
         act_th = -ax_val_th  # -1: max forward, +1: max backward
@@ -109,14 +120,7 @@ try:
             )
         else:
             duty_th = params["throttle_neutral"]
-        if is_paused:
-            mode = 'p'
-        else:
-            if is_recording:
-                mode = 'r'
-            else:
-                mode = 'n'
-        msg = f"{mode}, {duty_st}, {duty_th}\n".encode('utf-8')
+        msg = f"{mode}, {duty_st}, {duty_th}\n".encode("utf-8")
         messenger.write(msg)
         # Log action
         print(f"action: {act_st, act_th}")  # debug
