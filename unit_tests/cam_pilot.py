@@ -24,7 +24,7 @@ class BearNet(nn.Module):
         self.relu = nn.ReLU()
         self.max_pool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         # self.avg_pool = nn.AvgPool2d(kernel_size=1)
-        self.fc1 = nn.Linear(256*7*7, 128)
+        self.fc1 = nn.Linear(256 * 7 * 7, 128)
         self.fc2 = nn.Linear(128, 128)
         self.fc3 = nn.Linear(128, 2)
 
@@ -44,13 +44,16 @@ class BearNet(nn.Module):
         y = self.fc3(x)
         return y
 
+
 # Instantiate BearNet
 random_pilot = BearNet()
 random_pilot.eval()
 # Config image transforms
 to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
 # Load configs
-params_file_path = os.path.join(os.path.dirname(sys.path[0]), "configs.json")
+params_file_path = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "configs.json"
+)
 with open(params_file_path, "r") as file:
     params = json.load(file)
 # Init camera

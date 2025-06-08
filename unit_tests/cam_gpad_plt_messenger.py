@@ -51,7 +51,9 @@ random_pilot.eval()
 # Config image transforms
 to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
 # Load configs
-params_file_path = os.path.join(os.path.dirname(sys.path[0]), "configs.json")
+params_file_path = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "configs.json"
+)
 with open(params_file_path, "r") as file:
     params = json.load(file)
 # Init serial port

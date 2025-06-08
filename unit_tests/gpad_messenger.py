@@ -8,8 +8,10 @@ from time import sleep
 
 # SETUP
 # Load configs
-params_file_path = os.path.join(os.path.dirname(sys.path[0]), "configs.json")
-with open(params_file_path, 'r') as file:
+params_file_path = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "configs.json"
+)
+with open(params_file_path, "r") as file:
     params = json.load(file)
 # Init serial port
 messenger = serial.Serial(port="/dev/ttyACM0", baudrate=115200)
@@ -25,31 +27,35 @@ ax_val_th = 0.0
 is_stopped = False
 is_paused = True
 is_recording = False
-mode = 'p'
+mode = "p"
 
 # MAIN LOOP
 try:
     while not is_stopped:
         for e in pygame.event.get():  # read controller input
             if e.type == pygame.JOYBUTTONDOWN:
-                if js.get_button(params['stop_btn']):  # emergency stop
+                if js.get_button(params["stop_btn"]):  # emergency stop
                     is_stopped = True
                     print("E-STOP PRESSED. TERMINATE")
                     pygame.quit()
                     messenger.close()
                     sys.exit()
-                elif js.get_button(params['pause_btn']):
+                elif js.get_button(params["pause_btn"]):
                     is_paused = not is_paused
                     if is_paused:
                         is_recording = False
                     # print(f"Paused: {is_paused}")  # debug
-                elif js.get_button(params['record_btn']):
+                elif js.get_button(params["record_btn"]):
                     if not is_paused:
                         is_recording = not is_recording
                         # print(f"Recording: {is_recording}")  # debug
             elif e.type == pygame.JOYAXISMOTION:
-                ax_val_st = round((js.get_axis(params['steering_joy_axis'])), 2)  # keep 2 decimals
-                ax_val_th = round((js.get_axis(params['throttle_joy_axis'])), 2)  # keep 2 decimals
+                ax_val_st = round(
+                    (js.get_axis(params["steering_joy_axis"])), 2
+                )  # keep 2 decimals
+                ax_val_th = round(
+                    (js.get_axis(params["throttle_joy_axis"])), 2
+                )  # keep 2 decimals
         # Calaculate steering and throttle value
         act_st = ax_val_st  # -1: left most; +1: right most
         act_th = -ax_val_th  # -1: max forward, +1: max backward
@@ -67,13 +73,13 @@ try:
         else:
             duty_th = params["throttle_neutral"]
         if is_paused:
-            mode = 'p'
+            mode = "p"
         else:
             if is_recording:
-                mode = 'r'
+                mode = "r"
             else:
-                mode = 'n'
-        msg = f"{mode}, {duty_st}, {duty_th}\n".encode('utf-8')
+                mode = "n"
+        msg = f"{mode}, {duty_st}, {duty_th}\n".encode("utf-8")
         messenger.write(msg)
         # Log action
         print(f"action: {act_st, act_th}")  # debug

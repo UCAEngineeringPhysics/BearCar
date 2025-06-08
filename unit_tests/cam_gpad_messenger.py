@@ -10,7 +10,9 @@ from picamera2 import Picamera2
 
 # SETUP
 # Load configs
-params_file_path = os.path.join(os.path.dirname(sys.path[0]), "configs.json")
+params_file_path = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "configs.json"
+)
 with open(params_file_path, "r") as file:
     params = json.load(file)
 # Init serial port

@@ -25,7 +25,7 @@ class BearNet(nn.Module):
         self.relu = nn.ReLU()
         self.max_pool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         # self.avg_pool = nn.AvgPool2d(kernel_size=1)
-        self.fc1 = nn.Linear(256*7*7, 128)
+        self.fc1 = nn.Linear(256 * 7 * 7, 128)
         self.fc2 = nn.Linear(128, 128)
         self.fc3 = nn.Linear(128, 2)
 
@@ -45,11 +45,14 @@ class BearNet(nn.Module):
         y = self.fc3(x)
         return y
 
+
 # Instantiate BearNet
 random_pilot = BearNet()
 random_pilot.eval()
 # Load configs
-params_file_path = os.path.join(os.path.dirname(sys.path[0]), "configs.json")
+params_file_path = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "configs.json"
+)
 with open(params_file_path, "r") as file:
     params = json.load(file)
 # Config image transforms
@@ -114,7 +117,12 @@ try:
         # Predict steer and throttle
         img_tensor = to_tensor(frame)
         with torch.no_grad():
-            pred_st, pred_th = map(float, torch.clamp(random_pilot(img_tensor[None, :]).squeeze(), min=-0.999, max=0.999))
+            pred_st, pred_th = map(
+                float,
+                torch.clamp(
+                    random_pilot(img_tensor[None, :]).squeeze(), min=-0.999, max=0.999
+                ),
+            )
         print(pred_st, pred_th)
         if cv.waitKey(1) == ord("q"):
             print("Quit signal received.")
