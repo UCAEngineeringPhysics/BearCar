@@ -4,7 +4,6 @@
     "record_btn": 5,
     "pause_btn": 4,
     "stop_btn": 0,
-    "steering_dir": 1,
     "steering_left": 1000000,
     "steering_right": 2000000,
     "steering_center": 1500000,
