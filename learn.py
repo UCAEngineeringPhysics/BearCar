@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
 from torchvision.transforms import v2
-from torchvision.io import read_image
+from torchvision.io import decode_image
 import matplotlib.pyplot as plt
 from pilot_models import BearNet
 
@@ -35,20 +35,20 @@ class BearCartDataset(Dataset):
     Customized dataset
     """
 
-    def __init__(self, annotations_file, img_dir):
-        self.img_labels = pd.read_csv(annotations_file, header=None)
+    def __init__(self, labels_file_path, img_dir):
+        self.labels_df = pd.read_csv(labels_file_path, header=None)
         self.img_dir = img_dir
         self.trans_in = v2.Compose([v2.ToDtype(torch.float32, scale=True)])
 
     def __len__(self):
-        return len(self.img_labels)
+        return len(self.labels_df)
 
     def __getitem__(self, idx):
-        img_path = os.path.join(self.img_dir, self.img_labels.iloc[idx, 0])
-        image = self.trans_in(read_image(img_path))
-        steering = torch.as_tensor(self.img_labels.iloc[idx, 1], dtype=torch.float32)
-        throttle = torch.as_tensor(self.img_labels.iloc[idx, 2], dtype=torch.float32)
-        return image, steering, throttle
+        img_path = os.path.join(self.img_dir, self.labels_df.iloc[idx, 0])
+        image = self.trans_in(decode_image(img_path))
+        target_steering = torch.as_tensor(self.labels_df.iloc[idx, 1], dtype=torch.float32)
+        target_throttle = torch.as_tensor(self.labels_df.iloc[idx, 2], dtype=torch.float32)
+        return image, target_steering, target_throttle
 
 
 # Define training process
@@ -88,42 +88,41 @@ def validate(dataloader, model, loss_fn):
             ep_loss = (ep_loss * i + batch_loss.item()) / (i + 1)
     return ep_loss
 
-
-# LOOP
 # Instantiate dataset
 data_dir = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     "data",
     data_datetime,
 )
-annotations_file = os.path.join(data_dir, "labels.csv")  # the name of the csv file
-img_dir = os.path.join(data_dir, "images")
+raw_labels_file_path = os.path.join(data_dir, "labels.csv")  # the name of the csv file
 # Split train/val (9:1)
-df = pd.read_csv(
-    annotations_file,
+raw_labels_df = pd.read_csv(
+    raw_labels_file_path,
     header=None,
     names=["image_id", "steering_value", "throttle_value"],
 )
 val_ids = np.arange(
-    int(len(df) / 2) - int(len(df) * 0.1),  # lower bound
-    int(len(df) / 2) + int(len(df) * 0.1),  # upper bound
+    int(len(raw_labels_df) / 2) - int(len(raw_labels_df) * 0.1),  # lower bound
+    int(len(raw_labels_df) / 2) + int(len(raw_labels_df) * 0.1),  # upper bound
 )
-val_annotates = df.iloc[val_ids]
-train_annotates = df.drop(val_ids)
-val_annotates = val_annotates.reset_index(drop=True)
-train_annotates = train_annotates.reset_index(drop=True)
-print(f"train size: {len(train_annotates)}, validation size: {len(val_annotates)}")
-train_annotates.to_csv(
+val_df = raw_labels_df.iloc[val_ids]
+train_df = raw_labels_df.drop(val_ids)
+val_df = val_df.reset_index(drop=True)
+train_df = train_df.reset_index(drop=True)
+print(f"train size: {len(train_df)}, validation size: {len(val_df)}")
+train_df.to_csv(
     os.path.join(data_dir, "labels_train.csv"), index=False, header=False
 )
-val_annotates.to_csv(
+val_df.to_csv(
     os.path.join(data_dir, "labels_val.csv"), index=False, header=False
 )
-train_label_file_path = os.path.join(data_dir, "labels_train.csv")
-val_label_file_path = os.path.join(data_dir, "labels_val.csv")
+# train_label_file_path = os.path.join(data_dir, "labels_train.csv")
+# val_label_file_path = os.path.join(data_dir, "labels_val.csv")
 # Create dataset and dataloader
-train_set = BearCartDataset(train_label_file_path, img_dir)
-val_set = BearCartDataset(val_label_file_path, img_dir)
+img_dir = os.path.join(data_dir, "images")
+# val_set = BearCartDataset(val_label_file_path, img_dir)
+train_set = BearCartDataset(os.path.join(data_dir, "labels_train.csv"), img_dir)
+val_set = BearCartDataset(os.path.join(data_dir, "labels_val.csv"), img_dir)
 train_dataloader = DataLoader(train_set, batch_size=128, shuffle=True)
 val_dataloader = DataLoader(val_set, batch_size=128)
 # Instantiate model and config training
@@ -136,6 +135,16 @@ best_loss = float("inf")  # best loss on test data
 since_best_counter = 0
 train_losses = []
 val_losses = []
+model_dir = os.path.join(data_dir, "models")
+if not os.path.exists(model_dir):
+    try:
+        os.makedirs(model_dir)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+
+
+# LOOP
 # Optimize model
 for ep in range(epochs):
     print(f"Epoch {ep + 1}\n-------------------------------")
@@ -145,23 +154,23 @@ for ep in range(epochs):
     train_losses.append(ep_train_loss)
     val_losses.append(ep_val_loss)
     model_name = f"ep{ep + 1}-mse{ep_val_loss:.4f}"
-    torch.save(model.state_dict(), os.path.join(data_dir, model_name))
+    torch.save(model.state_dict(), os.path.join(data_dir, f"models/{model_name}.pth"))
     # Early stopping
     if ep_val_loss < best_loss:
         best_loss = ep_val_loss
         since_best_counter = 0  # Reset counter if validation loss improved
         try:
-            os.remove(os.path.join(data_dir, f"{model_name}.pth"))
+            os.remove(os.path.join(data_dir, "best_model.pth"))
             print("Last best model file has been deleted successfully.")
         except FileNotFoundError:
-            print(f"File '{os.path.join(data_dir, f'{model_name}.pth')}' not found.")
+            print(f"File '{os.path.join(data_dir, 'best_model.pth')}' not found.")
         except Exception as e:
             print(f"Error occurred while deleting the file: {e}")
         torch.save(
-            model.state_dict(), os.path.join(data_dir, "models", f"best-ep{ep}.pth")
+            model.state_dict(), os.path.join(data_dir, "best_model.pth")
         )
         print(
-            f"Best model: {model_name} saved at {os.path.join(data_dir, 'models', f'best-ep{ep}.pth')}"
+            f"Best model: {model_name} saved at {os.path.join(data_dir, 'best_model.pth')}"
         )
     else:
         since_best_counter += 1
@@ -179,4 +188,4 @@ plt.xlabel("Epoch")
 plt.ylabel("MSE Loss")
 plt.legend()
 plt.title(model_name)
-plt.savefig(os.path.join(data_dir, f"{model_name}.png"))
+plt.savefig(os.path.join(data_dir, f"models/{model_name}.png"))
