@@ -36,7 +36,7 @@ class BearCartDataset(Dataset):
     """
 
     def __init__(self, annotations_file, img_dir):
-        self.img_labels = pd.read_csv(annotations_file)
+        self.img_labels = pd.read_csv(annotations_file, header=None)
         self.img_dir = img_dir
         self.trans_in = v2.Compose([v2.ToDtype(torch.float32, scale=True)])
         self.trans_out = v2.Compose([v2.ToDtype(torch.float32, scale=False)])
@@ -100,22 +100,21 @@ img_dir = os.path.join(
     data_dir, "images"
 )  # the name of the folder with all the images in it
 # Split train/val (9:1)
-df = pd.read_csv(annotations_file)
+df = pd.read_csv(annotations_file, header=None, names=['image_id', 'steering_value', 'throttle_value'])
 # val_ids = np.arange(int(len(df) * 0.1)) * 8
 val_ids = np.arange(
     int(len(df) / 2) - int(len(df) * 0.1), int(len(df) / 2) + int(len(df) * 0.1)
 )
-print(f"val ids: {val_ids}")
 val_annotates = df.iloc[val_ids]  # TODO: val annotates somehow kept 1st row in df
 train_annotates = df.drop(val_ids)
 val_annotates = val_annotates.reset_index(drop=True)
 train_annotates = train_annotates.reset_index(drop=True)
 print(f"train size: {len(train_annotates)}, validation size: {len(val_annotates)}")
-train_annotates.to_csv(os.path.join(data_dir, "train.csv"), index=False)
-val_annotates.to_csv(os.path.join(data_dir, "validation.csv"), index=False)
-train_label_file_path = os.path.join(data_dir, "train.csv")  # the name of the csv file
+train_annotates.to_csv(os.path.join(data_dir, "labels_train.csv"), index=False, header=False)
+val_annotates.to_csv(os.path.join(data_dir, "labels_val.csv"), index=False, header=False)
+train_label_file_path = os.path.join(data_dir, "labels_train.csv")  # the name of the csv file
 val_label_file_path = os.path.join(
-    data_dir, "validation.csv"
+    data_dir, "labels_val.csv"
 )  # the name of the csv file
 train_set = BearCartDataset(train_label_file_path, img_dir)
 val_set = BearCartDataset(val_label_file_path, img_dir)
@@ -123,59 +122,59 @@ train_dataloader = DataLoader(train_set, batch_size=128, shuffle=True)
 val_dataloader = DataLoader(val_set, batch_size=128)
 
 # Instantiate model
-# model = BearNet().to(DEVICE)  # choose the architecture class from cnn_network.py
-#
-# # Hyper-parameters
-# learning_rate = 0.001
-# optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
-# loss_fn = nn.MSELoss()
-# epochs = 64
-# patience = 7
-# best_loss = float("inf")  # best loss on test data
-# best_counter = 0
-# train_losses = []
-# val_losses = []
-# # Optimize the model
-# for ep in range(epochs):
-#     print(f"Epoch {ep + 1}\n-------------------------------")
-#     ep_train_loss = train(train_dataloader, model, loss_fn, optimizer)
-#     ep_test_loss = validate(val_dataloader, model, loss_fn)
-#     print(
-#         f"Epoch {ep + 1} training loss: {ep_train_loss}, testing loss: {ep_test_loss}"
-#     )
-#     train_losses.append(ep_train_loss)
-#     val_losses.append(ep_test_loss)
-#     # Early stopping
-#     if ep_test_loss < best_loss:
-#         best_loss = ep_test_loss
-#         best_counter = 0  # Reset counter if validation loss improved
-#         try:
-#             os.remove(os.path.join(data_dir, f"{model_name}.pth"))
-#             print("Last best model file has been deleted successfully.")
-#         except FileNotFoundError:
-#             print(f"File '{os.path.join(data_dir, f'{model_name}.pth')}' not found.")
-#         except Exception as e:
-#             print(f"Error occurred while deleting the file: {e}")
-#         model_name = (
-#             f"{model._get_name()}-{ep + 1}ep-{learning_rate}lr-{ep_test_loss:.4f}mse"
-#         )
-#         torch.save(model.state_dict(), os.path.join(data_dir, f"{model_name}.pth"))
-#         print(f"Best model saved as '{os.path.join(data_dir, f'{model_name}.pth')}'")
-#     else:
-#         best_counter += 1
-#         print(f"{best_counter} epochs since best model")
-#         if best_counter >= patience:
-#             print("Early stopping triggered!")
-#             break
-#
-# print("Optimize Done!")
-#
-# # Graph training process
-# plt.plot(range(len(train_losses)), train_losses, "b--", label="Training")
-# plt.plot(range(len(val_losses)), val_losses, "orange", label="Validation")
-# plt.grid(True)
-# plt.xlabel("Epoch")
-# plt.ylabel("MSE Loss")
-# plt.legend()
-# plt.title(model_name)
-# plt.savefig(os.path.join(data_dir, f"{model_name}.png"))
+model = BearNet().to(DEVICE)  # choose the architecture class from cnn_network.py
+
+# Hyper-parameters
+learning_rate = 0.001
+optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+loss_fn = nn.MSELoss()
+epochs = 64
+patience = 7
+best_loss = float("inf")  # best loss on test data
+best_counter = 0
+train_losses = []
+val_losses = []
+# Optimize the model
+for ep in range(epochs):
+    print(f"Epoch {ep + 1}\n-------------------------------")
+    ep_train_loss = train(train_dataloader, model, loss_fn, optimizer)
+    ep_test_loss = validate(val_dataloader, model, loss_fn)
+    print(
+        f"Epoch {ep + 1} training loss: {ep_train_loss}, testing loss: {ep_test_loss}"
+    )
+    train_losses.append(ep_train_loss)
+    val_losses.append(ep_test_loss)
+    # Early stopping
+    if ep_test_loss < best_loss:
+        best_loss = ep_test_loss
+        best_counter = 0  # Reset counter if validation loss improved
+        try:
+            os.remove(os.path.join(data_dir, f"{model_name}.pth"))
+            print("Last best model file has been deleted successfully.")
+        except FileNotFoundError:
+            print(f"File '{os.path.join(data_dir, f'{model_name}.pth')}' not found.")
+        except Exception as e:
+            print(f"Error occurred while deleting the file: {e}")
+        model_name = (
+            f"{model._get_name()}-{ep + 1}ep-{learning_rate}lr-{ep_test_loss:.4f}mse"
+        )
+        torch.save(model.state_dict(), os.path.join(data_dir, f"{model_name}.pth"))
+        print(f"Best model saved as '{os.path.join(data_dir, f'{model_name}.pth')}'")
+    else:
+        best_counter += 1
+        print(f"{best_counter} epochs since best model")
+        if best_counter >= patience:
+            print("Early stopping triggered!")
+            break
+
+print("Optimize Done!")
+
+# Graph training process
+plt.plot(range(len(train_losses)), train_losses, "b--", label="Training")
+plt.plot(range(len(val_losses)), val_losses, "orange", label="Validation")
+plt.grid(True)
+plt.xlabel("Epoch")
+plt.ylabel("MSE Loss")
+plt.legend()
+plt.title(model_name)
+plt.savefig(os.path.join(data_dir, f"{model_name}.png"))
