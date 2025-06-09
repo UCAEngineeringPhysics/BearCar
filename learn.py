@@ -39,7 +39,6 @@ class BearCartDataset(Dataset):
         self.img_labels = pd.read_csv(annotations_file, header=None)
         self.img_dir = img_dir
         self.trans_in = v2.Compose([v2.ToDtype(torch.float32, scale=True)])
-        self.trans_out = v2.Compose([v2.ToDtype(torch.float32, scale=False)])
 
     def __len__(self):
         return len(self.img_labels)
@@ -93,19 +92,23 @@ def validate(dataloader, model, loss_fn):
 # LOOP
 # Instantiate dataset
 data_dir = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "data", data_datetime
+    os.path.dirname(os.path.abspath(__file__)), 
+    "data",
+    data_datetime,
 )
 annotations_file = os.path.join(data_dir, "labels.csv")  # the name of the csv file
-img_dir = os.path.join(
-    data_dir, "images"
-)  # the name of the folder with all the images in it
+img_dir = os.path.join(data_dir, "images")
 # Split train/val (9:1)
-df = pd.read_csv(annotations_file, header=None, names=['image_id', 'steering_value', 'throttle_value'])
-# val_ids = np.arange(int(len(df) * 0.1)) * 8
-val_ids = np.arange(
-    int(len(df) / 2) - int(len(df) * 0.1), int(len(df) / 2) + int(len(df) * 0.1)
+df = pd.read_csv(
+    annotations_file, 
+    header=None, 
+    names=['image_id', 'steering_value', 'throttle_value'],
 )
-val_annotates = df.iloc[val_ids]  # TODO: val annotates somehow kept 1st row in df
+val_ids = np.arange(
+    int(len(df) / 2) - int(len(df) * 0.1),  # lower bound
+    int(len(df) / 2) + int(len(df) * 0.1),  # upper bound
+)
+val_annotates = df.iloc[val_ids]
 train_annotates = df.drop(val_ids)
 val_annotates = val_annotates.reset_index(drop=True)
 train_annotates = train_annotates.reset_index(drop=True)
