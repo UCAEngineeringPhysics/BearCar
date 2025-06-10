@@ -28,9 +28,14 @@ class BearCartDataset(Dataset):
     def __getitem__(self, idx):
         img_path = os.path.join(self.img_dir, self.labels_df.iloc[idx, 0])
         image = self.trans_in(decode_image(img_path))
-        target_steering = torch.as_tensor(self.labels_df.iloc[idx, 1], dtype=torch.float32)
-        target_throttle = torch.as_tensor(self.labels_df.iloc[idx, 2], dtype=torch.float32)
+        target_steering = torch.as_tensor(
+            self.labels_df.iloc[idx, 1], dtype=torch.float32
+        )
+        target_throttle = torch.as_tensor(
+            self.labels_df.iloc[idx, 2], dtype=torch.float32
+        )
         return image, target_steering, target_throttle
+
 
 # SETUP
 # Pass in data directory name as CLI argument
@@ -87,6 +92,7 @@ def validate(dataloader, model, loss_fn):
             batch_loss = loss_fn(pred, target)
             ep_loss = (ep_loss * i + batch_loss.item()) / (i + 1)
     return ep_loss
+
 
 # Instantiate dataset
 data_dir = os.path.join(
@@ -153,7 +159,9 @@ for ep in range(max_epochs):
     print(f"Epoch {ep + 1}\n-------------------------------")
     ep_train_loss = train(train_dataloader, model, loss_fn, optimizer)
     ep_val_loss = validate(val_dataloader, model, loss_fn)
-    print(f"Epoch {ep + 1} training loss: {ep_train_loss}, validation loss: {ep_val_loss}")
+    print(
+        f"Epoch {ep + 1} training loss: {ep_train_loss}, validation loss: {ep_val_loss}"
+    )
     train_losses.append(ep_train_loss)
     val_losses.append(ep_val_loss)
     model_name = f"ep{ep + 1}-mse{ep_val_loss:.4f}"
@@ -169,9 +177,7 @@ for ep in range(max_epochs):
             print(f"File '{os.path.join(data_dir, 'best_model.pth')}' not found.")
         except Exception as e:
             print(f"Error occurred while deleting the file: {e}")
-        torch.save(
-            model.state_dict(), os.path.join(data_dir, "best_model.pth")
-        )
+        torch.save(model.state_dict(), os.path.join(data_dir, "best_model.pth"))
         print(
             f"Best model: {model_name} saved at {os.path.join(data_dir, 'best_model.pth')}"
         )
@@ -181,8 +187,7 @@ for ep in range(max_epochs):
         if since_best_counter >= patience:
             print("Early stopping triggered!")
             break
-print("Optimize Done!")
-
+print("Optimize Done!")  # debug
 # Graph training process
 plt.plot(range(len(train_losses)), train_losses, "b--", label="Training")
 plt.plot(range(len(val_losses)), val_losses, "orange", label="Validation")

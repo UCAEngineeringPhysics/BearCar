@@ -2,8 +2,6 @@ import sys
 import os
 import json
 from time import time
-from datetime import datetime
-import csv
 import serial
 import pygame
 import cv2 as cv
@@ -24,11 +22,11 @@ with open(params_file_path, "r") as file:
 # Load model
 model_path = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    'pilot.pth',  # BearCart/pilot.pth
+    "pilot.pth",  # BearCart/pilot.pth
 )
 to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
 pilot = BearNet()
-pilot.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+pilot.load_state_dict(torch.load(model_path, map_location=torch.device("cpu")))
 pilot.eval()
 # Init serial port
 messenger = serial.Serial(port="/dev/ttyACM0", baudrate=115200)
@@ -130,7 +128,7 @@ try:
             duty_th = params["throttle_neutral"]
         msg = f"{mode}, {duty_st}, {duty_th}\n".encode("utf-8")
         messenger.write(msg)
- 
+
 # Take care terminate signal (Ctrl-c)
 except KeyboardInterrupt:
     cv.destroyAllWindows()
