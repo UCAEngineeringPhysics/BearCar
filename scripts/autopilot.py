@@ -22,7 +22,8 @@ with open(params_file_path, "r") as file:
 # Load model
 model_path = os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "pilot.pth",  # BearCart/pilot.pth
+    "pilot_models",
+    "pilot.pth",  # BearCart/pilot_models/pilot.pth
 )
 to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
 pilot = BearNet()
