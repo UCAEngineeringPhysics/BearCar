@@ -27,7 +27,9 @@ model_path = os.path.join(
 )
 to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
 pilot = BearNet()
-pilot.load_state_dict(torch.load(model_path, map_location=torch.device("cpu")))
+pilot.load_state_dict(
+    torch.load(model_path, weights_only=True, map_location=torch.device("cpu"))
+)
 pilot.eval()
 # Init serial port
 messenger = serial.Serial(port="/dev/ttyACM0", baudrate=115200)
@@ -89,7 +91,7 @@ try:
         # Log frame rate
         since_start = time() - start_stamp
         frame_rate = frame_counts / since_start
-        print(f"frame rate: {frame_rate}")  # debug
+        # print(f"frame rate: {frame_rate}")  # debug
         for e in pygame.event.get():  # read controller input
             if e.type == pygame.JOYBUTTONDOWN:
                 if js.get_button(params["stop_btn"]):  # emergency stop
