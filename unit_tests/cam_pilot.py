@@ -102,7 +102,12 @@ try:
         # Predict steer and throttle
         img_tensor = to_tensor(frame)
         with torch.no_grad():
-            pred_st, pred_th = map(float, random_pilot(img_tensor[None, :]).squeeze())
+            pred_st, pred_th = map(
+                float,
+                torch.clamp(
+                    random_pilot(img_tensor[None, :]).squeeze(), min=-0.999, max=0.999
+                ),
+            )
         print(pred_st, pred_th)
         if cv.waitKey(1) == ord("q"):
             print("Quit signal received.")
