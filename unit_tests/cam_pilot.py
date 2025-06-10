@@ -52,7 +52,9 @@ random_pilot.eval()
 to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
 # Load configs
 params_file_path = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "configs.json"
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "scripts",
+    "configs.json",
 )
 with open(params_file_path, "r") as file:
     params = json.load(file)
@@ -91,12 +93,12 @@ try:
         if frame is None:
             print("No frame received. TERMINATE!")
             break
-        cv.imshow("Camera", frame)
+        # cv.imshow("Camera", frame)  # debug
         # Log frame rate
         frame_counts += 1
         since_start = time() - start_stamp
         frame_rate = frame_counts / since_start
-        print(f"frame rate: {frame_rate}")  # debug
+        # print(f"frame rate: {frame_rate}")  # debug
         # Predict steer and throttle
         img_tensor = to_tensor(frame)
         with torch.no_grad():
