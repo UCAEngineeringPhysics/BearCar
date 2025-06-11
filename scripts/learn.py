@@ -143,7 +143,7 @@ if not os.path.exists(model_dir):
             raise
 # Instantiate model and config training
 model = BearNet().to(DEVICE)  # choose the architecture class from cnn_network.py
-optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 loss_fn = nn.MSELoss()
 max_epochs = 64
 patience = 7
