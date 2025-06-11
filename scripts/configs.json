@@ -1,6 +1,6 @@
 {
     "steering_joy_axis": 0,
-    "throttle_joy_axis": 1,
+    "throttle_joy_axis": 4,
     "record_btn": 5,
     "pause_btn": 4,
     "stop_btn": 0,
@@ -12,5 +12,5 @@
     "throttle_fwd_range": 300000,
     "throttle_rev_range": 400000,
     "throttle_limit": 0.3,
-    "frame_rate": 21
+    "frame_rate": 24
 }

@@ -91,7 +91,7 @@ try:
         # Log frame rate
         since_start = time() - start_stamp
         frame_rate = frame_counts / since_start
-        # print(f"frame rate: {frame_rate}")  # debug
+        print(f"frame rate: {frame_rate}")  # debug
         for e in pygame.event.get():  # read controller input
             if e.type == pygame.JOYBUTTONDOWN:
                 if js.get_button(params["stop_btn"]):  # emergency stop
@@ -115,7 +115,7 @@ try:
                     pilot(img_tensor[None, :]).squeeze(), min=-0.999, max=0.999
                 ),
             )
-        print(f"predicted actions: {pred_st}, {pred_th}")  # debug
+        # print(f"predicted actions: {pred_st}, {pred_th}")  # debug
         # Encode steering value to dutycycle in nanosecond
         duty_st = params["steering_center"] + int(params["steering_range"] * pred_st)
         # Encode throttle value to dutycycle in nanosecond
