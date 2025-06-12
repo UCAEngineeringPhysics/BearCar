@@ -159,16 +159,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-# Freecad backup
-*.FCBak
-
-# Data directory
-*data/
-
-# VSCode
-*.micropico
-*.vscode/
-
 # mkdocs
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -240,3 +230,16 @@ ENV/
 
 # MkDocs documentation
 site*/
+
+# Freecad backup
+*.FCBak
+
+# Data directory
+*data/
+
+# VSCode
+*.micropico
+*.vscode/
+
+# autopilot models
+*.pth
