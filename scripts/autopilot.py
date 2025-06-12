@@ -43,7 +43,10 @@ cv.startWindowThread()
 cam = Picamera2()
 cam.configure(
     cam.create_preview_configuration(
-        main={"format": "RGB888", "size": (224, 224)},
+        main={
+            "format": "BGR888",
+            "size": (224, 224),
+        },  # WARN: has to be BGR to work with pytorch
         controls={
             "FrameDurationLimits": (
                 int(1_000_000 / params["frame_rate"]),
