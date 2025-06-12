@@ -5,6 +5,7 @@ If logged in remotely, please enable X11 forwarding, either `ssh -X` or `ssh -Y`
 import sys
 import os
 import json
+import numpy as np
 import cv2 as cv
 from picamera2 import Picamera2
 from time import time
@@ -13,7 +14,9 @@ print("Please adjust lens focus if image is blurry")
 # SETUP
 # Load configs
 params_file_path = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "configs.json"
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "scripts",
+    "configs.json",
 )
 with open(params_file_path, "r") as file:
     params = json.load(file)
@@ -23,6 +26,7 @@ cam = Picamera2()
 cam.configure(
     cam.create_preview_configuration(
         main={"format": "RGB888", "size": (224, 224)},
+        # main={"format": "BGR888", "size": (224, 224)},  # autopilot prefers BGR
         controls={
             "FrameDurationLimits": (
                 int(1_000_000 / params["frame_rate"]),
@@ -47,7 +51,7 @@ start_stamp = time()
 
 # LOOP
 try:
-    while True:
+    for _ in range(5 * params["frame_rate"]):
         if frame is None:
             print("No frame received. TERMINATE!")
             break
@@ -66,5 +70,6 @@ except KeyboardInterrupt:
     cv.destroyAllWindows()
     sys.exit()
 finally:
+    np.save("image_array.npy", im)
     cv.destroyAllWindows()
     sys.exit()
