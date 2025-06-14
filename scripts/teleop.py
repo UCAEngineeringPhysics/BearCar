@@ -63,11 +63,13 @@ ax_val_th = 0.0  # neutral throttle
 is_stopped = False
 is_paused = True
 is_recording = False
-mode = "p"
 # Init timer for FPS computing
 start_stamp = time()
 frame_counts = 0
 ave_frame_rate = 0.0
+# variables
+mode = "p"
+record_counts = 0
 
 # LOOP
 try:
@@ -85,7 +87,7 @@ try:
         # Log frame rate
         since_start = time() - start_stamp
         frame_rate = frame_counts / since_start
-        print(f"frame rate: {frame_rate}")  # debug
+        # print(f"frame rate: {frame_rate}")  # debug
         # Process gamepad data
         for e in pygame.event.get():  # read controller input
             if e.type == pygame.JOYBUTTONDOWN:
@@ -140,13 +142,20 @@ try:
         messenger.write(drive_msg)
         # Log data
         action = [act_st, act_th]
-        print(f"action: {action}")  # debug
+        # print(f"action: {action}")  # debug
         if is_recording:
             cv.imwrite(image_dir + "/" + str(frame_counts) + ".jpg", frame)
             label = [str(frame_counts) + ".jpg"] + action
             with open(label_path, "a+", newline="") as f:
                 writer = csv.writer(f)
                 writer.writerow(label)
+            record_counts += 1
+            print(f"recorded frame counts: {record_counts}")  # debug
+            if record_counts == params["record_cap"]:  # pause recording if max reached
+                mode = "p"
+                is_paused = True
+                is_recording = False
+
 # Take care terminate signal (Ctrl-c)
 except KeyboardInterrupt:
     cv.destroyAllWindows()
