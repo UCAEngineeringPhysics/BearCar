@@ -1,5 +1,5 @@
 import sys
-import os
+from pathlib import Path
 import json
 from time import time
 import serial
@@ -8,25 +8,20 @@ import cv2 as cv
 from picamera2 import Picamera2
 import torch
 from torchvision.transforms import v2
-from pilot_architecture import BearNet
+from cnn_architectures.bear_net import BearNet
 
 
 # SETUP
+# Define paths
+bc_dir = Path(__file__).parents[1]
 # Load configs
-params_file_path = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    "configs.json",
-)
+params_file_path = str(bc_dir.joinpath("scripts", "configs.json"))
 with open(params_file_path, "r") as file:
     params = json.load(file)
-# Load model
-model_path = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "pilot_models",
-    "pilot.pth",  # BearCart/pilot_models/pilot.pth
-)
 to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
+# Load model
 pilot = BearNet()
+model_path = str(bc_dir.joinpath("pilot_models", "pilot.pth"))
 pilot.load_state_dict(
     torch.load(model_path, weights_only=True, map_location=torch.device("cpu"))
 )
@@ -44,9 +39,9 @@ cam = Picamera2()
 cam.configure(
     cam.create_preview_configuration(
         main={
-            "format": "BGR888",
+            "format": "RGB888",
             "size": (224, 224),
-        },  # WARN: has to be BGR to work with pytorch
+        },  # WARN: BGR for autopilot
         controls={
             "FrameDurationLimits": (
                 int(1_000_000 / params["frame_rate"]),
@@ -110,7 +105,7 @@ try:
                     else:
                         mode = "a"
         # Predict steer and throttle
-        img_tensor = to_tensor(frame)
+        img_tensor = to_tensor(frame[:, :, [2, 1, 0]])  # WARN: autopilot needs BGR
         with torch.no_grad():
             pred_st, pred_th = map(
                 float,

@@ -1,5 +1,5 @@
 import sys
-import os
+from pathlib import Path
 import json
 from time import time
 from datetime import datetime
@@ -11,10 +11,14 @@ from picamera2 import Picamera2
 
 
 # SETUP
+# Define paths
+bc_dir = Path(__file__).parents[1]
+data_dir = bc_dir.joinpath("data")
+image_dir = str(data_dir.joinpath(datetime.now().strftime("%Y-%m-%d-%H-%M"), "images"))
+Path(image_dir).mkdir(parents=True, exist_ok=True)
+label_path = str(Path(image_dir).parent.joinpath("labels.csv"))
 # Load configs
-params_file_path = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), "configs.json"
-)
+params_file_path = str(bc_dir.joinpath("scripts", "configs.json"))
 with open(params_file_path, "r") as file:
     params = json.load(file)
 # Init serial port
@@ -25,19 +29,6 @@ pygame.display.init()
 pygame.joystick.init()
 js = pygame.joystick.Joystick(0)
 # Create data directory
-image_dir = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "data",
-    datetime.now().strftime("%Y-%m-%d-%H-%M"),
-    "images/",
-)
-if not os.path.exists(image_dir):
-    try:
-        os.makedirs(image_dir)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            raise
-label_path = os.path.join(os.path.dirname(os.path.dirname(image_dir)), "labels.csv")
 # Init camera
 cv.startWindowThread()
 cam = Picamera2()
@@ -151,7 +142,7 @@ try:
         action = [act_st, act_th]
         print(f"action: {action}")  # debug
         if is_recording:
-            cv.imwrite(image_dir + str(frame_counts) + ".jpg", frame)
+            cv.imwrite(image_dir + "/" + str(frame_counts) + ".jpg", frame)
             label = [str(frame_counts) + ".jpg"] + action
             with open(label_path, "a+", newline="") as f:
                 writer = csv.writer(f)
