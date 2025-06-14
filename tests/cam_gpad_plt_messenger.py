@@ -1,5 +1,5 @@
 import sys
-import os
+from pathlib import Path
 import json
 from time import time
 import serial
@@ -7,53 +7,23 @@ import pygame
 import cv2 as cv
 from picamera2 import Picamera2
 import torch
-import torch.nn as nn
 from torchvision.transforms import v2
 
 
 # SETUP
-# Define BearNet
-class BearNet(nn.Module):
-    def __init__(self):
-        super(BearNet, self).__init__()
-        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3)
-        self.conv2 = nn.Conv2d(64, 64, kernel_size=3)
-        self.conv3 = nn.Conv2d(64, 128, kernel_size=3, stride=2)
-        self.conv4 = nn.Conv2d(128, 128, kernel_size=3)
-        self.conv5 = nn.Conv2d(128, 256, kernel_size=3, stride=2)
-        self.conv6 = nn.Conv2d(256, 256, kernel_size=3)
-        self.conv7 = nn.Conv2d(256, 256, kernel_size=3)
-        self.relu = nn.ReLU()
-        self.max_pool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        self.fc1 = nn.Linear(256 * 7 * 7, 128)
-        self.fc2 = nn.Linear(128, 128)
-        self.fc3 = nn.Linear(128, 2)
+# Define paths
+bc_dir = Path(__file__).parents[1]
+# Import BearNet
+sys.path.append(str(bc_dir.joinpath("scripts", "cnn_architectures")))
+# print(sys.path)  # debug
+from bear_net import BearNet
 
-    def forward(self, x):  # 224
-        x = self.relu(self.conv1(x))  # (224 - 7 + 2 * 3) / 2 + 1 = 112.5
-        x = self.max_pool(x)  # (112 - 3 + 2 * 1) / 2 + 1 = 56.5
-        x = self.relu(self.conv2(x))  # (56 - 3) + 1 = 54
-        x = self.relu(self.conv3(x))  # (54 - 3) / 2 + 1 = 26.5
-        x = self.relu(self.conv4(x))  # (26 - 3) + 1 = 24
-        x = self.relu(self.conv5(x))  # (24 - 3) / 2 + 1 = 11.5
-        x = self.relu(self.conv6(x))  # (11 - 3) + 1 = 9
-        x = self.relu(self.conv7(x))  # (9 - 3) + 1 = 7
-        x = x.view(x.size(0), -1)  # flatten
-        x = self.relu(self.fc1(x))
-        x = self.relu(self.fc2(x))
-        y = self.fc3(x)
-        return y
-
-
-# Instantiate BearNet
 random_pilot = BearNet()
 random_pilot.eval()
 # Config image transforms
 to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
 # Load configs
-params_file_path = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "configs.json"
-)
+params_file_path = str(bc_dir.joinpath("scripts", "configs.json"))
 with open(params_file_path, "r") as file:
     params = json.load(file)
 # Init serial port
@@ -137,7 +107,7 @@ try:
                     random_pilot(img_tensor[None, :]).squeeze(), min=-0.999, max=0.999
                 ),
             )
-        print(f"predicted actions: {pred_st}, {pred_th}")  # debug
+        print(f"guessed actions: {pred_st}, {pred_th}")  # debug
         # Encode steering value to dutycycle in nanosecond
         duty_st = params["steering_center"] + int(params["steering_range"] * pred_st)
         # Encode throttle value to dutycycle in nanosecond

@@ -1,5 +1,5 @@
 import sys
-import os
+from pathlib import Path
 import serial
 import pygame
 import json
@@ -8,9 +8,7 @@ from time import sleep
 
 # SETUP
 # Load configs
-params_file_path = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "configs.json"
-)
+params_file_path = str(Path(__file__).parents[1].joinpath("scripts", "configs.json"))
 with open(params_file_path, "r") as file:
     params = json.load(file)
 # Init serial port

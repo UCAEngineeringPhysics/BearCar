@@ -1,5 +1,5 @@
 import sys
-import os
+from pathlib import Path
 import json
 from time import time
 import serial
@@ -10,9 +10,7 @@ from picamera2 import Picamera2
 
 # SETUP
 # Load configs
-params_file_path = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "configs.json"
-)
+params_file_path = str(Path(__file__).parents[1].joinpath("scripts", "configs.json"))
 with open(params_file_path, "r") as file:
     params = json.load(file)
 # Init serial port
@@ -66,10 +64,10 @@ try:
             print("No frame received. TERMINATE!")
             break
         frame_counts += 1
-        # cv.imshow("camera", frame)
-        # if cv.waitKey(1) == ord("q"):  # [q]uit
-        #     print("Quit signal received.")
-        #     break
+        cv.imshow("camera", frame)
+        if cv.waitKey(1) == ord("q"):  # [q]uit
+            print("Quit signal received.")
+            break
         # Log frame rate
         since_start = time() - start_stamp
         frame_rate = frame_counts / since_start

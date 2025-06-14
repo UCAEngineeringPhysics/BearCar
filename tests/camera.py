@@ -3,7 +3,7 @@ If logged in remotely, please enable X11 forwarding, either `ssh -X` or `ssh -Y`
 """
 
 import sys
-import os
+from pathlib import Path
 import json
 import numpy as np
 import cv2 as cv
@@ -13,11 +13,7 @@ from time import time
 print("Please adjust lens focus if image is blurry")
 # SETUP
 # Load configs
-params_file_path = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-    "scripts",
-    "configs.json",
-)
+params_file_path = str(Path(__file__).parents[1].joinpath("scripts", "configs.json"))
 with open(params_file_path, "r") as file:
     params = json.load(file)
 # Config Pi Camera
@@ -51,7 +47,7 @@ start_stamp = time()
 
 # LOOP
 try:
-    for _ in range(5 * params["frame_rate"]):
+    for _ in range(10 * params["frame_rate"]):
         if frame is None:
             print("No frame received. TERMINATE!")
             break
