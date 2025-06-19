@@ -12,6 +12,7 @@ while is_lifted != 'n':
     print("Please lift BearCart up and remove everything that is making the contact")
     is_lifted = input("Is something contacting any wheel of BearCart? (Y/n)")
 print("Hold tight! You are about to unleash the beast!")
+print("Verify light order: green -> blue -> purple -> green -> yellow -> red")
 for i in reversed(range(3)):
     print(i+1)
     sleep(1)
