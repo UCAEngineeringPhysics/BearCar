@@ -11,6 +11,9 @@ while is_contacted is not "n":
     print("Please lift BearCar up and remove everything that is making the contact\n")
     is_contacted = input("Is anything touching any wheel of BearCar? (Y/n)")
 print("Hold tight! Unleash the beast!!!")
+for i in reversed(range(3)):
+    print(i+1)
+    sleep(1)
 
 # SETUP
 throttle = PWM(Pin(16))
