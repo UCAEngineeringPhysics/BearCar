@@ -1,6 +1,13 @@
 from machine import Pin, PWM, reset
 from time import sleep
 
+# SAFETY CHECK
+is_contacted = "y"
+while is_contacted is not "n":
+    print("Please lift BearCar up and remove everything that is making the contact")
+    is_contacted = input("Is anything touching any wheel of BearCar? (Y/n)")
+print("BearCar is about to turn!!!")
+
 # SETUP
 servo = PWM(Pin(17))
 servo.freq(50)
