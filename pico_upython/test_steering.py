@@ -13,12 +13,12 @@ servo = PWM(Pin(17))
 servo.freq(50)
 
 # LOOP
-print("<<<--- <<-- <-W\n")
+print("<<<--- <<-- <- W -> -->> --->>>\n")
 for i in range(1000000, 2000000, 10000):
     servo.duty_ns(i)
     print(i)
     sleep(0.2)
-print("W -> -->> --->>>\n")
+print("--->>> -->> -> W <- <<-- <<<---- \n")
 for i in reversed(range(1000000, 2000000, 10000)):
     servo.duty_ns(i)
     print(i)
