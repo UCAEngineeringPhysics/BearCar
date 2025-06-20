@@ -2,10 +2,10 @@ from machine import Pin, PWM, reset
 from time import sleep
 
 # SAFETY CHECK
-is_lifted = input("Is something contacting any wheel of BearCart? (Y/n)")
-while is_lifted is not "n":
-    print("Please lift BearCart up and remove everything that is making the contact")
-    is_lifted = input("Is something contacting any wheel of BearCart? (Y/n)")
+is_contacted = "y"
+while is_contacted is not "n":
+    print("Please lift BearCar up and remove everything that is making the contact\n")
+    is_contacted = input("Is anything touching any wheel of BearCar? (Y/n)")
 print("Hold tight! Unleash the beast!!!")
 
 # SETUP
