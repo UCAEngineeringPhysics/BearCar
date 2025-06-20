@@ -2,6 +2,10 @@ from machine import Pin, PWM, reset
 from time import sleep
 
 # SAFETY CHECK
+is_goggled = "n"
+while is_goggled is not "y":
+    print("Please put on eye protections!\n")
+    is_goggled = input("Are goggles on your face? (y/N)")
 is_contacted = "y"
 while is_contacted is not "n":
     print("Please lift BearCar up and remove everything that is making the contact\n")
