@@ -1,6 +1,6 @@
 # BearCar
 
-![bearcar_portrait](/images/bearcar_portriat.png)
+![bearcar_portrait](/images/bearcar_portrait.png)
 
 BearCar is an autonomous driving platform based on an 1:16 RC car and Raspberry Pi.
 Visit [documentations](https://ucaengineeringphysics.github.io/bearcart_docs/) for more details.
