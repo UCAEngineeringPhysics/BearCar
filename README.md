@@ -26,6 +26,8 @@ cd ~/BearCar
 ./setup_pi_env.sh
 ```
 
+### Hook Up the Gamepad
+
 ### Have Fun Racing
 
 ```bash
