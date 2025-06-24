@@ -21,7 +21,7 @@ with open(params_file_path, "r") as file:
 to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
 # Load model
 pilot = BearNet()
-model_path = str(bc_dir.joinpath("pilot_models", "pilot.pth"))
+model_path = str(bc_dir.joinpath("models", "pilot.pth"))
 pilot.load_state_dict(
     torch.load(model_path, weights_only=True, map_location=torch.device("cpu"))
 )
