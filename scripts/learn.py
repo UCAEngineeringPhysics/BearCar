@@ -12,7 +12,7 @@ from cnn_architectures.bear_net import BearNet
 
 
 # Define custom dataset
-class BearCartDataset(Dataset):
+class BearCarDataset(Dataset):
     """
     Customized dataset
     """
@@ -129,8 +129,8 @@ val_df.to_csv(
 )
 # Create dataset and dataloader
 img_dir = os.path.join(data_dir, "images")
-train_set = BearCartDataset(os.path.join(data_dir, "labels_train.csv"), img_dir)
-val_set = BearCartDataset(os.path.join(data_dir, "labels_val.csv"), img_dir)
+train_set = BearCarDataset(os.path.join(data_dir, "labels_train.csv"), img_dir)
+val_set = BearCarDataset(os.path.join(data_dir, "labels_val.csv"), img_dir)
 train_dataloader = DataLoader(train_set, batch_size=128, shuffle=True)
 val_dataloader = DataLoader(val_set, batch_size=128)
 # Create directory for saving trained models
