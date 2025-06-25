@@ -146,7 +146,7 @@ model = BearNet().to(DEVICE)  # choose the architecture class from cnn_network.p
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 loss_fn = nn.MSELoss()
 max_epochs = 64
-patience = 7
+patience = 5
 best_loss = float("inf")  # best loss on validation data
 since_best_counter = 0
 train_losses = []
