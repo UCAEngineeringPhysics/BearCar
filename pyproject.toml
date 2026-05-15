@@ -1,42 +1,42 @@
 [project]
 name = "bearcar"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.2.0"
+description = "Autonomous racing"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = "==3.13.5"
 dependencies = [
   "matplotlib>=3.10.3",
-  "numpy<2.0.0",
+  "numpy>=2.4.5",
   "opencv-python>=4.11.0.86",
-  "pandas>=2.3.0",
+  "pandas>=3.0.1",
   "pygame>=2.6.1",
   "pyserial>=3.5",
   "rshell>=0.0.36",
-  "ruff>=0.11.13",
-  "torch>=2.7.0",
+  "ruff>=0.15.13",
+  "torch>=2.12.0",
+  "torchvision>=0.27.0",
   "torchinfo>=1.8.0",
-  "torchvision>=0.22.0",
 ]
 
 [dependency-groups]
 rpi = [
-  "numpy==1.26.4",
-  "opencv-python==4.11.0.86",
+  "numpy==2.4.5",
+  "opencv-python==4.13.0.92",
   "pygame==2.6.1",
   "pyserial==3.5",
   "rshell==0.0.36",
-  "ruff>=0.11.13",
-  "torch==2.7.0",
+  "ruff==0.15.13",
+  "torch==2.12.0",
+  "torchvision==0.27.0",
   "torchinfo==1.8.0",
-  "torchvision==0.22.0",
 ]
 server = [
   "matplotlib==3.10.3",
-  "numpy==1.26.4",
-  "pandas==2.3.0",
+  "numpy==2.4.5",
+  "pandas==3.0.1",
   "pygame==2.6.1",
-  "ruff>=0.11.13",
-  "torch==2.7.0",
+  "ruff>=0.15.13",
+  "torch==2.12.0",
+  "torchvision==0.27.0",
   "torchinfo==1.8.0",
-  "torchvision==0.22.0",
 ]
