@@ -10,7 +10,7 @@ import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
 
 
-def benchmark_model(model, input_size=(224, 224), epochs=20, batch_size=64, lr=3e-4):
+def benchmark_model(model, input_size=(224, 224), epochs=20, batch_size=64, lr=1e-4):
     """
     Trains and evaluates a PyTorch model on Imagenette.
     Accepts input_size as an int (square) or a tuple (height, width).
