@@ -1,4 +1,4 @@
-from benchy import benchmark_model
+from benchy import benchmark
 import torch.nn as nn
 
 
@@ -38,7 +38,6 @@ class ImageBearNet(nn.Module):
         return y
 
 
-image_bear_net = ImageBearNet()
-
-# Dynamically scales the dataloader inputs to 112x112
-trained_tiny = benchmark_model(image_bear_net, epochs=20)
+bearnet_scratch = ImageBearNet()
+print("Benchmarking BearNet...")
+bearnet_trained = benchmark(bearnet_scratch, epochs=20)

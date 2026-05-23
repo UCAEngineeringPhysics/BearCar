@@ -1,4 +1,4 @@
-from benchy import benchmark_model
+from benchy import benchmark
 import torch.nn as nn
 
 
@@ -30,7 +30,6 @@ class ImageDonkeyNet(nn.Module):
         return x
 
 
-image_donkey_net = ImageDonkeyNet()
-
-# Dynamically scales the dataloader inputs to 112x112
-trained_tiny = benchmark_model(image_donkey_net,input_size=(120, 160), epochs=20)
+donkeynet_scratch = ImageDonkeyNet()
+print("Benchmarking DonkeyNet...")
+donkeynet_trained = benchmark(donkeynet_scratch, input_size=(160, 120), epochs=20)
