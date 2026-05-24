@@ -21,18 +21,16 @@ for i in reversed(range(3)):
 messenger = Serial(port="/dev/ttyACM0", baudrate=115200, timeout=0.01)
 print(messenger.name)
 # Constants
-modes = ("n", "r", "a", "n")
-dutycycles = (1_350_000, 1_400_000, 1_650_000, 1_600_000)
+modes = ("n", "r", "a", "s")
+dutycycles = (1_200_000, 1_400_000, 1_600_000, 1_500_000)
 # Variables
 st_dc = 1_500_000
 th_dc = 1_500_000
-sleep(3)  # Wait briefly for the connection to stabilize
 
 # LOOP
-# tx_msg = f"s,{st_dc},{th_dc}\n".encode("utf-8")
-# messenger.write(f"s,{1_500_000},{1_500_000}\n".encode("utf-8"))
-# sleep(3)
-
+sleep(3)
+# messenger.write(f"s,{st_dc},{th_dc}\n".encode("utf-8"))
+# sleep(2)
 for i in range(100):
     # messenger.write(f"Hello from RPi: {i}\n".encode('utf-8'))  # simple test
     if i < 80:
