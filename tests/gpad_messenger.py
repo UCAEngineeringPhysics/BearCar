@@ -12,7 +12,7 @@ params_file_path = str(Path(__file__).parents[1].joinpath("scripts", "configs.js
 with open(params_file_path, "r") as file:
     params = json.load(file)
 # Init serial port
-messenger = serial.Serial(port="/dev/ttyACM0", baudrate=115200)
+messenger = serial.Serial(port="/dev/ttyACM0", baudrate=115200, timeout=0.01)
 print(f"Pico is connected to port: {messenger.name}")
 # Init controller
 pygame.display.init()
@@ -79,10 +79,14 @@ try:
                 mode = "n"
         msg = f"{mode}, {duty_st}, {duty_th}\n".encode("utf-8")
         messenger.write(msg)
+        if messenger.inWaiting() > 0:
+            reply = messenger.readline()
+            reply = reply.decode("utf-8", "ignore")
+            print(f"[Pico message]: {reply}")
         # Log action
         print(f"action: {act_st, act_th}")  # debug
-        # 20Hz
-        sleep(0.05)
+        # 50Hz
+        sleep(0.02)
 
 # Take care terminal signal (Ctrl-c)
 except KeyboardInterrupt:
