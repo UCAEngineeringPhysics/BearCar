@@ -26,37 +26,49 @@ pulsewidths = (1_500_000, 1_600_000, 1_400_000)
 
 # LOOP
 sleep(3)  # Stablize communication
-messenger.write(f"{modes[0]},{pulsewidths[0]},{pulsewidths[0]}\n".encode("utf-8"))  # standby
+messenger.write(
+    f"{modes[0]},{pulsewidths[0]},{pulsewidths[0]}\n".encode("utf-8")
+)  # standby
 if messenger.inWaiting() > 0:
     reply = messenger.readline()
     reply = reply.decode("utf-8", "ignore")
     print(f"[Pico message]: {reply}")
 sleep(2)
-messenger.write(f"{modes[1]},{pulsewidths[0]},{pulsewidths[0]}\n".encode("utf-8"))  # pause
+messenger.write(
+    f"{modes[1]},{pulsewidths[0]},{pulsewidths[0]}\n".encode("utf-8")
+)  # pause
 if messenger.inWaiting() > 0:
     reply = messenger.readline()
     reply = reply.decode("utf-8", "ignore")
     print(f"[Pico message]: {reply}")
 sleep(2)
-messenger.write(f"{modes[2]},{pulsewidths[1]},{pulsewidths[1]}\n".encode("utf-8"))  # normal
+messenger.write(
+    f"{modes[2]},{pulsewidths[1]},{pulsewidths[1]}\n".encode("utf-8")
+)  # normal
 if messenger.inWaiting() > 0:
     reply = messenger.readline()
     reply = reply.decode("utf-8", "ignore")
     print(f"[Pico message]: {reply}")
 sleep(2)
-messenger.write(f"{modes[3]},{pulsewidths[2]},{pulsewidths[1]}\n".encode("utf-8"))  # recording
+messenger.write(
+    f"{modes[3]},{pulsewidths[2]},{pulsewidths[1]}\n".encode("utf-8")
+)  # recording
 if messenger.inWaiting() > 0:
     reply = messenger.readline()
     reply = reply.decode("utf-8", "ignore")
     print(f"[Pico message]: {reply}")
 sleep(2)
-messenger.write(f"{modes[4]},{pulsewidths[2]},{pulsewidths[2]}\n".encode("utf-8"))  # autopilot
+messenger.write(
+    f"{modes[4]},{pulsewidths[2]},{pulsewidths[2]}\n".encode("utf-8")
+)  # autopilot
 if messenger.inWaiting() > 0:
     reply = messenger.readline()
     reply = reply.decode("utf-8", "ignore")
     print(f"[Pico message]: {reply}")
 sleep(2)
-messenger.write(f"{modes[5]},{pulsewidths[0]},{pulsewidths[0]}\n".encode("utf-8"))  # error
+messenger.write(
+    f"{modes[5]},{pulsewidths[0]},{pulsewidths[0]}\n".encode("utf-8")
+)  # error
 if messenger.inWaiting() > 0:
     reply = messenger.readline()
     reply = reply.decode("utf-8", "ignore")
