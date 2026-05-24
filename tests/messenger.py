@@ -12,7 +12,7 @@ while is_lifted != "n":
     print("Please lift BearCart up and remove everything that is making the contact")
     is_lifted = input("Is something contacting any wheel of BearCart? (Y/n)")
 print("Hold tight! You are about to unleash the beast!")
-print("Verify light order: green -> blue -> purple -> green -> yellow -> red")
+print("Verify light order: cyan -> yellow -> green -> blue -> purple -> red")
 for i in reversed(range(3)):
     print(i + 1)
     sleep(1)
@@ -22,47 +22,44 @@ messenger = Serial(port="/dev/ttyACM0", baudrate=115200, timeout=0.01)
 print(messenger.name)
 # Constants
 modes = ("s", "p", "n", "r", "a", "e")
-pulsewidths = (1_500_000, 1_650_000, 1_350_000)
+pulsewidths = (1_500_000, 1_600_000, 1_400_000)
 
 # LOOP
 sleep(3)  # Stablize communication
 messenger.write(f"{modes[0]},{pulsewidths[0]},{pulsewidths[0]}\n".encode("utf-8"))  # standby
+if messenger.inWaiting() > 0:
+    reply = messenger.readline()
+    reply = reply.decode("utf-8", "ignore")
+    print(f"[Pico message]: {reply}")
 sleep(2)
 messenger.write(f"{modes[1]},{pulsewidths[0]},{pulsewidths[0]}\n".encode("utf-8"))  # pause
+if messenger.inWaiting() > 0:
+    reply = messenger.readline()
+    reply = reply.decode("utf-8", "ignore")
+    print(f"[Pico message]: {reply}")
 sleep(2)
 messenger.write(f"{modes[2]},{pulsewidths[1]},{pulsewidths[1]}\n".encode("utf-8"))  # normal
+if messenger.inWaiting() > 0:
+    reply = messenger.readline()
+    reply = reply.decode("utf-8", "ignore")
+    print(f"[Pico message]: {reply}")
 sleep(2)
-messenger.write(f"{modes[3]},{pulsewidths[1]},{pulsewidths[2]}\n".encode("utf-8"))  # recording
+messenger.write(f"{modes[3]},{pulsewidths[2]},{pulsewidths[1]}\n".encode("utf-8"))  # recording
+if messenger.inWaiting() > 0:
+    reply = messenger.readline()
+    reply = reply.decode("utf-8", "ignore")
+    print(f"[Pico message]: {reply}")
 sleep(2)
 messenger.write(f"{modes[4]},{pulsewidths[2]},{pulsewidths[2]}\n".encode("utf-8"))  # autopilot
+if messenger.inWaiting() > 0:
+    reply = messenger.readline()
+    reply = reply.decode("utf-8", "ignore")
+    print(f"[Pico message]: {reply}")
 sleep(2)
 messenger.write(f"{modes[5]},{pulsewidths[0]},{pulsewidths[0]}\n".encode("utf-8"))  # error
+if messenger.inWaiting() > 0:
+    reply = messenger.readline()
+    reply = reply.decode("utf-8", "ignore")
+    print(f"[Pico message]: {reply}")
 sleep(1)
 messenger.close()
-
-# messenger.write(f"s,{st_dc},{th_dc}\n".encode("utf-8"))
-# sleep(2)
-# for i in range(100):
-#     # messenger.write(f"Hello from RPi: {i}\n".encode('utf-8'))  # simple test
-#     if i < 80:
-#         st_dc = dutycycles[int(i / 20)]
-#         th_dc = dutycycles[int(i / 20)]
-#         msg = f"{modes[int(i / 20)]}, {st_dc}, {th_dc}\n".encode("utf-8")
-#     else:
-#         msg = f"p, {dutycycles[-1]}, {dutycycles[-1]}\n".encode("utf-8")
-#     messenger.write(msg)
-#     # print(f"[RPi Transmit] {msg}")  # debug
-#     # Listen to Pico's response
-#     if messenger.inWaiting() > 0:
-#         reply = messenger.readline()
-#         reply = reply.decode("utf-8", "ignore")
-#         print(f"[Pico message]: {reply}")
-#     sleep(0.1)
-# messenger.write(f"e, {dutycycles[-1]}, {dutycycles[-1]}\n".encode("utf-8"))
-# # print(f"[RPi Transmit] e, {dutycycles[-1]}, {dutycycles[-1]}\n")  # debug
-# if messenger.inWaiting() > 0:
-#     reply = messenger.readline()
-#     reply = reply.decode("utf-8", "ignore")
-#     print(f"[Pico Response] {reply}")
-# sleep(0.5)
-# messenger.close()
