@@ -6,7 +6,7 @@ from serial import Serial
 class Messenger:
     def __init__(self, port="/dev/ttyACM0", baudrate=115200) -> None:
         self.communicator = Serial(port=port, baudrate=baudrate, timeout=0.01)
-        print(f"Messenger initiated at: {self.communicator.name}\n")
+        print(f"Messenger connected at: {self.communicator.name}\n")
         self.out_msg = "s,1500000,1500000\n"
         self.in_msg = None
         self.ang_vel_z = 0.0
