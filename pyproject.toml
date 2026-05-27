@@ -3,7 +3,7 @@ name = "bearcar"
 version = "0.2.0"
 description = "Behavioral-Cloning powered autonomous driving"
 readme = "README.md"
-requires-python = "==3.13.5"
+requires-python = ">=3.11"
 [dependency-groups]
 rpi = [
   "numpy==2.4.5",
