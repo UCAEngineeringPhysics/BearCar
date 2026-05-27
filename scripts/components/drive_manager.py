@@ -3,7 +3,7 @@ import pygame
 
 
 class DriveManager:
-    def __init__(self, joy_id=0, autopilot_on=False) -> None:
+    def __init__(self, joy_id=0, autopilot=None) -> None:
         # pygame.display.init()
         pygame.init()
         pygame.joystick.init()
@@ -13,11 +13,11 @@ class DriveManager:
         self.gamepad = pygame.joystick.Joystick(joy_id)
         self.gamepad.init()
         print(f"Gamepad initiated at: {self.gamepad.get_name()}\n")
+        self.autopilot = autopilot  # load autopilot
         # Flags
         self.is_terminated = False
         self.is_paused = True
         self.is_recording = False
-        self.autopilot_on = autopilot_on
         # Variables
         self.mode = "p"
         self.steering_value = 0.0
@@ -27,25 +27,25 @@ class DriveManager:
 
     def process_events(self, params):
         for e in pygame.event.get():  # read controller input
-            if e.type == pygame.JOYBUTTONDOWN:
+            if e.type == pygame.JOYBUTTONDOWN:  # check buttons pressed
                 if self.gamepad.get_button(params["terminate_btn"]):  # emergency stop
                     self.is_terminated = True
                     print("E-STOP PRESSED. TERMINATE")
                     pygame.quit()
                     sys.exit()
-                elif self.gamepad.get_button(params["pause_btn"]):
+                elif self.gamepad.get_button(params["pause_btn"]):  # pause
                     self.is_paused = not self.is_paused
                     if self.is_paused:
                         self.mode = "p"
                         self.is_recording = False
                     else:
-                        if self.autopilot_on:
+                        if self.autopilot:
                             self.mode = "a"
                         else:
                             self.mode = "n"
                     print(f"Paused: {self.is_paused}")
                 elif self.gamepad.get_button(params["record_btn"]):
-                    if not self.autopilot_on:
+                    if not self.autopilot:
                         if not self.is_paused:
                             self.is_recording = not self.is_recording
                             if self.is_recording:
