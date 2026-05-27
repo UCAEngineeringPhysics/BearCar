@@ -58,7 +58,7 @@ try:
         frame_rate = frame_counts / since_start
         print(f"frame rate: {frame_rate}")
         # grey = cv.cvtColor(im, cv.COLOR_BGR2GRAY)
-        cv.imshow("Camera", im)
+        cv.imshow("Camera", cv.flip(im, -1))  # picam mounted upside down
         if cv.waitKey(1) == ord("q"):  # [q]uit
             print("Quit signal received.")
             break
