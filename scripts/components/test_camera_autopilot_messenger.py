@@ -22,7 +22,7 @@ with open(params_file_path, "r") as file:
 # Init components
 picam = ThreadedCamera()
 messenger = ThreadedMessenger(port="/dev/ttyACM0", baudrate=115200)
-driver = Driver(joy_id=0, autopilot_name=None)
+driver = Driver(joy_id=0, autopilot_name="example_pilot")
 
 # LOOP
 try:
@@ -31,7 +31,7 @@ try:
     while not driver.is_terminated:
         frame = picam.read()
         frame_counts += 1
-        mode, st_pw, th_pw = driver.process_event(params, frame=None)
+        mode, st_pw, th_pw = driver.process_event(params, frame=frame)
         messenger.out_msg = f"{mode},{st_pw},{th_pw}\n"
         if not frame_counts % params["frame_rate"]:
             elapsed = time() - start_time
