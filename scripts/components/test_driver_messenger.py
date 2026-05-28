@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 from time import sleep
 from messenger import Messenger
-from drive_manager import DriveManager
+from driver import Driver
 
 
 # SETUP
@@ -13,12 +13,12 @@ with open(params_file_path, "r") as file:
     params = json.load(file)
 # Init serial port
 messenger = Messenger(port="/dev/ttyACM0", baudrate=115200)
-manager = DriveManager(joy_id=0, autopilot_on=False)
+driver = Driver(joy_id=0, autopilot_name=None)
 
 # MAIN LOOP
 try:
-    while not manager.is_terminated:
-        mode, st_pw, th_pw = manager.process_events(params)
+    while not driver.is_terminated:
+        mode, st_pw, th_pw = driver.process_event(params, frame=None)
         messenger.out_msg = f"{mode},{st_pw},{th_pw}\n"
         print("---")
         print("Out message: " + messenger.out_msg)
