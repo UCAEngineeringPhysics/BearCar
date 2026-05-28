@@ -3,7 +3,7 @@ from time import time, sleep
 from serial import Serial
 
 
-class Messenger:
+class ThreadedMessenger:
     def __init__(self, port="/dev/ttyACM0", baudrate=115200) -> None:
         self.communicator = Serial(port=port, baudrate=baudrate, timeout=0.01)
         print(f"Messenger connected at: {self.communicator.name}\n")
@@ -49,7 +49,7 @@ if __name__ == "__main__":
         sleep(1)
 
     # SETUP
-    msngr = Messenger()
+    msngr = ThreadedMessenger()
     modes = ("s", "p", "n", "r", "a", "e")
     pulsewidths = (1_500_000, 1_600_000, 1_400_000)
     sleep(3)  # wait communication to be stablized
