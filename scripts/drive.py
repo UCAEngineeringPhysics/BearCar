@@ -1,17 +1,31 @@
+import argparse
 from pathlib import Path
-import json
 from time import sleep, time
+from datetime import datetime
+import csv
+import json
+import cv2 as cv
+
+import torch
+from torchvision.transforms import v2
+
+from components.autopilot_architectures.bearnet import BearNet
 from components.camera import ThreadedCamera
 from components.messenger import ThreadedMessenger
 from components.driver import Driver
-import cv2 as cv
-from datetime import datetime
-import csv
 
 # SAFETY CHECK
-print("Place BearCar on the ground and enjoy your ride!")
 
 # SETUP
+# Parse arguments
+parser = argparse.ArgumentParser(description="BearCar Driver Selection")
+parser.add_argument(
+    "--model",
+    type=str,
+    default=None,
+    help="Name or path of the autopilot model to load",
+)
+args = parser.parse_args()
 # Define paths
 bc_dir = Path(__file__).parents[1]
 data_dir = bc_dir.joinpath("data")
@@ -22,10 +36,29 @@ label_path = str(Path(image_dir).parent.joinpath("labels.csv"))
 params_file_path = bc_dir.joinpath("scripts", "components", "configs.json")
 with open(params_file_path, "r") as file:
     params = json.load(file)
+# Load autopilot model if provided
+autopilot = None
+if args.model:
+    model_path = bc_dir.joinpath("models", args.model + ".pth")
+    autopilot = BearNet()
+    autopilot.load_state_dict(
+        torch.load(
+            model_path,
+            weights_only=True,
+            map_location=torch.device("cpu"),
+        )
+    )
+    autopilot.eval()  # freeze weights
+    to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
+    print("!!!\nAUTOPILOT ON DUTY\n!!!")
+else:
+    print("~~~\nGet ready, Human!\n~~~")
+print("Place BearCar on the ground and enjoy your ride...\n")
+sleep(1)  # Let the driver be ready
 # Init components
 picam = ThreadedCamera()
 messenger = ThreadedMessenger(port="/dev/ttyACM0", baudrate=115200)
-driver = Driver(joy_id=0, autopilot_model=None)
+driver = Driver(joy_id=0, autopilot_model=autopilot)
 
 # LOOP
 try:
@@ -45,17 +78,21 @@ try:
                 writer = csv.writer(f)
                 writer.writerow(label)
             record_counts += 1
-            print(f"recorded frame counts: {record_counts}")  # debug
+            # print(f"recorded frame counts: {record_counts}")  # debug
             if record_counts == params["record_cap"]:  # pause recording if max reached
                 driver.mode = "p"
                 driver.is_paused = True
                 driver.is_recording = False
+        # For debugging, uncomment following lines
         if not frame_counts % params["frame_rate"]:
             elapsed = time() - start_time
             fps = params["frame_rate"] / elapsed
             print("---")
-            print("Out message: " + messenger.out_msg)
-            print(f"angular velocity on z: {messenger.ang_vel_z}")
+            print(
+                f"steering value: {driver.steering_value}, throttle value: {driver.throttle_value}"
+            )
+            print(f"Out message: {messenger.out_msg}")
+            print(f"In message (ang_vel_z): {messenger.ang_vel_z}")
             print(f"Processing at {fps:.2f} FPS | Frame shape: {frame.shape}")
             start_time = time()
         # cv.imshow("Camera", cv.flip(frame, -1))  # picam mounted upside down
