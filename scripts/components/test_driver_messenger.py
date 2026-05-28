@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 import json
 from time import sleep
-from messenger import Messenger
+from messenger import ThreadedMessenger
 from driver import Driver
 
 # SAFETY CHECK
@@ -22,10 +22,10 @@ params_file_path = Path(__file__).parent.joinpath("configs.json")
 with open(params_file_path, "r") as file:
     params = json.load(file)
 # Init serial port
-messenger = Messenger(port="/dev/ttyACM0", baudrate=115200)
+messenger = ThreadedMessenger(port="/dev/ttyACM0", baudrate=115200)
 driver = Driver(joy_id=0, autopilot_name=None)
 
-# MAIN LOOP
+# LOOP
 try:
     while not driver.is_terminated:
         mode, st_pw, th_pw = driver.process_event(params, frame=None)
