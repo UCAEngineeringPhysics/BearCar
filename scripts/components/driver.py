@@ -1,10 +1,18 @@
 import sys
+from pathlib import Path
 import pygame
+import torch
+from torchvision.transforms import v2
+from autopilot_architectures.bearnet import BearNet
 
 
-class DriveManager:
-    def __init__(self, joy_id=0, autopilot=None) -> None:
-        # pygame.display.init()
+class Driver:
+    """
+    Manages human's or autopilot's input for BearCar
+    """
+
+    def __init__(self, joy_id=0, autopilot_name=None) -> None:
+        # Init gamepad
         pygame.init()
         pygame.joystick.init()
         if pygame.joystick.get_count() == 0:
@@ -13,19 +21,34 @@ class DriveManager:
         self.gamepad = pygame.joystick.Joystick(joy_id)
         self.gamepad.init()
         print(f"Gamepad initiated at: {self.gamepad.get_name()}\n")
-        self.autopilot = autopilot  # load autopilot
+        # Init autopilot, if available
+        self.autopilot = None  # default to human driver
+        if autopilot_name:  # None for human
+            self.to_tensor = v2.Compose(
+                [v2.ToImage(), v2.ToDtype(torch.float32, scale=True)]
+            )
+            self.autopilot = BearNet()
+            model_path = Path(__file__).parents[2].joinpath("models", autopilot_name)
+            self.autopilot.load_state_dict(
+                torch.load(
+                    model_path,
+                    weights_only=True,
+                    map_location=torch.device("cpu"),
+                )
+            )
+            self.autopilot.eval()  # freeze weights
         # Flags
         self.is_terminated = False
         self.is_paused = True
         self.is_recording = False
         # Variables
-        self.mode = "p"
+        self.mode = "p"  # init mode: pause
         self.steering_value = 0.0
         self.throttle_value = 0.0
-        self.steering_pulse_width = 1_500_000
-        self.throttle_pulse_width = 1_500_000
+        self.steering_pulse_width = 1_500_000  # center
+        self.throttle_pulse_width = 1_500_000  # stall
 
-    def process_events(self, params):
+    def process_event(self, params, frame=None):
         for e in pygame.event.get():  # read controller input
             if e.type == pygame.JOYBUTTONDOWN:  # check buttons pressed
                 if self.gamepad.get_button(params["terminate_btn"]):  # emergency stop
@@ -33,34 +56,50 @@ class DriveManager:
                     print("E-STOP PRESSED. TERMINATE")
                     pygame.quit()
                     sys.exit()
-                elif self.gamepad.get_button(params["pause_btn"]):  # pause
+                elif self.gamepad.get_button(params["pause_btn"]):
                     self.is_paused = not self.is_paused
                     if self.is_paused:
                         self.mode = "p"
                         self.is_recording = False
-                    else:
+                    else:  # if not paused
                         if self.autopilot:
                             self.mode = "a"
                         else:
                             self.mode = "n"
                     print(f"Paused: {self.is_paused}")
                 elif self.gamepad.get_button(params["record_btn"]):
-                    if not self.autopilot:
-                        if not self.is_paused:
+                    if not self.autopilot:  # only work for human driver
+                        if not self.is_paused:  # only work in normal mode
                             self.is_recording = not self.is_recording
                             if self.is_recording:
                                 self.mode = "r"
                             else:
                                 self.mode = "n"
-                            print(f"Recording: {self.is_recording}")  # debug
+                            print(f"Recording: {self.is_recording}")
             elif e.type == pygame.JOYAXISMOTION:
-                st_ax_val = self.gamepad.get_axis(params["steering_axis"])
-                th_ax_val = self.gamepad.get_axis(params["throttle_axis"])
-                # Calaculate steering and throttle value
-                self.steering_value = round(st_ax_val, 2)  # -1: left end; +1: right end
-                self.throttle_value = -round(
-                    th_ax_val, 2
-                )  # -1:max forward, +1:max reverse
+                if self.autopilot:
+                    img_tensor = self.to_tensor(
+                        frame[:, :, [2, 1, 0]]
+                    )  # WARN: autopilot needs BGR
+                    with torch.no_grad():
+                        self.steering_value, self.throttle_value = map(
+                            float,
+                            torch.clamp(
+                                self.autopilot(img_tensor[None, :]).squeeze(),
+                                min=-0.999,
+                                max=0.999,
+                            ),
+                        )
+                else:  # human input from gamepad
+                    st_ax_val = self.gamepad.get_axis(params["steering_axis"])
+                    th_ax_val = self.gamepad.get_axis(params["throttle_axis"])
+                    # Calaculate steering and throttle value
+                    self.steering_value = round(
+                        st_ax_val, 2
+                    )  # -1: left end; +1: right end
+                    self.throttle_value = -round(
+                        th_ax_val, 2
+                    )  # -1:max forward, +1:max reverse
                 # Map steering value into pulse width in nanoseconds
                 self.steering_pulse_width = params["steering_center"] + int(
                     params["steering_range"] * self.steering_value
@@ -91,20 +130,20 @@ if __name__ == "__main__":
     params_file_path = str(Path(__file__).parents[1].joinpath("configs.json"))
     with open(params_file_path, "r") as file:
         params = json.load(file)
-    mngr = DriveManager(joy_id=0, autopilot_on=False)
+    driver = Driver(joy_id=0, autopilot_name=None)
     print(f"{pygame.joystick.get_count()} joystick connected")
 
     # LOOP
     try:
-        while mngr:
-            mode, st_pw, th_pw = mngr.process_events(params)
+        while driver.gamepad:
+            mode, st_pw, th_pw = driver.process_event(params, frame=None)
             print("---")
-            print(f"terminate flag: {mngr.is_terminated}")
-            print(f"pause flag: {mngr.is_paused}")
-            print(f"record flag: {mngr.is_recording}")
+            print(f"terminate flag: {driver.is_terminated}")
+            print(f"pause flag: {driver.is_paused}")
+            print(f"record flag: {driver.is_recording}")
             print(f"mode: {mode}")
-            print(f"steering value: {mngr.steering_value}, pw: {st_pw}")
-            print(f"throttle_value: {mngr.throttle_value}, pw: {th_pw}")
+            print(f"steering value: {driver.steering_value}, pw: {st_pw}")
+            print(f"throttle_value: {driver.throttle_value}, pw: {th_pw}")
             sleep(0.033)  # 30 Hz
     except KeyboardInterrupt:
         print("\nExiting cleanly...")
