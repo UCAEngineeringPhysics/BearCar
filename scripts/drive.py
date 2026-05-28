@@ -5,9 +5,7 @@ from datetime import datetime
 import csv
 import json
 import cv2 as cv
-
 import torch
-from torchvision.transforms import v2
 
 from components.autopilot_architectures.bearnet import BearNet
 from components.camera import ThreadedCamera
@@ -49,7 +47,6 @@ if args.model:
         )
     )
     autopilot.eval()  # freeze weights
-    to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
     print("!!!\nAUTOPILOT ON DUTY\n!!!")
 else:
     print("~~~\nGet ready, Human!\n~~~")
@@ -68,9 +65,9 @@ try:
     while not driver.is_terminated:
         frame = picam.read()
         frame_counts += 1
-        mode, st_pw, th_pw = driver.process_event(params, frame=None)
+        mode, st_pw, th_pw = driver.process_event(params, frame=frame)
         messenger.out_msg = f"{mode},{st_pw},{th_pw}\n"
-        action = [st_pw, th_pw]
+        action = [driver.steering_value, driver.throttle_value]
         if mode == "r":
             cv.imwrite(image_dir + "/" + str(frame_counts) + ".jpg", frame)
             label = [str(frame_counts) + ".jpg"] + action
