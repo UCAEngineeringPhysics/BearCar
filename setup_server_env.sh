@@ -3,7 +3,11 @@ sudo apt update && sudo apt upgrade -y
 curl -LsSf https://astral.sh/uv/install.sh | sh
 source $HOME/.local/bin/env
 cd $HOME/BearCar
+uv venv --system-site-packages --python /usr/bin/python3
 uv sync --group server
+echo 'alias gobear="source $HOME/BearCar/.venv/bin/activate"' >>$HOME/.bashrc
+echo 'eval "$(uv generate-shell-completion bash)"' >>$HOME/.bashrc
+source $HOME/.bashrc
 
 # Coloring output
 PURPLE='\033[0;35m'
