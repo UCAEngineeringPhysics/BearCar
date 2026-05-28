@@ -2,8 +2,6 @@ import sys
 from pathlib import Path
 import pygame
 import torch
-from torchvision.transforms import v2
-from autopilot_architectures.bearnet import BearNet
 
 
 class Driver:
@@ -11,7 +9,7 @@ class Driver:
     Manages human's or autopilot's input for BearCar
     """
 
-    def __init__(self, joy_id=0, autopilot_name=None) -> None:
+    def __init__(self, joy_id=0, autopilot_model=None) -> None:
         # Init gamepad
         pygame.init()
         pygame.joystick.init()
@@ -22,21 +20,21 @@ class Driver:
         self.gamepad.init()
         print(f"Gamepad initiated at: {self.gamepad.get_name()}\n")
         # Init autopilot, if available
-        self.autopilot = None  # default to human driver
-        if autopilot_name:  # None for human
-            self.to_tensor = v2.Compose(
-                [v2.ToImage(), v2.ToDtype(torch.float32, scale=True)]
-            )
-            self.autopilot = BearNet()
-            model_path = Path(__file__).parents[2].joinpath("models", autopilot_name)
-            self.autopilot.load_state_dict(
-                torch.load(
-                    model_path,
-                    weights_only=True,
-                    map_location=torch.device("cpu"),
-                )
-            )
-            self.autopilot.eval()  # freeze weights
+        self.autopilot = autopilot_model  # default to human driver
+        # if autopilot_name:  # None for human
+        #     self.to_tensor = v2.Compose(
+        #         [v2.ToImage(), v2.ToDtype(torch.float32, scale=True)]
+        #     )
+        #     self.autopilot = BearNet()
+        #     model_path = Path(__file__).parents[2].joinpath("models", autopilot_name)
+        #     self.autopilot.load_state_dict(
+        #         torch.load(
+        #             model_path,
+        #             weights_only=True,
+        #             map_location=torch.device("cpu"),
+        #         )
+        #     )
+        #     self.autopilot.eval()  # freeze weights
         # Flags
         self.is_terminated = False
         self.is_paused = True
@@ -130,7 +128,7 @@ if __name__ == "__main__":
     params_file_path = Path(__file__).parent.joinpath("configs.json")
     with open(params_file_path, "r") as file:
         params = json.load(file)
-    driver = Driver(joy_id=0, autopilot_name=None)
+    driver = Driver(joy_id=0, autopilot_model=None)
     print(f"{pygame.joystick.get_count()} joystick connected")
 
     # LOOP
