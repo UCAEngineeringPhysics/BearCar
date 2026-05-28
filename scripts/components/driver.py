@@ -127,7 +127,7 @@ if __name__ == "__main__":
     from time import sleep
 
     # SETUP
-    params_file_path = str(Path(__file__).parents[1].joinpath("configs.json"))
+    params_file_path = Path(__file__).parent.joinpath("configs.json")
     with open(params_file_path, "r") as file:
         params = json.load(file)
     driver = Driver(joy_id=0, autopilot_name=None)

@@ -18,7 +18,7 @@ for i in reversed(range(3)):
 
 # SETUP
 # Load configs
-params_file_path = str(Path(__file__).parents[1].joinpath("configs.json"))
+params_file_path = Path(__file__).parent.joinpath("configs.json")
 with open(params_file_path, "r") as file:
     params = json.load(file)
 # Init serial port
