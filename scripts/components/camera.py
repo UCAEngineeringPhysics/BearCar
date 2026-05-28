@@ -87,9 +87,9 @@ if __name__ == "__main__":
             frame_counts += 1
 
             # Print FPS every sec
-            if frame_counts % params["frame_rate"] == 0:
+            if not frame_counts % params["frame_rate"]:
                 elapsed = time() - start_time
-                fps = 30 / elapsed
+                fps = params["frame_rate"] / elapsed
                 print(f"Processing at {fps:.2f} FPS | Frame shape: {frame.shape}")
                 start_time = time()
             cv.imshow("Camera", cv.flip(frame, -1))  # picam mounted upside down
