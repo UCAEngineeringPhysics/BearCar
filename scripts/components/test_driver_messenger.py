@@ -5,6 +5,16 @@ from time import sleep
 from messenger import Messenger
 from driver import Driver
 
+# SAFETY CHECK
+is_lifted = input("Is anything contacting any wheels of BearCar? (Y/n)")
+while is_lifted != "n":
+    print("Please lift BearCar up and remove everything that is making the contact")
+    is_lifted = input("Is anything contacting any wheels of BearCar? (Y/n)")
+print("Hold tight! You are about to unleash the beast!")
+print("Verify light order: cyan -> yellow -> green -> blue -> purple -> red")
+for i in reversed(range(3)):
+    print(i + 1)
+    sleep(1)
 
 # SETUP
 # Load configs
