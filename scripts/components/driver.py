@@ -2,6 +2,7 @@ import sys
 from pathlib import Path
 import pygame
 import torch
+from torchvision.transforms import v2
 
 
 class Driver:
@@ -21,20 +22,10 @@ class Driver:
         print(f"Gamepad initiated at: {self.gamepad.get_name()}\n")
         # Init autopilot, if available
         self.autopilot = autopilot_model  # default to human driver
-        # if autopilot_name:  # None for human
-        #     self.to_tensor = v2.Compose(
-        #         [v2.ToImage(), v2.ToDtype(torch.float32, scale=True)]
-        #     )
-        #     self.autopilot = BearNet()
-        #     model_path = Path(__file__).parents[2].joinpath("models", autopilot_name)
-        #     self.autopilot.load_state_dict(
-        #         torch.load(
-        #             model_path,
-        #             weights_only=True,
-        #             map_location=torch.device("cpu"),
-        #         )
-        #     )
-        #     self.autopilot.eval()  # freeze weights
+        if self.autopilot:
+            self.to_tensor = v2.Compose(
+                [v2.ToImage(), v2.ToDtype(torch.float32, scale=True)]
+            )
         # Flags
         self.is_terminated = False
         self.is_paused = True
@@ -47,6 +38,23 @@ class Driver:
         self.throttle_pulse_width = 1_500_000  # stall
 
     def process_event(self, params, frame=None):
+        # Take care of autopilot prediction
+        if self.mode == "a":
+            try:
+                img_tensor = self.to_tensor(
+                    frame[:, :, [2, 1, 0]]
+                )  # WARN: autopilot needs BGR
+                with torch.no_grad():
+                    self.steering_value, self.throttle_value = map(
+                        float,
+                        torch.clamp(
+                            self.autopilot(img_tensor[None, :]).squeeze(),
+                            min=-0.999,
+                            max=0.999,
+                        ),
+                    )  # predicted steering and throttle
+            except TypeError:
+                pass
         for e in pygame.event.get():  # read controller input
             if e.type == pygame.JOYBUTTONDOWN:  # check buttons pressed
                 if self.gamepad.get_button(params["terminate_btn"]):  # emergency stop
@@ -75,20 +83,7 @@ class Driver:
                                 self.mode = "n"
                             print(f"Recording: {self.is_recording}")
             elif e.type == pygame.JOYAXISMOTION:
-                if self.autopilot:
-                    img_tensor = self.to_tensor(
-                        frame[:, :, [2, 1, 0]]
-                    )  # WARN: autopilot needs BGR
-                    with torch.no_grad():
-                        self.steering_value, self.throttle_value = map(
-                            float,
-                            torch.clamp(
-                                self.autopilot(img_tensor[None, :]).squeeze(),
-                                min=-0.999,
-                                max=0.999,
-                            ),
-                        )
-                else:  # human input from gamepad
+                if not self.autopilot:  # human input from gamepad
                     st_ax_val = self.gamepad.get_axis(params["steering_axis"])
                     th_ax_val = self.gamepad.get_axis(params["throttle_axis"])
                     # Calaculate steering and throttle value
@@ -98,23 +93,23 @@ class Driver:
                     self.throttle_value = -round(
                         th_ax_val, 2
                     )  # -1:max forward, +1:max reverse
-                # Map steering value into pulse width in nanoseconds
-                self.steering_pulse_width = params["steering_center"] + int(
-                    params["steering_range"] * self.steering_value
+            # Map steering value into pulse width in nanoseconds
+            self.steering_pulse_width = params["steering_center"] + int(
+                params["steering_range"] * self.steering_value
+            )
+            # Map throttle value into pulse width in nanoseconds
+            if self.throttle_value > 0:
+                self.throttle_pulse_width = params["throttle_neutral"] + int(
+                    params["throttle_fwd_range"]
+                    * min(self.throttle_value, params["throttle_limit"])
                 )
-                # Map throttle value into pulse width in nanoseconds
-                if self.throttle_value > 0:
-                    self.throttle_pulse_width = params["throttle_neutral"] + int(
-                        params["throttle_fwd_range"]
-                        * min(self.throttle_value, params["throttle_limit"])
-                    )
-                elif self.throttle_value < 0:
-                    self.throttle_pulse_width = params["throttle_neutral"] + int(
-                        params["throttle_fwd_range"]
-                        * max(self.throttle_value, -params["throttle_limit"])
-                    )
-                else:
-                    self.throttle_pulse_width = params["throttle_neutral"]
+            elif self.throttle_value < 0:
+                self.throttle_pulse_width = params["throttle_neutral"] + int(
+                    params["throttle_fwd_range"]
+                    * max(self.throttle_value, -params["throttle_limit"])
+                )
+            else:
+                self.throttle_pulse_width = params["throttle_neutral"]
 
         return self.mode, self.steering_pulse_width, self.throttle_pulse_width
 

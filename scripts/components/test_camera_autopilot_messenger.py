@@ -6,7 +6,8 @@ from messenger import ThreadedMessenger
 from driver import Driver
 import cv2 as cv
 import torch
-from torchvision.transforms import v2
+
+# from torchvision.transforms import v2
 from autopilot_architectures.bearnet import BearNet
 
 # SAFETY CHECK
@@ -23,7 +24,7 @@ params_file_path = Path(__file__).parent.joinpath("configs.json")
 with open(params_file_path, "r") as file:
     params = json.load(file)
 # Load autopilot model
-to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
+# to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
 model = BearNet()
 model_path = Path(__file__).parents[2].joinpath("models", "dummy.pth")
 model.load_state_dict(
@@ -52,8 +53,11 @@ try:
             elapsed = time() - start_time
             fps = params["frame_rate"] / elapsed
             print("---")
+            print(
+                f"steering value: {driver.steering_value}, throttle value: {driver.throttle_value}"
+            )
             print("Out message: " + messenger.out_msg)
-            print(f"angular velocity on z: {messenger.ang_vel_z}")
+            print(f"In message (ang_vel_z): {messenger.ang_vel_z}")
             print(f"Processing at {fps:.2f} FPS | Frame shape: {frame.shape}")
             start_time = time()
         cv.imshow("Camera", cv.flip(frame, -1))  # picam mounted upside down
