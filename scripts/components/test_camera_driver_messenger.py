@@ -22,7 +22,7 @@ with open(params_file_path, "r") as file:
 # Init components
 picam = ThreadedCamera()
 messenger = ThreadedMessenger(port="/dev/ttyACM0", baudrate=115200)
-driver = Driver(joy_id=0, autopilot_name=None)
+driver = Driver(joy_id=0, autopilot_model=None)
 
 # LOOP
 try:

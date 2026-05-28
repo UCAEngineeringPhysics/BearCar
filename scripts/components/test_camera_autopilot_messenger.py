@@ -5,6 +5,9 @@ from camera import ThreadedCamera
 from messenger import ThreadedMessenger
 from driver import Driver
 import cv2 as cv
+import torch
+from torchvision.transforms import v2
+from autopilot_architectures.bearnet import BearNet
 
 # SAFETY CHECK
 is_lifted = input("Is anything contacting any wheels of BearCar? (Y/n)")
@@ -19,10 +22,22 @@ print("Verify light order: cyan -> yellow -> green -> blue -> purple -> red")
 params_file_path = Path(__file__).parent.joinpath("configs.json")
 with open(params_file_path, "r") as file:
     params = json.load(file)
+# Load autopilot model
+to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
+model = BearNet()
+model_path = Path(__file__).parents[2].joinpath("models", "dummy.pth")
+model.load_state_dict(
+    torch.load(
+        model_path,
+        weights_only=True,
+        map_location=torch.device("cpu"),
+    )
+)
+model.eval()  # freeze weights
 # Init components
 picam = ThreadedCamera()
 messenger = ThreadedMessenger(port="/dev/ttyACM0", baudrate=115200)
-driver = Driver(joy_id=0, autopilot_name="example_pilot")
+driver = Driver(joy_id=0, autopilot_model=model)
 
 # LOOP
 try:
