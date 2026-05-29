@@ -53,9 +53,15 @@ else:
 print("Place BearCar on the ground and enjoy your ride...\n")
 sleep(1)  # Let the driver be ready
 # Init components
-picam = ThreadedCamera()
+picam = ThreadedCamera(params=params)
 messenger = ThreadedMessenger(port="/dev/ttyACM0", baudrate=115200)
 driver = Driver(joy_id=0, autopilot_model=autopilot)
+# Adjust control rate
+if args.model:
+    drive_rate = params["frame_rate"]
+else:
+    drive_rate = int(params["frame_rate"] / 2)
+
 
 # LOOP
 try:
@@ -65,9 +71,9 @@ try:
     while not driver.is_terminated:
         frame = picam.read()
         frame_counts += 1
-        mode, st_pw, th_pw = driver.process_event(params, frame=frame)
+        mode, st_val, th_val, st_pw, th_pw = driver.process_event(params, frame=frame)
         messenger.out_msg = f"{mode},{st_pw},{th_pw}\n"
-        action = [driver.steering_value, driver.throttle_value]
+        action = [st_val, th_val]
         if mode == "r":
             cv.imwrite(image_dir + "/" + str(frame_counts) + ".jpg", frame)
             label = [str(frame_counts) + ".jpg"] + action
@@ -81,9 +87,9 @@ try:
                 driver.is_paused = True
                 driver.is_recording = False
         # For debugging, uncomment following lines
-        if not frame_counts % params["frame_rate"]:
+        if not frame_counts % drive_rate:
             elapsed = time() - start_time
-            fps = params["frame_rate"] / elapsed
+            fps = drive_rate / elapsed
             print("---")
             print(
                 f"steering value: {driver.steering_value}, throttle value: {driver.throttle_value}"
@@ -96,7 +102,7 @@ try:
         # if cv.waitKey(1) == ord("q"):  # [q]uit
         #     print("Quit signal received.")
         #     break
-        sleep(1 / params["frame_rate"])  # see configs.json for FPS
+        sleep(1 / drive_rate)  # see configs.json for FPS
 except KeyboardInterrupt:
     print("\nShutdown signal received.")
 finally:
