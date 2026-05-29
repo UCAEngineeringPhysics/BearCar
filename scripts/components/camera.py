@@ -5,7 +5,7 @@ from picamera2 import Picamera2
 
 
 class ThreadedCamera:
-    def __init__(self, max_queue_size=2):
+    def __init__(self):
         """
         Initializes the camera, configures it, and starts the background thread.
         """
@@ -24,7 +24,6 @@ class ThreadedCamera:
         )
         self.picam.configure(config)
         # Threading setup
-        self.frame_queue = queue.Queue(maxsize=max_queue_size)
         self.thread_stopped = False  # Flag to cleanly stop the thread
         # Start the camera and the thread
         self.picam.start()
@@ -41,20 +40,13 @@ class ThreadedCamera:
         """
         while not self.thread_stopped:
             try:
-                frame = self.picam.capture_array()
-                if self.frame_queue.full():
-                    try:
-                        self.frame_queue.get_nowait()  # dump oldest frame
-                    except queue.Empty:
-                        pass
-
-                self.frame_queue.put(frame)
+                self.frame = self.picam.capture_array()
             except Exception as e:
                 print(f"Camera thread error: {e}")
                 break
 
     def read(self):
-        return self.frame_queue.get()  # block until a frame is available
+        return self.frame  # block until a frame is available
 
     def stop(self):
         self.thread_stopped = True

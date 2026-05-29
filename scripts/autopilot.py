@@ -8,20 +8,20 @@ import cv2 as cv
 from picamera2 import Picamera2
 import torch
 from torchvision.transforms import v2
-from cnn_architectures.bear_net import BearNet
+from components.autopilot_architectures.bearnet import BearNet
 
 
 # SETUP
 # Define paths
 bc_dir = Path(__file__).parents[1]
 # Load configs
-params_file_path = str(bc_dir.joinpath("scripts", "configs.json"))
+params_file_path = str(bc_dir.joinpath("scripts", "components", "configs.json"))
 with open(params_file_path, "r") as file:
     params = json.load(file)
 to_tensor = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)])
 # Load model
 pilot = BearNet()
-model_path = str(bc_dir.joinpath("models", "pilot.pth"))
+model_path = str(bc_dir.joinpath("models", "dummy_pilot"))
 pilot.load_state_dict(
     torch.load(model_path, weights_only=True, map_location=torch.device("cpu"))
 )
@@ -92,7 +92,7 @@ try:
         print(f"frame rate: {frame_rate}")  # debug
         for e in pygame.event.get():  # read controller input
             if e.type == pygame.JOYBUTTONDOWN:
-                if js.get_button(params["stop_btn"]):  # emergency stop
+                if js.get_button(params["terminate_btn"]):  # emergency stop
                     is_stopped = True
                     print("E-STOP PRESSED. TERMINATE")
                     pygame.quit()
@@ -127,7 +127,7 @@ try:
             )
         else:
             duty_th = params["throttle_neutral"]
-        msg = f"{mode}, {duty_st}, {duty_th}\n".encode("utf-8")
+        msg = f"{mode},{duty_st},{duty_th}\n".encode("utf-8")
         messenger.write(msg)
 
 # Take care terminate signal (Ctrl-c)
