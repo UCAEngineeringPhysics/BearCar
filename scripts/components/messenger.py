@@ -15,7 +15,7 @@ class ThreadedMessenger:
 
     def process_msgs(self):
         last_ts = time()
-        while self.communicator is not None:
+        while self.communicator is not None and self.communicator.is_open:
             # Transmit velocity commands to Pico
             curr_ts = time()
             dt = curr_ts - last_ts
@@ -24,7 +24,7 @@ class ThreadedMessenger:
                 self.communicator.write(self.out_msg.encode("utf-8"))
                 last_ts = curr_ts
             # Receive motion data from Pico
-            if self.communicator.inWaiting() > 0:
+            if self.communicator.in_waiting > 0:
                 self.in_msg = (
                     self.communicator.readline().decode("utf-8", "ignore").strip()
                 )
@@ -33,6 +33,7 @@ class ThreadedMessenger:
                         self.ang_vel_z = float(self.in_msg)
                     except ValueError:
                         pass
+            sleep(0.01)  # prevent 100% CPU usage
 
 
 # Component Test

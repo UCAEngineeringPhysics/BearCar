@@ -1,6 +1,7 @@
 from pathlib import Path
 import json
 from time import sleep, time
+from serial import Serial
 from picamera2 import Picamera2
 import cv2 as cv
 import torch
@@ -35,7 +36,14 @@ model.load_state_dict(
     )
 )
 model.eval()  # freeze weights
-# Init components
+# Init serial comm
+messenger = Serial(port="/dev/ttyACM0", baudrate=115200, timeout=0.01)
+in_msg = None
+out_msg = "s,1500000,1500000\n"
+ang_vel_z = 0.0
+# Init drive manager
+driver = Driver(joy_id=0, autopilot_model=model)
+# Init cam
 picam = Picamera2()
 picam.configure(
     picam.create_video_configuration(
@@ -52,8 +60,7 @@ picam.configure(
     )
 )
 picam.start()
-messenger = ThreadedMessenger(port="/dev/ttyACM0", baudrate=115200)
-driver = Driver(joy_id=0, autopilot_model=model)
+
 
 # LOOP
 try:
@@ -69,21 +76,29 @@ try:
         # frame_rate = frame_counts / since_start
         # print(f"frame rate: {frame_rate}")
         mode, st_val, th_val, st_pw, th_pw = driver.process_event(params, frame=frame)
-        messenger.out_msg = f"{mode},{st_pw},{th_pw}\n"
+        # messenger.out_msg = f"{mode},{st_pw},{th_pw}\n"
+        out_msg = f"{mode},{st_pw},{th_pw}\n"
+        messenger.write(out_msg.encode("utf-8"))
+        if messenger.in_waiting > 0:
+            in_msg = messenger.readline().decode("utf-8", "ignore").strip()
+            if in_msg:
+                try:
+                    ang_vel_z = float(in_msg)
+                except ValueError:
+                    pass
         if not frame_counts % params["frame_rate"]:
             elapsed = time() - start_time
             fps = params["frame_rate"] / elapsed
             print("---")
             print(f"Processing at {fps:.2f} FPS | Frame shape: {frame.shape}")
             print(f"steering value: {st_val}, throttle_value: {th_val}")
-            print(f"In message (ang_vel_z): {messenger.ang_vel_z}")
-            print("Out message: " + messenger.out_msg)
+            print(f"In message (ang_vel_z): {ang_vel_z}")
+            print("Out message: " + out_msg)
             start_time = time()
-        cv.imshow("Camera", cv.flip(frame, -1))  # picam mounted upside down
-        if cv.waitKey(1) == ord("q"):  # [q]uit
-            print("Quit signal received.")
-            break
-        # sleep(1 / params["frame_rate"])  # see configs.json for FPS
+        # cv.imshow("Camera", cv.flip(frame, -1))  # picam mounted upside down
+        # if cv.waitKey(1) == ord("q"):  # [q]uit
+        #     print("Quit signal received.")
+        #     break
 except KeyboardInterrupt:
     print("\nShutdown signal received.")
 finally:

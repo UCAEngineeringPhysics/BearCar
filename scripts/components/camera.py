@@ -5,7 +5,7 @@ from picamera2 import Picamera2
 
 
 class ThreadedCamera:
-    def __init__(self):
+    def __init__(self, params):
         """
         Initializes the camera, configures it, and starts the background thread.
         """
@@ -15,10 +15,10 @@ class ThreadedCamera:
             main={"format": "RGB888", "size": (224, 224)},
             controls={
                 "FrameDurationLimits": (
-                    # int(1_000_000 / params["frame_rate"]),
-                    # int(1_000_000 / params["frame_rate"]),
-                    int(1_000_000 / 60),
-                    int(1_000_000 / 60),
+                    int(1_000_000 / params["frame_rate"]),
+                    int(1_000_000 / params["frame_rate"]),
+                    # int(1_000_000 / 60),
+                    # int(1_000_000 / 60),
                 )
             },
         )
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     with open(params_file_path, "r") as file:
         params = json.load(file)
     print("Initializing camera...")
-    cam = ThreadedCamera()
+    cam = ThreadedCamera(params=params)
     print("Starting processing loop. Press Ctrl+C to stop.")
 
     # LOOP
