@@ -38,23 +38,7 @@ class Driver:
         self.throttle_pulse_width = 1_500_000  # stall
 
     def process_event(self, params, frame=None):
-        # Take care of autopilot prediction
-        if self.mode == "a":
-            try:
-                img_tensor = self.to_tensor(
-                    frame[:, :, [2, 1, 0]]
-                )  # WARN: autopilot needs BGR
-                with torch.no_grad():
-                    self.steering_value, self.throttle_value = map(
-                        float,
-                        torch.clamp(
-                            self.autopilot(img_tensor[None, :]).squeeze(),
-                            min=-0.999,
-                            max=0.999,
-                        ),
-                    )  # predicted steering and throttle
-            except TypeError:
-                pass
+        # Take care of gamepad input
         for e in pygame.event.get():  # read controller input
             if e.type == pygame.JOYBUTTONDOWN:  # check buttons pressed
                 if self.gamepad.get_button(params["terminate_btn"]):  # emergency stop
@@ -93,25 +77,48 @@ class Driver:
                     self.throttle_value = -round(
                         th_ax_val, 2
                     )  # -1:max forward, +1:max reverse
-            # Map steering value into pulse width in nanoseconds
-            self.steering_pulse_width = params["steering_center"] + int(
-                params["steering_range"] * self.steering_value
+        # Take care of autopilot prediction
+        if self.mode == "a":
+            try:
+                img_tensor = self.to_tensor(
+                    frame[:, :, [2, 1, 0]]
+                )  # WARN: autopilot needs BGR
+                with torch.no_grad():
+                    self.steering_value, self.throttle_value = map(
+                        float,
+                        torch.clamp(
+                            self.autopilot(img_tensor[None, :]).squeeze(),
+                            min=-0.999,
+                            max=0.999,
+                        ),
+                    )  # predicted steering and throttle
+            except TypeError:
+                pass
+        # Map steering value into pulse width in nanoseconds
+        self.steering_pulse_width = params["steering_center"] + int(
+            params["steering_range"] * self.steering_value
+        )
+        # Map throttle value into pulse width in nanoseconds
+        if self.throttle_value > 0:
+            self.throttle_pulse_width = params["throttle_neutral"] + int(
+                params["throttle_fwd_range"]
+                * min(self.throttle_value, params["throttle_limit"])
             )
-            # Map throttle value into pulse width in nanoseconds
-            if self.throttle_value > 0:
-                self.throttle_pulse_width = params["throttle_neutral"] + int(
-                    params["throttle_fwd_range"]
-                    * min(self.throttle_value, params["throttle_limit"])
-                )
-            elif self.throttle_value < 0:
-                self.throttle_pulse_width = params["throttle_neutral"] + int(
-                    params["throttle_fwd_range"]
-                    * max(self.throttle_value, -params["throttle_limit"])
-                )
-            else:
-                self.throttle_pulse_width = params["throttle_neutral"]
+        elif self.throttle_value < 0:
+            self.throttle_pulse_width = params["throttle_neutral"] + int(
+                params["throttle_fwd_range"]
+                * max(self.throttle_value, -params["throttle_limit"])
+            )
+        else:
+            self.throttle_pulse_width = params["throttle_neutral"]
 
-        return self.mode, self.steering_pulse_width, self.throttle_pulse_width
+        return (
+            self.mode,
+            self.steering_value,
+            self.throttle_value,
+            self.steering_pulse_width,
+            self.throttle_pulse_width,
+        )
 
 
 if __name__ == "__main__":
@@ -129,15 +136,17 @@ if __name__ == "__main__":
     # LOOP
     try:
         while driver.gamepad:
-            mode, st_pw, th_pw = driver.process_event(params, frame=None)
+            mode, st_val, th_val, st_pw, th_pw = driver.process_event(
+                params, frame=None
+            )
             print("---")
             print(f"terminate flag: {driver.is_terminated}")
             print(f"pause flag: {driver.is_paused}")
             print(f"record flag: {driver.is_recording}")
             print(f"mode: {mode}")
-            print(f"steering value: {driver.steering_value}, pw: {st_pw}")
-            print(f"throttle_value: {driver.throttle_value}, pw: {th_pw}")
-            sleep(0.033)  # 30 Hz
+            print(f"steering value: {st_val}, pw: {st_pw}")
+            print(f"throttle_value: {th_val}, pw: {th_pw}")
+            sleep(0.1)  # 10 Hz
     except KeyboardInterrupt:
         print("\nExiting cleanly...")
     finally:
