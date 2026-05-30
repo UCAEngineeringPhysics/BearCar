@@ -57,28 +57,34 @@ if __name__ == "__main__":
 
     # LOOP
     msngr.out_msg = f"{modes[0]},{pulsewidths[0]},{pulsewidths[0]}\n"
-    print("Standby \n---led: cyan, steering: mid, throttle: stall")
-    print(f"angular velocity on z: {msngr.ang_vel_z}")
+    print("---\nSTANDBY, CYAN, MID, STALL")
+    print(f"In message (ang_vel_z): {msngr.ang_vel_z}")
+    print(f"Out message: {msngr.out_msg}")
     sleep(2)
     msngr.out_msg = f"{modes[1]},{pulsewidths[0]},{pulsewidths[0]}\n"
-    print("Pause \n---led: yellow, steering: mid, throttle: stall")
-    print(f"angular velocity on z: {msngr.ang_vel_z}")
+    print("---\nPAUSE, YELLOW, MID, STALL")
+    print(f"In message (ang_vel_z): {msngr.ang_vel_z}")
+    print(f"Out message: {msngr.out_msg}")
     sleep(2)
     msngr.out_msg = f"{modes[2]},{pulsewidths[1]},{pulsewidths[1]}\n"
-    print("Normal \n---led: green, steering: left, throttle: forward")
-    print(f"angular velocity on z: {msngr.ang_vel_z}")
+    print("---\nNORMAL, GREEN, RIGHT, FORWARD")
+    print(f"In message (ang_vel_z): {msngr.ang_vel_z}")
+    print(f"Out message: {msngr.out_msg}")
     sleep(2)
     msngr.out_msg = f"{modes[3]},{pulsewidths[2]},{pulsewidths[1]}\n"
-    print("Recording \n---led: blue, steering: right, throttle: forward")
-    print(f"angular velocity on z: {msngr.ang_vel_z}")
+    print("---\nRECORDING, BLUE, LEFT, FORWARD")
+    print(f"In message (ang_vel_z): {msngr.ang_vel_z}")
+    print(f"Out message: {msngr.out_msg}")
     sleep(2)
     msngr.out_msg = f"{modes[4]},{pulsewidths[2]},{pulsewidths[2]}\n"
-    print("Autopilot \n---led: purple, steering: right, throttle: reverse")
-    print(f"angular velocity on z: {msngr.ang_vel_z}")
+    print("---\nAUTOPILOT, PURPLE, LEFT, REVERSE")
+    print(f"In message (ang_vel_z): {msngr.ang_vel_z}")
+    print(f"Out message: {msngr.out_msg}")
     sleep(2)
     msngr.out_msg = f"{modes[5]},{pulsewidths[0]},{pulsewidths[0]}\n"
-    print("Error \n---led: purple, steering: right, throttle: reverse")
-    print(f"angular velocity on z: {msngr.ang_vel_z}")
+    print("---\nERROR, RED, MID, STALL")
+    print(f"In message (ang_vel_z): {msngr.ang_vel_z}")
+    print(f"Out message: {msngr.out_msg}")
     sleep(2)
     msngr.communicator.close()
     print(f"Serial Port: {msngr.communicator.name} closed.")
