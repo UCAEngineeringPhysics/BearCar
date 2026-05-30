@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/bin/sh
 echo "!!!"
 echo "WARNING: currently, this script only work with Raspberry Pi OS on Raspberry Pi 4/5 or Ubuntu/Debian on x86_64"
 echo "!!!"
@@ -22,12 +22,12 @@ x86_64)
 esac
 echo "BearCar environemnt type: $BEARCAR_ENV_TYPE"
 
-cd $HOME
 # Install uv
 sudo apt update && sudo apt upgrade -y
 curl -LsSf https://astral.sh/uv/install.sh | sh
 . $HOME/.local/bin/env
-echo 'eval "$(uv generate-shell-completion bash)"' >>$HOME/.bashrc
+grep -qF 'eval "$(uv generate-shell-completion bash)"' "$HOME/.bashrc" || echo 'eval "$(uv generate-shell-completion bash)"' >>"$HOME/.bashrc"
+
 # Setup project env
 cd $HOME/BearCar
 uv venv --system-site-packages --python /usr/bin/python3
@@ -42,7 +42,7 @@ x86_64)
   echo "BearCar environemnt type not found"
   ;;
 esac
-echo 'alias gobear="source $HOME/BearCar/.venv/bin/activate"' >>$HOME/.bashrc
+grep -qF 'alias gobear="source $HOME/BearCar/.venv/bin/activate"' "$HOME/.bashrc" || echo 'alias gobear="source $HOME/BearCar/.venv/bin/activate"' >>"$HOME/.bashrc"
 # Output result
 PURPLE='\033[0;35m' # Coloring output
 NC='\033[0m'        # No Color
