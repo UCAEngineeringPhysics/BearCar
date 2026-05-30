@@ -91,9 +91,7 @@ try:
             elapsed = time() - start_time
             fps = drive_rate / elapsed
             print("---")
-            print(
-                f"steering value: {driver.steering_value}, throttle value: {driver.throttle_value}"
-            )
+            print(f"steering value: {st_val}, throttle value: {th_val}")
             print(f"Out message: {messenger.out_msg}")
             print(f"In message (ang_vel_z): {messenger.ang_vel_z}")
             print(f"Processing at {fps:.2f} FPS | Frame shape: {frame.shape}")
