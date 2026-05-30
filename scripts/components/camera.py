@@ -17,8 +17,6 @@ class ThreadedCamera:
                 "FrameDurationLimits": (
                     int(1_000_000 / params["frame_rate"]),
                     int(1_000_000 / params["frame_rate"]),
-                    # int(1_000_000 / 60),
-                    # int(1_000_000 / 60),
                 )
             },
         )
