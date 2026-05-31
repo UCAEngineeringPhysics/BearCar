@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision.transforms import v2
 from torchvision.io import decode_image
 import matplotlib.pyplot as plt
-from cnn_architectures.bear_net import BearNet
+from components.autopilot_architectures.bearnet import BearNet
 
 
 # Define custom dataset

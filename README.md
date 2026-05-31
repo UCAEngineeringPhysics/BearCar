@@ -1,16 +1,16 @@
 # BearCar
 
-![bearcar_portrait](/images/bearcar_portrait.png)
+![bearcar_portrait](https://ucaengineeringphysics.github.io/bearcar_docs/images/bearcar_annotate.png)
 
 BearCar is an autonomous driving platform based on an 1:16 RC car and a Raspberry Pi SBC.
 Visit [documentations](https://ucaengineeringphysics.github.io/bearcar_docs/) for more details.
 
-This project is strongly inspired by the
+> [!IMPORTANT]
+> This project is strongly inspired by the
 [DonkeyCar](https://github.com/autorope/donkeycar) project.
 
 ## Quick Start
 
-Fire up the terminal on your Raspberry Pi, and run following commands in it.
 
 ### Download BearCar software
 
@@ -23,17 +23,17 @@ git clone https://github.com/UCAEngineeringPhysics/BearCar.git
 
 ```bash
 cd ~/BearCar
-./setup_pi_env.sh
+./setup_env.sh
 ```
 
 ### Hook Up the Gamepad
+Plug in USB receiver or connect via bluetooth.
 
-### Have Fun Racing
+### Have Fun Driving
 
 ```bash
 cd ~/BearCar
-cp models/example_pilot models/pilot.pth
-uv run scripts/autopilot.py
+uv run scripts/drive.py
 ```
 
 ## Demo Videos
