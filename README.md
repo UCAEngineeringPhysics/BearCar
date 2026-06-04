@@ -11,7 +11,6 @@ Visit [documentations](https://ucaengineeringphysics.github.io/bearcar_docs/) fo
 
 ## Quick Start
 
-
 ### Download BearCar software
 
 ```bash
@@ -27,6 +26,7 @@ cd ~/BearCar
 ```
 
 ### Hook Up the Gamepad
+
 Plug in USB receiver or connect via bluetooth.
 
 ### Have Fun Driving
