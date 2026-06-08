@@ -6,6 +6,7 @@ import csv
 import json
 import cv2 as cv
 import torch
+from torchvision import models
 
 from components.autopilot_architectures.bearnet import BearNet
 from components.camera import ThreadedCamera
@@ -38,7 +39,8 @@ with open(params_file_path, "r") as file:
 autopilot = None
 if args.model:
     model_path = bc_dir.joinpath("models", args.model + ".pth")
-    autopilot = BearNet()
+    # autopilot = BearNet()
+    autopilot = models.mobilenet_v3_small(weights=None, num_classes=2)
     autopilot.load_state_dict(
         torch.load(
             model_path,
