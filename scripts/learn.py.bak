@@ -5,10 +5,10 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
-import torchvision.models as models
 from torchvision.transforms import v2
 from torchvision.io import decode_image
 import matplotlib.pyplot as plt
+from components.autopilot_architectures.bearnet import BearNet
 
 
 # Define custom dataset
@@ -142,9 +142,7 @@ if not os.path.exists(model_dir):
         if e.errno != errno.EEXIST:
             raise
 # Instantiate model and config training
-model = models.mobilenet_v3_small(weights=None, num_classes=2).to(
-    DEVICE
-)  # choose the architecture class from cnn_network.py
+model = BearNet().to(DEVICE)  # choose the architecture class from cnn_network.py
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 loss_fn = nn.MSELoss()
 max_epochs = 64
