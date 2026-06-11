@@ -9,6 +9,14 @@ class ThreadedMessenger:
         print(f"Messenger connected at: {self.communicator.name}\n")
         self.out_msg = "s,1500000,1500000\n"
         self.in_msg = None
+        self.imu_data = {
+            "lin_acc_x": 0.0,
+            "lin_acc_y": 0.0,
+            "lin_acc_z": 0.0,
+            "ang_vel_x": 0.0,
+            "ang_vel_y": 0.0,
+            "ang_vel_z": 0.0,
+        }
         self.ang_vel_z = 0.0
         self.pico_thread = threading.Thread(target=self.process_msgs, daemon=True)
         self.pico_thread.start()
@@ -26,11 +34,19 @@ class ThreadedMessenger:
             # Receive motion data from Pico
             if self.communicator.in_waiting > 0:
                 self.in_msg = (
-                    self.communicator.readline().decode("utf-8", "ignore").strip()
+                    self.communicator.readline()
+                    .decode("utf-8", "ignore")
+                    .strip()
+                    .split(",")
                 )
-                if self.in_msg:
+                if len(self.in_msg) == 6:
                     try:
-                        self.ang_vel_z = float(self.in_msg)
+                        self.imu_data["lin_acc_x"] = float(self.in_msg[0])
+                        self.imu_data["lin_acc_y"] = float(self.in_msg[1])
+                        self.imu_data["lin_acc_z"] = float(self.in_msg[2])
+                        self.imu_data["ang_vel_x"] = float(self.in_msg[3])
+                        self.imu_data["ang_vel_y"] = float(self.in_msg[4])
+                        self.imu_data["ang_vel_z"] = float(self.in_msg[5])
                     except ValueError:
                         pass
             sleep(0.01)  # prevent 100% CPU usage
@@ -58,32 +74,32 @@ if __name__ == "__main__":
     # LOOP
     msngr.out_msg = f"{modes[0]},{pulsewidths[0]},{pulsewidths[0]}\n"
     print("---\nSTANDBY, CYAN, MID, STALL")
-    print(f"In message (ang_vel_z): {msngr.ang_vel_z}")
+    print(f"IMU data: {msngr.imu_data}")
     print(f"Out message: {msngr.out_msg}")
     sleep(2)
     msngr.out_msg = f"{modes[1]},{pulsewidths[0]},{pulsewidths[0]}\n"
     print("---\nPAUSE, YELLOW, MID, STALL")
-    print(f"In message (ang_vel_z): {msngr.ang_vel_z}")
+    print(f"IMU data: {msngr.imu_data}")
     print(f"Out message: {msngr.out_msg}")
     sleep(2)
     msngr.out_msg = f"{modes[2]},{pulsewidths[1]},{pulsewidths[1]}\n"
     print("---\nNORMAL, GREEN, RIGHT, FORWARD")
-    print(f"In message (ang_vel_z): {msngr.ang_vel_z}")
+    print(f"IMU data: {msngr.imu_data}")
     print(f"Out message: {msngr.out_msg}")
     sleep(2)
     msngr.out_msg = f"{modes[3]},{pulsewidths[2]},{pulsewidths[1]}\n"
     print("---\nRECORDING, BLUE, LEFT, FORWARD")
-    print(f"In message (ang_vel_z): {msngr.ang_vel_z}")
+    print(f"IMU data: {msngr.imu_data}")
     print(f"Out message: {msngr.out_msg}")
     sleep(2)
     msngr.out_msg = f"{modes[4]},{pulsewidths[2]},{pulsewidths[2]}\n"
     print("---\nAUTOPILOT, PURPLE, LEFT, REVERSE")
-    print(f"In message (ang_vel_z): {msngr.ang_vel_z}")
+    print(f"IMU data: {msngr.imu_data}")
     print(f"Out message: {msngr.out_msg}")
     sleep(2)
     msngr.out_msg = f"{modes[5]},{pulsewidths[0]},{pulsewidths[0]}\n"
     print("---\nERROR, RED, MID, STALL")
-    print(f"In message (ang_vel_z): {msngr.ang_vel_z}")
+    print(f"IMU data: {msngr.imu_data}")
     print(f"Out message: {msngr.out_msg}")
     sleep(2)
     msngr.communicator.close()
