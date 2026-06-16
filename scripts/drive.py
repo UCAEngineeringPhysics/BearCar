@@ -74,9 +74,10 @@ try:
         mode, st_val, th_val, st_pw, th_pw = driver.process_event(params, frame=frame)
         messenger.out_msg = f"{mode},{st_pw},{th_pw}\n"
         action = [st_val, th_val]
+        imu_data = [*messenger.imu_data.values()]
         if mode == "r":
             cv.imwrite(image_dir + "/" + str(frame_counts) + ".jpg", frame)
-            label = [str(frame_counts) + ".jpg"] + action
+            label = [str(frame_counts) + ".jpg"] + action + imu_data
             with open(label_path, "a+", newline="") as f:
                 writer = csv.writer(f)
                 writer.writerow(label)
@@ -91,9 +92,10 @@ try:
             elapsed = time() - start_time
             fps = drive_rate / elapsed
             print("---")
+            print(f"Frame counts: {frame_counts}, Record counts: {record_counts}")
             print(f"steering value: {st_val}, throttle value: {th_val}")
             print(f"Out message: {messenger.out_msg}")
-            print(f"In message (ang_vel_z): {messenger.ang_vel_z}")
+            print(f"IMU data: {messenger.imu_data}")
             print(f"Processing at {fps:.2f} FPS | Frame shape: {frame.shape}")
             start_time = time()
         # cv.imshow("Camera", cv.flip(frame, -1))  # picam mounted upside down
